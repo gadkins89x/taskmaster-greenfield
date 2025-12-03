@@ -7,6 +7,11 @@ import {
 } from '@tanstack/react-router';
 import { LoginPage } from './pages/login';
 import { DashboardPage } from './pages/dashboard';
+import { WorkOrdersListPage, WorkOrderDetailPage, WorkOrderCreatePage } from './pages/work-orders';
+import { InventoryListPage, InventoryDetailPage } from './pages/inventory';
+import { AssetsListPage, AssetDetailPage } from './pages/assets';
+import { SchedulingListPage, ScheduleDetailPage, ScheduleCreatePage } from './pages/scheduling';
+import { SettingsPage } from './pages/settings';
 import { AppLayout } from './components/layout/app-layout';
 import { useAuthStore } from './stores/auth-store';
 
@@ -52,40 +57,75 @@ const dashboardRoute = createRoute({
   component: DashboardPage,
 });
 
-// Work Orders route (placeholder)
+// Work Orders routes
 const workOrdersRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/work-orders',
-  component: () => (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Work Orders</h1>
-      <p className="text-muted-foreground">Work orders list will be implemented in Phase 2.</p>
-    </div>
-  ),
+  component: WorkOrdersListPage,
 });
 
-// Inventory route (placeholder)
+const workOrderNewRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/work-orders/new',
+  component: WorkOrderCreatePage,
+});
+
+const workOrderDetailRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/work-orders/$workOrderId',
+  component: ({ params }) => <WorkOrderDetailPage workOrderId={params.workOrderId} />,
+});
+
+// Inventory routes
 const inventoryRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/inventory',
-  component: () => (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Inventory</h1>
-      <p className="text-muted-foreground">Inventory management will be implemented in Phase 2.</p>
-    </div>
-  ),
+  component: InventoryListPage,
 });
 
-// Settings route (placeholder)
+const inventoryDetailRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/inventory/$itemId',
+  component: ({ params }) => <InventoryDetailPage itemId={params.itemId} />,
+});
+
+// Assets routes
+const assetsRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/assets',
+  component: AssetsListPage,
+});
+
+const assetDetailRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/assets/$assetId',
+  component: ({ params }) => <AssetDetailPage assetId={params.assetId} />,
+});
+
+// Scheduling routes
+const schedulingRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/scheduling',
+  component: SchedulingListPage,
+});
+
+const schedulingNewRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/scheduling/new',
+  component: ScheduleCreatePage,
+});
+
+const schedulingDetailRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/scheduling/$scheduleId',
+  component: ({ params }) => <ScheduleDetailPage scheduleId={params.scheduleId} />,
+});
+
+// Settings route
 const settingsRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/settings',
-  component: () => (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Settings</h1>
-      <p className="text-muted-foreground">Settings will be implemented in Phase 2.</p>
-    </div>
-  ),
+  component: SettingsPage,
 });
 
 // Route tree
@@ -94,7 +134,15 @@ const routeTree = rootRoute.addChildren([
   protectedRoute.addChildren([
     dashboardRoute,
     workOrdersRoute,
+    workOrderNewRoute,
+    workOrderDetailRoute,
     inventoryRoute,
+    inventoryDetailRoute,
+    assetsRoute,
+    assetDetailRoute,
+    schedulingRoute,
+    schedulingNewRoute,
+    schedulingDetailRoute,
     settingsRoute,
   ]),
 ]);
