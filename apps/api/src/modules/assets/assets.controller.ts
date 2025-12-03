@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AssetsService } from './assets.service';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
@@ -47,5 +57,69 @@ export class AssetsController {
   @ApiOperation({ summary: 'Get asset by ID' })
   async findOne(@TenantCtx() ctx: TenantContext, @Param('id') id: string) {
     return this.assetsService.findById(ctx, id);
+  }
+
+  @Post()
+  @Permissions('assets:create')
+  @ApiOperation({ summary: 'Create a new asset' })
+  async create(
+    @TenantCtx() ctx: TenantContext,
+    @Body() body: {
+      name: string;
+      assetTag: string;
+      serialNumber?: string;
+      manufacturer?: string;
+      model?: string;
+      category?: string;
+      status?: string;
+      locationId?: string;
+      parentAssetId?: string;
+      purchaseDate?: string;
+      warrantyExpires?: string;
+      specifications?: Record<string, unknown>;
+    },
+  ) {
+    return this.assetsService.create(ctx, body);
+  }
+
+  @Patch(':id')
+  @Permissions('assets:update')
+  @ApiOperation({ summary: 'Update an asset' })
+  async update(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      name?: string;
+      assetTag?: string;
+      serialNumber?: string;
+      manufacturer?: string;
+      model?: string;
+      category?: string;
+      locationId?: string;
+      parentAssetId?: string;
+      purchaseDate?: string;
+      warrantyExpires?: string;
+      specifications?: Record<string, unknown>;
+    },
+  ) {
+    return this.assetsService.update(ctx, id, body);
+  }
+
+  @Patch(':id/status')
+  @Permissions('assets:update')
+  @ApiOperation({ summary: 'Update asset status' })
+  async updateStatus(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: { status: string },
+  ) {
+    return this.assetsService.updateStatus(ctx, id, body.status);
+  }
+
+  @Delete(':id')
+  @Permissions('assets:delete')
+  @ApiOperation({ summary: 'Delete an asset' })
+  async delete(@TenantCtx() ctx: TenantContext, @Param('id') id: string) {
+    return this.assetsService.delete(ctx, id);
   }
 }
