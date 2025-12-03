@@ -15,6 +15,8 @@ import { AuthenticationModule } from './modules/authentication/authentication.mo
 import { LocationsModule } from './modules/locations/locations.module';
 import { AssetsModule } from './modules/assets/assets.module';
 import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { HealthModule } from './health/health.module';
 
@@ -62,6 +64,8 @@ import { configSchema } from './common/config/config.schema';
     LocationsModule,
     AssetsModule,
     WorkOrdersModule,
+    InventoryModule,
+    SchedulingModule,
     AuditModule,
     HealthModule,
   ],
