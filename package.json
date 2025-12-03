@@ -1,0 +1,36 @@
+{
+  "name": "taskmaster",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TaskMaster CMMS - Computerized Maintenance Management System",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "docker compose up -d && npm run dev:apps",
+    "dev:apps": "npm run dev --workspaces --if-present",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:pwa": "npm run dev -w apps/pwa",
+    "build": "npm run build --workspaces --if-present",
+    "build:api": "npm run build -w apps/api",
+    "build:pwa": "npm run build -w apps/pwa",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspaces --if-present",
+    "db:migrate": "npm run prisma:migrate -w apps/api",
+    "db:seed": "npm run prisma:seed -w apps/api",
+    "db:studio": "npm run prisma:studio -w apps/api",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:build": "docker compose -f docker-compose.prod.yml build",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "author": "TaskMaster Team",
+  "license": "UNLICENSED"
+}

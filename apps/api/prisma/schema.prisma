@@ -1,0 +1,384 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// TENANT & AUTHENTICATION
+// =============================================================================
+
+model Tenant {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  settings  Json?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users           User[]
+  roles           Role[]
+  locations       Location[]
+  assets          Asset[]
+  workOrders      WorkOrder[]
+  auditLogs       AuditLog[]
+
+  @@map("tenants")
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  email        String
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  phone        String?
+  avatarUrl    String?   @map("avatar_url")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  tenant                   Tenant                   @relation(fields: [tenantId], references: [id])
+  userRoles                UserRole[]
+  refreshTokens            RefreshToken[]
+  createdWorkOrders        WorkOrder[]              @relation("CreatedBy")
+  assignedWorkOrders       WorkOrder[]              @relation("AssignedTo")
+  completedSteps           WorkOrderStep[]          @relation("CompletedBy")
+  comments                 WorkOrderComment[]
+  signatures               WorkOrderSignature[]
+  auditLogs                AuditLog[]
+  notifications            Notification[]
+  notificationPreferences  NotificationPreference[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([email])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("roles")
+}
+
+model Permission {
+  id          String @id @default(uuid()) @db.Uuid
+  resource    String
+  action      String
+  description String
+
+  // Relations
+  rolePermissions RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @map("user_id") @db.Uuid
+  roleId String @map("role_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  tokenHash  String   @unique @map("token_hash")
+  deviceInfo String?  @map("device_info")
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// =============================================================================
+// LOCATIONS
+// =============================================================================
+
+model Location {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  parentId  String?  @map("parent_id") @db.Uuid
+  name      String
+  code      String
+  type      String   // site, building, floor, area, room
+  address   String?
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+  metadata  Json?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  parent     Location?  @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children   Location[] @relation("LocationHierarchy")
+  assets     Asset[]
+  workOrders WorkOrder[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([parentId])
+  @@map("locations")
+}
+
+// =============================================================================
+// ASSETS
+// =============================================================================
+
+model Asset {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  locationId      String?  @map("location_id") @db.Uuid
+  parentAssetId   String?  @map("parent_asset_id") @db.Uuid
+  name            String
+  assetTag        String   @map("asset_tag")
+  serialNumber    String?  @map("serial_number")
+  manufacturer    String?
+  model           String?
+  category        String?
+  status          String   @default("operational") // operational, maintenance, offline, retired
+  purchaseDate    DateTime? @map("purchase_date") @db.Date
+  warrantyExpires DateTime? @map("warranty_expires") @db.Date
+  specifications  Json?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant       Tenant      @relation(fields: [tenantId], references: [id])
+  location     Location?   @relation(fields: [locationId], references: [id])
+  parentAsset  Asset?      @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
+  childAssets  Asset[]     @relation("AssetHierarchy")
+  workOrders   WorkOrder[]
+
+  @@unique([tenantId, assetTag])
+  @@index([tenantId])
+  @@index([locationId])
+  @@index([status])
+  @@map("assets")
+}
+
+// =============================================================================
+// WORK ORDERS
+// =============================================================================
+
+model WorkOrder {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  workOrderNumber String    @map("work_order_number")
+  assetId         String?   @map("asset_id") @db.Uuid
+  locationId      String?   @map("location_id") @db.Uuid
+  createdById     String    @map("created_by_id") @db.Uuid
+  assignedToId    String?   @map("assigned_to_id") @db.Uuid
+  title           String
+  description     String?
+  type            String    @default("reactive") // reactive, preventive, predictive, inspection
+  priority        String    @default("medium") // low, medium, high, critical
+  status          String    @default("open") // open, in_progress, on_hold, completed, cancelled
+  dueDate         DateTime? @map("due_date")
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  estimatedHours  Int?      @map("estimated_hours")
+  actualHours     Int?      @map("actual_hours")
+  completionNotes String?   @map("completion_notes")
+  version         Int       @default(1)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant               @relation(fields: [tenantId], references: [id])
+  asset      Asset?               @relation(fields: [assetId], references: [id])
+  location   Location?            @relation(fields: [locationId], references: [id])
+  createdBy  User                 @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo User?                @relation("AssignedTo", fields: [assignedToId], references: [id])
+  steps      WorkOrderStep[]
+  comments   WorkOrderComment[]
+  signatures WorkOrderSignature[]
+
+  @@unique([tenantId, workOrderNumber])
+  @@index([tenantId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedToId])
+  @@index([assetId])
+  @@index([locationId])
+  @@index([dueDate])
+  @@index([createdAt])
+  @@map("work_orders")
+}
+
+model WorkOrderStep {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @map("tenant_id") @db.Uuid
+  workOrderId     String    @map("work_order_id") @db.Uuid
+  stepOrder       Int       @map("step_order")
+  title           String
+  description     String?
+  isRequired      Boolean   @default(true) @map("is_required")
+  isCompleted     Boolean   @default(false) @map("is_completed")
+  completedById   String?   @map("completed_by_id") @db.Uuid
+  completedAt     DateTime? @map("completed_at")
+  completionNotes String?   @map("completion_notes")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  completedBy User?     @relation("CompletedBy", fields: [completedById], references: [id])
+
+  @@index([workOrderId])
+  @@index([tenantId])
+  @@map("work_order_steps")
+}
+
+model WorkOrderComment {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  workOrderId String @map("work_order_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  parentId  String?  @map("parent_id") @db.Uuid
+  content   String
+  isInternal Boolean @default(false) @map("is_internal")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  workOrder WorkOrder          @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id])
+  parent    WorkOrderComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   WorkOrderComment[] @relation("CommentReplies")
+
+  @@index([workOrderId])
+  @@index([tenantId])
+  @@map("work_order_comments")
+}
+
+model WorkOrderSignature {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @map("tenant_id") @db.Uuid
+  workOrderId   String   @map("work_order_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  signatureData String   @map("signature_data")
+  type          String   // technician, supervisor, customer
+  signedAt      DateTime @default(now()) @map("signed_at")
+
+  // Relations
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([workOrderId])
+  @@index([tenantId])
+  @@map("work_order_signatures")
+}
+
+// =============================================================================
+// NOTIFICATIONS
+// =============================================================================
+
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      String    // work_order_assigned, work_order_completed, etc.
+  title     String
+  body      String
+  data      Json?     // Entity references
+  isRead    Boolean   @default(false) @map("is_read")
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([tenantId])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id               String  @id @default(uuid()) @db.Uuid
+  userId           String  @map("user_id") @db.Uuid
+  notificationType String  @map("notification_type")
+  emailEnabled     Boolean @default(true) @map("email_enabled")
+  pushEnabled      Boolean @default(true) @map("push_enabled")
+  inAppEnabled     Boolean @default(true) @map("in_app_enabled")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationType])
+  @@map("notification_preferences")
+}
+
+// =============================================================================
+// AUDIT LOG
+// =============================================================================
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id") @db.Uuid
+  action     String   // create, update, delete
+  changes    Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, entityType, entityId])
+  @@index([tenantId, createdAt])
+  @@index([userId])
+  @@map("audit_logs")
+}
