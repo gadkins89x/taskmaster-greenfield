@@ -19,6 +19,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './health/health.module';
 
 import { configSchema } from './common/config/config.schema';
@@ -69,6 +70,7 @@ import { configSchema } from './common/config/config.schema';
     SchedulingModule,
     AuditModule,
     NotificationsModule,
+    DashboardModule,
     HealthModule,
   ],
 })
