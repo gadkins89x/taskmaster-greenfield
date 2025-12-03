@@ -27,6 +27,7 @@ model Tenant {
   locations       Location[]
   assets          Asset[]
   workOrders      WorkOrder[]
+  inventoryItems  InventoryItem[]
   auditLogs       AuditLog[]
 
   @@map("tenants")
@@ -58,6 +59,7 @@ model User {
   auditLogs                AuditLog[]
   notifications            Notification[]
   notificationPreferences  NotificationPreference[]
+  inventoryTransactions    InventoryTransaction[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -154,11 +156,12 @@ model Location {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tenant     Tenant     @relation(fields: [tenantId], references: [id])
-  parent     Location?  @relation("LocationHierarchy", fields: [parentId], references: [id])
-  children   Location[] @relation("LocationHierarchy")
-  assets     Asset[]
-  workOrders WorkOrder[]
+  tenant         Tenant          @relation(fields: [tenantId], references: [id])
+  parent         Location?       @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children       Location[]      @relation("LocationHierarchy")
+  assets         Asset[]
+  workOrders     WorkOrder[]
+  inventoryItems InventoryItem[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -355,6 +358,70 @@ model NotificationPreference {
 
   @@unique([userId, notificationType])
   @@map("notification_preferences")
+}
+
+// =============================================================================
+// INVENTORY
+// =============================================================================
+
+model InventoryItem {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  itemNumber      String   @map("item_number")
+  name            String
+  description     String?
+  category        String?
+  unit            String   @default("each") // each, box, pack, liter, kg, etc.
+  currentStock    Int      @default(0) @map("current_stock")
+  minimumStock    Int      @default(0) @map("minimum_stock")
+  reorderPoint    Int      @default(0) @map("reorder_point")
+  reorderQuantity Int      @default(0) @map("reorder_quantity")
+  unitCost        Decimal? @map("unit_cost") @db.Decimal(10, 2)
+  manufacturer    String?
+  partNumber      String?  @map("part_number")
+  barcode         String?
+  locationId      String?  @map("location_id") @db.Uuid
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant       Tenant                 @relation(fields: [tenantId], references: [id])
+  location     Location?              @relation(fields: [locationId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@unique([tenantId, itemNumber])
+  @@index([tenantId])
+  @@index([category])
+  @@index([barcode])
+  @@index([currentStock])
+  @@map("inventory_items")
+}
+
+model InventoryTransaction {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  itemId          String   @map("item_id") @db.Uuid
+  type            String   // receipt, issue, adjustment, transfer, return
+  quantity        Int
+  previousStock   Int      @map("previous_stock")
+  newStock        Int      @map("new_stock")
+  unitCost        Decimal? @map("unit_cost") @db.Decimal(10, 2)
+  reference       String?  // Work order number, PO number, etc.
+  referenceId     String?  @map("reference_id") @db.Uuid
+  notes           String?
+  performedById   String   @map("performed_by_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+  performedBy User          @relation(fields: [performedById], references: [id])
+
+  @@index([tenantId])
+  @@index([itemId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("inventory_transactions")
 }
 
 // =============================================================================
