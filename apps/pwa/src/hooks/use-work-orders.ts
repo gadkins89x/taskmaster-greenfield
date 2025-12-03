@@ -12,6 +12,18 @@ import {
   updateComment,
   deleteComment,
   getActivityFeed,
+  uploadPhoto,
+  deletePhoto,
+  updatePhotoCaption,
+  addLaborEntry,
+  updateLaborEntry,
+  deleteLaborEntry,
+  startLaborTimer,
+  stopLaborTimer,
+  addPart,
+  updatePart,
+  deletePart,
+  returnPart,
   type CreateWorkOrderData,
   type UpdateWorkOrderData,
 } from '../lib/work-orders-api';
@@ -215,5 +227,257 @@ export function useActivityFeed(workOrderId: string, params: { page?: number; li
     queryKey: workOrderKeys.activity(workOrderId),
     queryFn: () => getActivityFeed(workOrderId, params),
     enabled: !!workOrderId,
+  });
+}
+
+// Upload photo
+export function useUploadPhoto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      data,
+    }: {
+      workOrderId: string;
+      data: { file: File; caption?: string; category?: string };
+    }) => uploadPhoto(workOrderId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Delete photo
+export function useDeletePhoto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ workOrderId, photoId }: { workOrderId: string; photoId: string }) =>
+      deletePhoto(workOrderId, photoId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Update photo caption
+export function useUpdatePhotoCaption() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      photoId,
+      caption,
+    }: {
+      workOrderId: string;
+      photoId: string;
+      caption: string;
+    }) => updatePhotoCaption(workOrderId, photoId, caption),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Add labor entry
+export function useAddLaborEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      data,
+    }: {
+      workOrderId: string;
+      data: {
+        startTime: string;
+        endTime?: string;
+        hours?: number;
+        description?: string;
+        laborType?: string;
+      };
+    }) => addLaborEntry(workOrderId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Update labor entry
+export function useUpdateLaborEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      entryId,
+      data,
+    }: {
+      workOrderId: string;
+      entryId: string;
+      data: {
+        startTime?: string;
+        endTime?: string;
+        hours?: number;
+        description?: string;
+        laborType?: string;
+      };
+    }) => updateLaborEntry(workOrderId, entryId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Delete labor entry
+export function useDeleteLaborEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ workOrderId, entryId }: { workOrderId: string; entryId: string }) =>
+      deleteLaborEntry(workOrderId, entryId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Start labor timer
+export function useStartLaborTimer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      data,
+    }: {
+      workOrderId: string;
+      data: { description?: string; laborType?: string };
+    }) => startLaborTimer(workOrderId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Stop labor timer
+export function useStopLaborTimer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ workOrderId, entryId }: { workOrderId: string; entryId: string }) =>
+      stopLaborTimer(workOrderId, entryId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Add part
+export function useAddPart() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      data,
+    }: {
+      workOrderId: string;
+      data: {
+        inventoryItemId?: string;
+        partNumber?: string;
+        partName: string;
+        quantity: number;
+        unitCost?: number;
+        notes?: string;
+      };
+    }) => addPart(workOrderId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Update part
+export function useUpdatePart() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      partId,
+      data,
+    }: {
+      workOrderId: string;
+      partId: string;
+      data: {
+        quantity?: number;
+        unitCost?: number;
+        notes?: string;
+        status?: 'used' | 'returned' | 'damaged';
+      };
+    }) => updatePart(workOrderId, partId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Delete part
+export function useDeletePart() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ workOrderId, partId }: { workOrderId: string; partId: string }) =>
+      deletePart(workOrderId, partId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
+  });
+}
+
+// Return part
+export function useReturnPart() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workOrderId,
+      partId,
+      data,
+    }: {
+      workOrderId: string;
+      partId: string;
+      data: { quantity: number; notes?: string };
+    }) => returnPart(workOrderId, partId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: workOrderKeys.detail(variables.workOrderId),
+      });
+    },
   });
 }
