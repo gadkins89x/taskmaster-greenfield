@@ -12,6 +12,7 @@ import { InventoryListPage, InventoryDetailPage } from './pages/inventory';
 import { AssetsListPage, AssetDetailPage } from './pages/assets';
 import { SchedulingListPage, ScheduleDetailPage, ScheduleCreatePage } from './pages/scheduling';
 import { SettingsPage } from './pages/settings';
+import { ConflictsPage } from './pages/sync';
 import { AppLayout } from './components/layout/app-layout';
 import { useAuthStore } from './stores/auth-store';
 
@@ -128,6 +129,13 @@ const settingsRoute = createRoute({
   component: SettingsPage,
 });
 
+// Sync conflicts route
+const conflictsRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: '/sync/conflicts',
+  component: ConflictsPage,
+});
+
 // Route tree
 const routeTree = rootRoute.addChildren([
   loginRoute,
@@ -144,6 +152,7 @@ const routeTree = rootRoute.addChildren([
     schedulingNewRoute,
     schedulingDetailRoute,
     settingsRoute,
+    conflictsRoute,
   ]),
 ]);
 

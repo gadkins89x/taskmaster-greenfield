@@ -40,6 +40,30 @@ export interface WorkOrder {
   updatedAt: string;
 }
 
+export interface WorkOrderPart {
+  id: string;
+  inventoryItemId?: string;
+  partNumber?: string;
+  partName: string;
+  quantity: number;
+  unitCost?: number;
+  totalCost?: number;
+  notes?: string;
+  status: 'used' | 'returned' | 'damaged';
+  inventoryItem?: {
+    id: string;
+    itemNumber: string;
+    name: string;
+    currentStock: number;
+  };
+  addedBy: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  createdAt: string;
+}
+
 export interface WorkOrderDetail extends WorkOrder {
   startedAt: string | null;
   completedAt: string | null;
@@ -48,7 +72,43 @@ export interface WorkOrderDetail extends WorkOrder {
   steps: WorkOrderStep[];
   comments: WorkOrderComment[];
   signatures: WorkOrderSignature[];
+  photos: WorkOrderPhoto[];
+  laborEntries: WorkOrderLabor[];
+  partsUsed: WorkOrderPart[];
   version: number;
+}
+
+export interface WorkOrderPhoto {
+  id: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  caption?: string;
+  category?: 'before' | 'during' | 'after' | 'damage' | 'repair';
+  uploadedBy: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  createdAt: string;
+}
+
+export interface WorkOrderLabor {
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  startTime: string;
+  endTime?: string;
+  hours?: number;
+  description?: string;
+  laborType: 'regular' | 'overtime' | 'travel';
+  hourlyRate?: number;
+  createdAt: string;
 }
 
 export interface WorkOrderStep {
@@ -251,4 +311,117 @@ export async function getActivityFeed(
 
   const query = searchParams.toString();
   return apiClient.get(`/work-orders/${workOrderId}/activity${query ? `?${query}` : ''}`);
+}
+
+// Photos
+export async function uploadPhoto(
+  workOrderId: string,
+  data: { dataUrl: string; filename: string; caption?: string; category?: string }
+): Promise<WorkOrderPhoto> {
+  return apiClient.post(`/work-orders/${workOrderId}/photos`, data);
+}
+
+export async function deletePhoto(
+  workOrderId: string,
+  photoId: string
+): Promise<{ success: boolean }> {
+  return apiClient.delete(`/work-orders/${workOrderId}/photos/${photoId}`);
+}
+
+export async function updatePhotoCaption(
+  workOrderId: string,
+  photoId: string,
+  data: { caption?: string; category?: string }
+): Promise<WorkOrderPhoto> {
+  return apiClient.patch(`/work-orders/${workOrderId}/photos/${photoId}`, data);
+}
+
+// Labor Tracking
+export async function addLaborEntry(
+  workOrderId: string,
+  data: {
+    startTime: string;
+    endTime?: string;
+    hours?: number;
+    description?: string;
+    laborType?: 'regular' | 'overtime' | 'travel';
+  }
+): Promise<WorkOrderLabor> {
+  return apiClient.post(`/work-orders/${workOrderId}/labor`, data);
+}
+
+export async function updateLaborEntry(
+  workOrderId: string,
+  laborId: string,
+  data: {
+    startTime?: string;
+    endTime?: string;
+    hours?: number;
+    description?: string;
+    laborType?: 'regular' | 'overtime' | 'travel';
+  }
+): Promise<WorkOrderLabor> {
+  return apiClient.patch(`/work-orders/${workOrderId}/labor/${laborId}`, data);
+}
+
+export async function deleteLaborEntry(
+  workOrderId: string,
+  laborId: string
+): Promise<{ success: boolean }> {
+  return apiClient.delete(`/work-orders/${workOrderId}/labor/${laborId}`);
+}
+
+export async function startLaborTimer(workOrderId: string): Promise<WorkOrderLabor> {
+  return apiClient.post(`/work-orders/${workOrderId}/labor/start`);
+}
+
+export async function stopLaborTimer(
+  workOrderId: string,
+  laborId: string,
+  data?: { description?: string }
+): Promise<WorkOrderLabor> {
+  return apiClient.post(`/work-orders/${workOrderId}/labor/${laborId}/stop`, data || {});
+}
+
+// Parts/Materials
+export async function addPart(
+  workOrderId: string,
+  data: {
+    inventoryItemId?: string;
+    partNumber?: string;
+    partName: string;
+    quantity: number;
+    unitCost?: number;
+    notes?: string;
+  }
+): Promise<WorkOrderPart> {
+  return apiClient.post(`/work-orders/${workOrderId}/parts`, data);
+}
+
+export async function updatePart(
+  workOrderId: string,
+  partId: string,
+  data: {
+    quantity?: number;
+    unitCost?: number;
+    notes?: string;
+    status?: 'used' | 'returned' | 'damaged';
+  }
+): Promise<WorkOrderPart> {
+  return apiClient.patch(`/work-orders/${workOrderId}/parts/${partId}`, data);
+}
+
+export async function deletePart(
+  workOrderId: string,
+  partId: string
+): Promise<{ success: boolean }> {
+  return apiClient.delete(`/work-orders/${workOrderId}/parts/${partId}`);
+}
+
+export async function returnPart(
+  workOrderId: string,
+  partId: string,
+  data: { quantity: number; notes?: string }
+): Promise<WorkOrderPart> {
+  return apiClient.post(`/work-orders/${workOrderId}/parts/${partId}/return`, data);
 }

@@ -57,6 +57,9 @@ model User {
   completedSteps           WorkOrderStep[]          @relation("CompletedBy")
   comments                 WorkOrderComment[]
   signatures               WorkOrderSignature[]
+  uploadedPhotos           WorkOrderPhoto[]         @relation("PhotoUploadedBy")
+  laborEntries             WorkOrderLabor[]         @relation("LaborUser")
+  partsAdded               WorkOrderPart[]          @relation("PartAddedBy")
   auditLogs                AuditLog[]
   notifications            Notification[]
   notificationPreferences  NotificationPreference[]
@@ -245,7 +248,10 @@ model WorkOrder {
   steps             WorkOrderStep[]
   comments          WorkOrderComment[]
   signatures        WorkOrderSignature[]
+  photos            WorkOrderPhoto[]
   scheduledWorkOrders ScheduledWorkOrder[]
+  laborEntries      WorkOrderLabor[]
+  partsUsed         WorkOrderPart[]
 
   @@unique([tenantId, workOrderNumber])
   @@index([tenantId])
@@ -321,6 +327,84 @@ model WorkOrderSignature {
   @@index([workOrderId])
   @@index([tenantId])
   @@map("work_order_signatures")
+}
+
+model WorkOrderPhoto {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  workOrderId String   @map("work_order_id") @db.Uuid
+  uploadedById String  @map("uploaded_by_id") @db.Uuid
+  filename    String
+  mimeType    String   @map("mime_type")
+  size        Int      // bytes
+  url         String   // Storage URL or base64 data URI
+  caption     String?
+  category    String?  // before, during, after, damage, repair
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  workOrder  WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  uploadedBy User      @relation("PhotoUploadedBy", fields: [uploadedById], references: [id])
+
+  @@index([workOrderId])
+  @@index([tenantId])
+  @@map("work_order_photos")
+}
+
+model WorkOrderLabor {
+  id          String    @id @default(uuid()) @db.Uuid
+  tenantId    String    @map("tenant_id") @db.Uuid
+  workOrderId String    @map("work_order_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  startTime   DateTime  @map("start_time")
+  endTime     DateTime? @map("end_time")
+  hours       Decimal?  @db.Decimal(5, 2) // Calculated from start/end or entered manually
+  description String?
+  laborType   String    @default("regular") @map("labor_type") // regular, overtime, travel
+  hourlyRate  Decimal?  @map("hourly_rate") @db.Decimal(10, 2)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user      User      @relation("LaborUser", fields: [userId], references: [id])
+
+  @@index([workOrderId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("work_order_labor")
+}
+
+model WorkOrderPart {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  workOrderId     String   @map("work_order_id") @db.Uuid
+  inventoryItemId String?  @map("inventory_item_id") @db.Uuid
+  addedById       String   @map("added_by_id") @db.Uuid
+
+  // Part details (can be from inventory or manual entry)
+  partNumber      String?  @map("part_number")
+  partName        String   @map("part_name")
+  quantity        Int
+  unitCost        Decimal? @map("unit_cost") @db.Decimal(10, 2)
+  totalCost       Decimal? @map("total_cost") @db.Decimal(10, 2)
+  notes           String?
+
+  // Status tracking
+  status          String   @default("used") // used, returned, damaged
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  workOrder     WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  inventoryItem InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+  addedBy       User           @relation("PartAddedBy", fields: [addedById], references: [id])
+
+  @@index([workOrderId])
+  @@index([inventoryItemId])
+  @@index([tenantId])
+  @@map("work_order_parts")
 }
 
 // =============================================================================
@@ -476,9 +560,10 @@ model InventoryItem {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tenant       Tenant                 @relation(fields: [tenantId], references: [id])
-  location     Location?              @relation(fields: [locationId], references: [id])
-  transactions InventoryTransaction[]
+  tenant         Tenant                 @relation(fields: [tenantId], references: [id])
+  location       Location?              @relation(fields: [locationId], references: [id])
+  transactions   InventoryTransaction[]
+  workOrderParts WorkOrderPart[]
 
   @@unique([tenantId, itemNumber])
   @@index([tenantId])
