@@ -121,4 +121,23 @@ export class AssetsService {
 
     return this.findById(ctx, asset.id);
   }
+
+  async findByBarcode(ctx: TenantContext, barcode: string) {
+    // Search by asset tag or serial number
+    const asset = await this.prisma.asset.findFirst({
+      where: {
+        tenantId: ctx.tenantId,
+        OR: [
+          { assetTag: barcode },
+          { serialNumber: barcode },
+        ],
+      },
+    });
+
+    if (!asset) {
+      throw new NotFoundException('Asset not found for barcode');
+    }
+
+    return this.findById(ctx, asset.id);
+  }
 }

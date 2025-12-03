@@ -3,12 +3,13 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Param,
   Body,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { WorkOrdersService } from './work-orders.service';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/auth/guards/permissions.guard';
@@ -114,5 +115,108 @@ export class WorkOrdersController {
     },
   ) {
     return this.workOrdersService.complete(ctx, id, body);
+  }
+
+  // ============================================================================
+  // Comments
+  // ============================================================================
+
+  @Get(':id/comments')
+  @Permissions('work_orders:read')
+  @ApiOperation({ summary: 'Get comments for a work order' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'includeInternal', required: false, type: Boolean })
+  async getComments(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('includeInternal') includeInternal?: boolean,
+  ) {
+    return this.workOrdersService.getComments(ctx, id, { page, limit, includeInternal });
+  }
+
+  @Post(':id/comments')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Add a comment to a work order' })
+  async addComment(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      content: string;
+      parentId?: string;
+      isInternal?: boolean;
+    },
+  ) {
+    return this.workOrdersService.addComment(ctx, id, body);
+  }
+
+  @Patch(':id/comments/:commentId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Update a comment' })
+  async updateComment(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+    @Body() body: { content: string },
+  ) {
+    return this.workOrdersService.updateComment(ctx, id, commentId, body);
+  }
+
+  @Delete(':id/comments/:commentId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Delete a comment' })
+  async deleteComment(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+  ) {
+    return this.workOrdersService.deleteComment(ctx, id, commentId);
+  }
+
+  // ============================================================================
+  // Activity Feed
+  // ============================================================================
+
+  @Get(':id/activity')
+  @Permissions('work_orders:read')
+  @ApiOperation({ summary: 'Get activity feed for a work order' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async getActivityFeed(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.workOrdersService.getActivityFeed(ctx, id, { page, limit });
+  }
+
+  // ============================================================================
+  // Steps
+  // ============================================================================
+
+  @Post(':id/steps/:stepId/complete')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Mark a step as completed' })
+  async completeStep(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('stepId') stepId: string,
+    @Body() body: { completionNotes?: string },
+  ) {
+    return this.workOrdersService.completeStep(ctx, id, stepId, body);
+  }
+
+  @Post(':id/steps/:stepId/uncomplete')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Mark a step as not completed' })
+  async uncompleteStep(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('stepId') stepId: string,
+  ) {
+    return this.workOrdersService.uncompleteStep(ctx, id, stepId);
   }
 }

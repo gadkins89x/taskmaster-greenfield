@@ -18,6 +18,7 @@ import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HealthModule } from './health/health.module';
 
 import { configSchema } from './common/config/config.schema';
@@ -67,6 +68,7 @@ import { configSchema } from './common/config/config.schema';
     InventoryModule,
     SchedulingModule,
     AuditModule,
+    NotificationsModule,
     HealthModule,
   ],
 })

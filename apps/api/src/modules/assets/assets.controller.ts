@@ -35,6 +35,13 @@ export class AssetsController {
     return this.assetsService.findByTag(ctx, tag);
   }
 
+  @Get('barcode/:barcode')
+  @Permissions('assets:read')
+  @ApiOperation({ summary: 'Get asset by barcode (asset tag or serial number)' })
+  async findByBarcode(@TenantCtx() ctx: TenantContext, @Param('barcode') barcode: string) {
+    return this.assetsService.findByBarcode(ctx, barcode);
+  }
+
   @Get(':id')
   @Permissions('assets:read')
   @ApiOperation({ summary: 'Get asset by ID' })
