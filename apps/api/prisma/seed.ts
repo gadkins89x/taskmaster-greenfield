@@ -41,6 +41,13 @@ async function main() {
     { resource: 'inventory', action: 'receive', description: 'Receive stock into inventory' },
     { resource: 'inventory', action: 'adjust', description: 'Adjust inventory stock counts' },
 
+    // Scheduling
+    { resource: 'schedules', action: 'create', description: 'Create maintenance schedules' },
+    { resource: 'schedules', action: 'read', description: 'View maintenance schedules' },
+    { resource: 'schedules', action: 'update', description: 'Update maintenance schedules' },
+    { resource: 'schedules', action: 'delete', description: 'Delete maintenance schedules' },
+    { resource: 'schedules', action: 'generate', description: 'Manually generate work orders from schedules' },
+
     // Users
     { resource: 'users', action: 'read', description: 'View users' },
     { resource: 'users', action: 'manage', description: 'Create, update, delete users' },
@@ -543,6 +550,93 @@ async function main() {
   });
 
   console.log('  ✓ Created 5 demo inventory items');
+
+  // =============================================================================
+  // DEMO MAINTENANCE SCHEDULES
+  // =============================================================================
+  console.log('Creating demo maintenance schedules...');
+
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+  nextMonth.setDate(1);
+
+  await prisma.maintenanceSchedule.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000001' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000001',
+      tenantId: tenant.id,
+      name: 'Monthly HVAC Filter Replacement',
+      description: 'Replace air filters in all HVAC units monthly',
+      assetId: hvacUnit.id,
+      locationId: floor1.id,
+      priority: 'medium',
+      estimatedHours: 1,
+      assignedToId: techUser.id,
+      frequency: 'monthly',
+      interval: 1,
+      dayOfMonth: 15,
+      startDate: new Date('2024-01-01'),
+      leadTimeDays: 7,
+      workOrderTitle: 'HVAC Filter Replacement',
+      workOrderType: 'preventive',
+      isActive: true,
+      nextDueDate: nextMonth,
+      steps: {
+        create: [
+          { stepOrder: 1, title: 'Turn off HVAC unit', isRequired: true },
+          { stepOrder: 2, title: 'Remove old filter', isRequired: true },
+          { stepOrder: 3, title: 'Inspect filter housing', isRequired: false },
+          { stepOrder: 4, title: 'Install new filter', isRequired: true },
+          { stepOrder: 5, title: 'Turn on unit and verify operation', isRequired: true },
+        ],
+      },
+    },
+  });
+
+  const quarterlyDate = new Date();
+  quarterlyDate.setMonth(quarterlyDate.getMonth() + 3);
+  quarterlyDate.setDate(1);
+
+  await prisma.maintenanceSchedule.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000002' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000002',
+      tenantId: tenant.id,
+      name: 'Quarterly Elevator Inspection',
+      description: 'Comprehensive quarterly safety inspection of elevator systems',
+      assetId: elevator.id,
+      locationId: buildingA.id,
+      priority: 'high',
+      estimatedHours: 4,
+      assignedToId: techUser.id,
+      frequency: 'quarterly',
+      interval: 1,
+      dayOfMonth: 1,
+      startDate: new Date('2024-01-01'),
+      leadTimeDays: 14,
+      workOrderTitle: 'Quarterly Elevator Safety Inspection',
+      workOrderType: 'preventive',
+      isActive: true,
+      nextDueDate: quarterlyDate,
+      steps: {
+        create: [
+          { stepOrder: 1, title: 'Visual inspection of cab interior', isRequired: true },
+          { stepOrder: 2, title: 'Test emergency stop button', isRequired: true },
+          { stepOrder: 3, title: 'Test emergency phone/alarm', isRequired: true },
+          { stepOrder: 4, title: 'Inspect door operations and safety sensors', isRequired: true },
+          { stepOrder: 5, title: 'Check leveling at each floor', isRequired: true },
+          { stepOrder: 6, title: 'Inspect machine room', isRequired: true },
+          { stepOrder: 7, title: 'Check cables and pulleys', isRequired: true },
+          { stepOrder: 8, title: 'Lubricate as needed', isRequired: true },
+          { stepOrder: 9, title: 'Complete inspection checklist', isRequired: true },
+        ],
+      },
+    },
+  });
+
+  console.log('  ✓ Created 2 demo maintenance schedules');
 
   console.log('\n✅ Database seeded successfully!');
 }

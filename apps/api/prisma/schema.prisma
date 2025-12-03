@@ -22,13 +22,14 @@ model Tenant {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  users           User[]
-  roles           Role[]
-  locations       Location[]
-  assets          Asset[]
-  workOrders      WorkOrder[]
-  inventoryItems  InventoryItem[]
-  auditLogs       AuditLog[]
+  users                User[]
+  roles                Role[]
+  locations            Location[]
+  assets               Asset[]
+  workOrders           WorkOrder[]
+  maintenanceSchedules MaintenanceSchedule[]
+  inventoryItems       InventoryItem[]
+  auditLogs            AuditLog[]
 
   @@map("tenants")
 }
@@ -60,6 +61,7 @@ model User {
   notifications            Notification[]
   notificationPreferences  NotificationPreference[]
   inventoryTransactions    InventoryTransaction[]
+  assignedSchedules        MaintenanceSchedule[]    @relation("ScheduleAssignedTo")
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -156,12 +158,13 @@ model Location {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tenant         Tenant          @relation(fields: [tenantId], references: [id])
-  parent         Location?       @relation("LocationHierarchy", fields: [parentId], references: [id])
-  children       Location[]      @relation("LocationHierarchy")
-  assets         Asset[]
-  workOrders     WorkOrder[]
-  inventoryItems InventoryItem[]
+  tenant               Tenant                @relation(fields: [tenantId], references: [id])
+  parent               Location?             @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children             Location[]            @relation("LocationHierarchy")
+  assets               Asset[]
+  workOrders           WorkOrder[]
+  maintenanceSchedules MaintenanceSchedule[]
+  inventoryItems       InventoryItem[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -192,11 +195,12 @@ model Asset {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tenant       Tenant      @relation(fields: [tenantId], references: [id])
-  location     Location?   @relation(fields: [locationId], references: [id])
-  parentAsset  Asset?      @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
-  childAssets  Asset[]     @relation("AssetHierarchy")
-  workOrders   WorkOrder[]
+  tenant               Tenant                @relation(fields: [tenantId], references: [id])
+  location             Location?             @relation(fields: [locationId], references: [id])
+  parentAsset          Asset?                @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
+  childAssets          Asset[]               @relation("AssetHierarchy")
+  workOrders           WorkOrder[]
+  maintenanceSchedules MaintenanceSchedule[]
 
   @@unique([tenantId, assetTag])
   @@index([tenantId])
@@ -233,14 +237,15 @@ model WorkOrder {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  tenant     Tenant               @relation(fields: [tenantId], references: [id])
-  asset      Asset?               @relation(fields: [assetId], references: [id])
-  location   Location?            @relation(fields: [locationId], references: [id])
-  createdBy  User                 @relation("CreatedBy", fields: [createdById], references: [id])
-  assignedTo User?                @relation("AssignedTo", fields: [assignedToId], references: [id])
-  steps      WorkOrderStep[]
-  comments   WorkOrderComment[]
-  signatures WorkOrderSignature[]
+  tenant            Tenant               @relation(fields: [tenantId], references: [id])
+  asset             Asset?               @relation(fields: [assetId], references: [id])
+  location          Location?            @relation(fields: [locationId], references: [id])
+  createdBy         User                 @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo        User?                @relation("AssignedTo", fields: [assignedToId], references: [id])
+  steps             WorkOrderStep[]
+  comments          WorkOrderComment[]
+  signatures        WorkOrderSignature[]
+  scheduledWorkOrders ScheduledWorkOrder[]
 
   @@unique([tenantId, workOrderNumber])
   @@index([tenantId])
@@ -358,6 +363,91 @@ model NotificationPreference {
 
   @@unique([userId, notificationType])
   @@map("notification_preferences")
+}
+
+// =============================================================================
+// SCHEDULING (Preventive Maintenance)
+// =============================================================================
+
+model MaintenanceSchedule {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  name            String
+  description     String?
+  assetId         String?  @map("asset_id") @db.Uuid
+  locationId      String?  @map("location_id") @db.Uuid
+  priority        String   @default("medium") // low, medium, high, critical
+  estimatedHours  Int?     @map("estimated_hours")
+  assignedToId    String?  @map("assigned_to_id") @db.Uuid
+
+  // Recurrence pattern (RFC 5545 inspired)
+  frequency       String   // daily, weekly, biweekly, monthly, quarterly, yearly, custom
+  interval        Int      @default(1) // Every N days/weeks/months
+  daysOfWeek      Int[]    @default([]) @map("days_of_week") // 0=Sun, 1=Mon, etc.
+  dayOfMonth      Int?     @map("day_of_month") // 1-31
+  monthOfYear     Int?     @map("month_of_year") // 1-12
+
+  // Schedule window
+  startDate       DateTime @map("start_date") @db.Date
+  endDate         DateTime? @map("end_date") @db.Date
+  leadTimeDays    Int      @default(7) @map("lead_time_days") // Days before due date to create WO
+
+  // Work order template
+  workOrderTitle  String   @map("work_order_title")
+  workOrderType   String   @default("preventive") @map("work_order_type")
+
+  // Status
+  isActive        Boolean  @default(true) @map("is_active")
+  lastGeneratedAt DateTime? @map("last_generated_at")
+  nextDueDate     DateTime? @map("next_due_date") @db.Date
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant     Tenant                   @relation(fields: [tenantId], references: [id])
+  asset      Asset?                   @relation(fields: [assetId], references: [id])
+  location   Location?                @relation(fields: [locationId], references: [id])
+  assignedTo User?                    @relation("ScheduleAssignedTo", fields: [assignedToId], references: [id])
+  steps      MaintenanceScheduleStep[]
+  generatedWorkOrders ScheduledWorkOrder[]
+
+  @@index([tenantId])
+  @@index([assetId])
+  @@index([locationId])
+  @@index([isActive, nextDueDate])
+  @@map("maintenance_schedules")
+}
+
+model MaintenanceScheduleStep {
+  id          String   @id @default(uuid()) @db.Uuid
+  scheduleId  String   @map("schedule_id") @db.Uuid
+  stepOrder   Int      @map("step_order")
+  title       String
+  description String?
+  isRequired  Boolean  @default(true) @map("is_required")
+
+  // Relations
+  schedule MaintenanceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([scheduleId])
+  @@map("maintenance_schedule_steps")
+}
+
+model ScheduledWorkOrder {
+  id          String   @id @default(uuid()) @db.Uuid
+  scheduleId  String   @map("schedule_id") @db.Uuid
+  workOrderId String   @map("work_order_id") @db.Uuid
+  scheduledFor DateTime @map("scheduled_for") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  schedule  MaintenanceSchedule @relation(fields: [scheduleId], references: [id])
+  workOrder WorkOrder           @relation(fields: [workOrderId], references: [id])
+
+  @@index([scheduleId])
+  @@index([workOrderId])
+  @@map("scheduled_work_orders")
 }
 
 // =============================================================================
