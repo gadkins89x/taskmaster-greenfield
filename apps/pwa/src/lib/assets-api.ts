@@ -71,3 +71,48 @@ export async function getAssetByTag(tag: string): Promise<AssetDetail> {
 export async function getAssetByBarcode(barcode: string): Promise<AssetDetail> {
   return apiClient.get(`/assets/barcode/${encodeURIComponent(barcode)}`);
 }
+
+export interface CreateAssetData {
+  name: string;
+  assetTag: string;
+  serialNumber?: string;
+  manufacturer?: string;
+  model?: string;
+  category?: string;
+  status?: AssetStatus;
+  locationId?: string;
+  parentAssetId?: string;
+  purchaseDate?: string;
+  warrantyExpires?: string;
+  specifications?: Record<string, unknown>;
+}
+
+export interface UpdateAssetData {
+  name?: string;
+  assetTag?: string;
+  serialNumber?: string;
+  manufacturer?: string;
+  model?: string;
+  category?: string;
+  locationId?: string;
+  parentAssetId?: string;
+  purchaseDate?: string;
+  warrantyExpires?: string;
+  specifications?: Record<string, unknown>;
+}
+
+export async function createAsset(data: CreateAssetData): Promise<AssetDetail> {
+  return apiClient.post('/assets', data);
+}
+
+export async function updateAsset(id: string, data: UpdateAssetData): Promise<AssetDetail> {
+  return apiClient.patch(`/assets/${id}`, data);
+}
+
+export async function updateAssetStatus(id: string, status: AssetStatus): Promise<AssetDetail> {
+  return apiClient.patch(`/assets/${id}/status`, { status });
+}
+
+export async function deleteAsset(id: string): Promise<{ success: boolean }> {
+  return apiClient.delete(`/assets/${id}`);
+}

@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { LocationsService } from './locations.service';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
@@ -30,5 +40,52 @@ export class LocationsController {
   @ApiOperation({ summary: 'Get location by ID' })
   async findOne(@TenantCtx() ctx: TenantContext, @Param('id') id: string) {
     return this.locationsService.findById(ctx, id);
+  }
+
+  @Post()
+  @Permissions('locations:create')
+  @ApiOperation({ summary: 'Create a new location' })
+  async create(
+    @TenantCtx() ctx: TenantContext,
+    @Body() body: {
+      name: string;
+      code: string;
+      type: string;
+      parentId?: string;
+      address?: string;
+      latitude?: number;
+      longitude?: number;
+      metadata?: Record<string, unknown>;
+    },
+  ) {
+    return this.locationsService.create(ctx, body);
+  }
+
+  @Patch(':id')
+  @Permissions('locations:update')
+  @ApiOperation({ summary: 'Update a location' })
+  async update(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      name?: string;
+      code?: string;
+      type?: string;
+      parentId?: string | null;
+      address?: string;
+      latitude?: number;
+      longitude?: number;
+      metadata?: Record<string, unknown>;
+      isActive?: boolean;
+    },
+  ) {
+    return this.locationsService.update(ctx, id, body);
+  }
+
+  @Delete(':id')
+  @Permissions('locations:delete')
+  @ApiOperation({ summary: 'Delete a location' })
+  async delete(@TenantCtx() ctx: TenantContext, @Param('id') id: string) {
+    return this.locationsService.delete(ctx, id);
   }
 }
