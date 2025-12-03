@@ -65,6 +65,7 @@ model User {
   notificationPreferences  NotificationPreference[]
   inventoryTransactions    InventoryTransaction[]
   assignedSchedules        MaintenanceSchedule[]    @relation("ScheduleAssignedTo")
+  pushSubscriptions        PushSubscription[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -447,6 +448,22 @@ model NotificationPreference {
 
   @@unique([userId, notificationType])
   @@map("notification_preferences")
+}
+
+model PushSubscription {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  endpoint     String   @unique
+  p256dh       String   // Public key for encryption
+  auth         String   // Auth secret
+  userAgent    String?  @map("user_agent")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }
 
 // =============================================================================
