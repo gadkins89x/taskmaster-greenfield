@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/database/prisma.service';
 import { EmailService } from './email.service';
+import { PushService } from './push.service';
 
 export enum NotificationType {
   WORK_ORDER_ASSIGNED = 'work_order_assigned',
@@ -37,6 +38,7 @@ export class NotificationDeliveryService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
+    private pushService: PushService,
   ) {}
 
   async sendNotification(payload: NotificationPayload): Promise<void> {
@@ -148,11 +150,17 @@ export class NotificationDeliveryService {
 
   private async sendPushNotification(
     payload: NotificationPayload,
-    user: { email: string },
+    _user: { email: string },
   ): Promise<void> {
-    // Placeholder for push notification implementation
-    // This could integrate with Firebase Cloud Messaging, Web Push, etc.
-    this.logger.debug(`Push notification queued for ${user.email}: ${payload.title}`);
+    await this.pushService.sendToUser(payload.userId, {
+      title: payload.title,
+      body: payload.body,
+      tag: payload.type,
+      data: {
+        type: payload.type,
+        ...payload.data,
+      },
+    });
   }
 
   // Helper methods for common notification scenarios

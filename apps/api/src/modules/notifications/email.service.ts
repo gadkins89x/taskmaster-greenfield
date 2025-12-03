@@ -1,5 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
 export interface EmailOptions {
   to: string | string[];
@@ -19,16 +21,42 @@ export interface NotificationEmailData {
 }
 
 @Injectable()
-export class EmailService {
+export class EmailService implements OnModuleInit {
   private readonly logger = new Logger(EmailService.name);
   private readonly fromEmail: string;
   private readonly fromName: string;
   private readonly baseUrl: string;
+  private smtpTransporter: Transporter | null = null;
 
   constructor(private configService: ConfigService) {
     this.fromEmail = this.configService.get<string>('EMAIL_FROM', 'noreply@taskmaster.app');
     this.fromName = this.configService.get<string>('EMAIL_FROM_NAME', 'TaskMaster CMMS');
     this.baseUrl = this.configService.get<string>('APP_URL', 'http://localhost:3000');
+  }
+
+  async onModuleInit() {
+    const provider = this.configService.get<string>('EMAIL_PROVIDER', 'console');
+
+    if (provider === 'smtp') {
+      try {
+        this.smtpTransporter = nodemailer.createTransport({
+          host: this.configService.get<string>('SMTP_HOST', 'localhost'),
+          port: this.configService.get<number>('SMTP_PORT', 587),
+          secure: this.configService.get<boolean>('SMTP_SECURE', false),
+          auth: {
+            user: this.configService.get<string>('SMTP_USER', ''),
+            pass: this.configService.get<string>('SMTP_PASS', ''),
+          },
+        });
+
+        // Verify connection
+        await this.smtpTransporter.verify();
+        this.logger.log('SMTP transporter initialized successfully');
+      } catch (error) {
+        this.logger.warn(`SMTP transporter initialization failed: ${error}. Falling back to console logging.`);
+        this.smtpTransporter = null;
+      }
+    }
   }
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
@@ -84,16 +112,29 @@ export class EmailService {
   }
 
   private async sendViaSMTP(options: EmailOptions): Promise<boolean> {
-    // Placeholder for SMTP integration
-    // const nodemailer = require('nodemailer');
-    // const transporter = nodemailer.createTransport({
-    //   host: this.configService.get('SMTP_HOST'),
-    //   port: this.configService.get('SMTP_PORT'),
-    //   auth: { ... }
-    // });
-    // await transporter.sendMail({...});
-    this.logger.log('SMTP email sent (placeholder)');
-    return true;
+    if (!this.smtpTransporter) {
+      this.logger.warn('SMTP transporter not initialized, logging email instead');
+      this.logger.log(`Email would be sent via SMTP:
+        To: ${Array.isArray(options.to) ? options.to.join(', ') : options.to}
+        Subject: ${options.subject}
+      `);
+      return true;
+    }
+
+    try {
+      await this.smtpTransporter.sendMail({
+        from: `"${this.fromName}" <${this.fromEmail}>`,
+        to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+      });
+      this.logger.log(`SMTP email sent to ${Array.isArray(options.to) ? options.to.join(', ') : options.to}`);
+      return true;
+    } catch (error) {
+      this.logger.error('Failed to send email via SMTP', error);
+      return false;
+    }
   }
 
   async sendNotificationEmail(data: NotificationEmailData): Promise<boolean> {
