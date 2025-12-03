@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class WorkOrdersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => NotificationsService))
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   async findAll(ctx: TenantContext, filters: {
     page?: number;
@@ -336,6 +341,453 @@ export class WorkOrdersService {
       version: wo.version,
       createdAt: wo.createdAt.toISOString(),
       updatedAt: wo.updatedAt.toISOString(),
+    };
+  }
+
+  // ============================================================================
+  // Comments
+  // ============================================================================
+
+  async addComment(
+    ctx: TenantContext,
+    workOrderId: string,
+    data: {
+      content: string;
+      parentId?: string;
+      isInternal?: boolean;
+    },
+  ) {
+    // Verify work order exists and belongs to tenant
+    const workOrder = await this.prisma.workOrder.findFirst({
+      where: { id: workOrderId, tenantId: ctx.tenantId },
+      include: {
+        createdBy: { select: { id: true } },
+        assignedTo: { select: { id: true } },
+      },
+    });
+
+    if (!workOrder) {
+      throw new NotFoundException('Work order not found');
+    }
+
+    // If parentId is provided, verify it exists
+    if (data.parentId) {
+      const parentComment = await this.prisma.workOrderComment.findFirst({
+        where: { id: data.parentId, workOrderId },
+      });
+      if (!parentComment) {
+        throw new NotFoundException('Parent comment not found');
+      }
+    }
+
+    const comment = await this.prisma.workOrderComment.create({
+      data: {
+        tenantId: ctx.tenantId,
+        workOrderId,
+        userId: ctx.userId,
+        content: data.content,
+        parentId: data.parentId,
+        isInternal: data.isInternal ?? false,
+      },
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+        replies: {
+          include: {
+            user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+          },
+        },
+      },
+    });
+
+    // Get commenter info for notification
+    const commenter = await this.prisma.user.findUnique({
+      where: { id: ctx.userId },
+      select: { firstName: true, lastName: true },
+    });
+
+    const commenterName = commenter ? `${commenter.firstName} ${commenter.lastName}` : 'Someone';
+
+    // Notify relevant users (assignee and creator)
+    const notifyUserIds = new Set<string>();
+    if (workOrder.createdBy) notifyUserIds.add(workOrder.createdBy.id);
+    if (workOrder.assignedTo) notifyUserIds.add(workOrder.assignedTo.id);
+
+    for (const userId of notifyUserIds) {
+      await this.notificationsService.notifyWorkOrderComment(
+        ctx.tenantId,
+        userId,
+        ctx.userId,
+        commenterName,
+        workOrderId,
+        workOrder.workOrderNumber,
+      );
+    }
+
+    return this.mapComment(comment);
+  }
+
+  async getComments(
+    ctx: TenantContext,
+    workOrderId: string,
+    options: { includeInternal?: boolean; page?: number; limit?: number } = {},
+  ) {
+    const { includeInternal = true, page = 1, limit = 50 } = options;
+
+    // Verify work order exists
+    const workOrder = await this.prisma.workOrder.findFirst({
+      where: { id: workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!workOrder) {
+      throw new NotFoundException('Work order not found');
+    }
+
+    const where: Record<string, unknown> = {
+      workOrderId,
+      tenantId: ctx.tenantId,
+      parentId: null, // Only get top-level comments
+    };
+
+    if (!includeInternal) {
+      where.isInternal = false;
+    }
+
+    const [comments, total] = await Promise.all([
+      this.prisma.workOrderComment.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+          replies: {
+            orderBy: { createdAt: 'asc' },
+            include: {
+              user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+            },
+          },
+        },
+      }),
+      this.prisma.workOrderComment.count({ where }),
+    ]);
+
+    return {
+      data: comments.map((c) => this.mapComment(c)),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  async updateComment(
+    ctx: TenantContext,
+    workOrderId: string,
+    commentId: string,
+    data: { content: string },
+  ) {
+    const comment = await this.prisma.workOrderComment.findFirst({
+      where: { id: commentId, workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    // Only the author can update their comment
+    if (comment.userId !== ctx.userId) {
+      throw new ForbiddenException('You can only edit your own comments');
+    }
+
+    const updated = await this.prisma.workOrderComment.update({
+      where: { id: commentId },
+      data: { content: data.content },
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+        replies: {
+          include: {
+            user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+          },
+        },
+      },
+    });
+
+    return this.mapComment(updated);
+  }
+
+  async deleteComment(ctx: TenantContext, workOrderId: string, commentId: string) {
+    const comment = await this.prisma.workOrderComment.findFirst({
+      where: { id: commentId, workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    // Only the author can delete their comment
+    if (comment.userId !== ctx.userId) {
+      throw new ForbiddenException('You can only delete your own comments');
+    }
+
+    // Delete will cascade to replies
+    await this.prisma.workOrderComment.delete({ where: { id: commentId } });
+
+    return { success: true };
+  }
+
+  private mapComment(comment: any) {
+    return {
+      id: comment.id,
+      content: comment.content,
+      user: comment.user,
+      isInternal: comment.isInternal,
+      parentId: comment.parentId,
+      replies: comment.replies?.map((r: any) => ({
+        id: r.id,
+        content: r.content,
+        user: r.user,
+        isInternal: r.isInternal,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString(),
+      })) ?? [],
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.updatedAt.toISOString(),
+    };
+  }
+
+  // ============================================================================
+  // Activity Feed
+  // ============================================================================
+
+  async getActivityFeed(
+    ctx: TenantContext,
+    workOrderId: string,
+    options: { page?: number; limit?: number } = {},
+  ) {
+    const { page = 1, limit = 50 } = options;
+
+    // Verify work order exists
+    const workOrder = await this.prisma.workOrder.findFirst({
+      where: { id: workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!workOrder) {
+      throw new NotFoundException('Work order not found');
+    }
+
+    // Fetch comments, step completions, and audit logs in parallel
+    const [comments, steps, auditLogs] = await Promise.all([
+      this.prisma.workOrderComment.findMany({
+        where: { workOrderId, tenantId: ctx.tenantId },
+        include: {
+          user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.workOrderStep.findMany({
+        where: { workOrderId, isCompleted: true },
+        include: {
+          completedBy: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+        },
+        orderBy: { completedAt: 'desc' },
+      }),
+      this.prisma.auditLog.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          entityType: 'WorkOrder',
+          entityId: workOrderId,
+        },
+        include: {
+          user: { select: { id: true, firstName: true, lastName: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+
+    // Combine and transform into unified activity items
+    type ActivityItem = {
+      id: string;
+      type: 'comment' | 'step_completed' | 'status_change' | 'created' | 'updated';
+      timestamp: Date;
+      user: { id: string; firstName: string; lastName: string; avatarUrl?: string } | null;
+      data: Record<string, unknown>;
+    };
+
+    const activities: ActivityItem[] = [];
+
+    // Add comments
+    for (const comment of comments) {
+      activities.push({
+        id: `comment-${comment.id}`,
+        type: 'comment',
+        timestamp: comment.createdAt,
+        user: comment.user,
+        data: {
+          commentId: comment.id,
+          content: comment.content,
+          isInternal: comment.isInternal,
+        },
+      });
+    }
+
+    // Add step completions
+    for (const step of steps) {
+      if (step.completedAt) {
+        activities.push({
+          id: `step-${step.id}`,
+          type: 'step_completed',
+          timestamp: step.completedAt,
+          user: step.completedBy,
+          data: {
+            stepId: step.id,
+            stepTitle: step.title,
+            stepOrder: step.stepOrder,
+            completionNotes: step.completionNotes,
+          },
+        });
+      }
+    }
+
+    // Add audit log entries (status changes, updates)
+    for (const log of auditLogs) {
+      let activityType: ActivityItem['type'] = 'updated';
+      if (log.action === 'create') {
+        activityType = 'created';
+      } else if (log.action === 'update') {
+        const changes = log.changes as Record<string, unknown> | null;
+        if (changes && 'status' in changes) {
+          activityType = 'status_change';
+        }
+      }
+
+      activities.push({
+        id: `audit-${log.id}`,
+        type: activityType,
+        timestamp: log.createdAt,
+        user: log.user,
+        data: {
+          action: log.action,
+          changes: log.changes,
+        },
+      });
+    }
+
+    // Sort by timestamp descending
+    activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+    // Paginate
+    const total = activities.length;
+    const startIndex = (page - 1) * limit;
+    const paginatedActivities = activities.slice(startIndex, startIndex + limit);
+
+    return {
+      data: paginatedActivities.map((a) => ({
+        id: a.id,
+        type: a.type,
+        timestamp: a.timestamp.toISOString(),
+        user: a.user,
+        data: a.data,
+      })),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  // ============================================================================
+  // Steps
+  // ============================================================================
+
+  async completeStep(
+    ctx: TenantContext,
+    workOrderId: string,
+    stepId: string,
+    data: { completionNotes?: string },
+  ) {
+    // Verify work order exists
+    const workOrder = await this.prisma.workOrder.findFirst({
+      where: { id: workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!workOrder) {
+      throw new NotFoundException('Work order not found');
+    }
+
+    const step = await this.prisma.workOrderStep.findFirst({
+      where: { id: stepId, workOrderId },
+    });
+
+    if (!step) {
+      throw new NotFoundException('Step not found');
+    }
+
+    if (step.isCompleted) {
+      throw new BadRequestException('Step is already completed');
+    }
+
+    const updated = await this.prisma.workOrderStep.update({
+      where: { id: stepId },
+      data: {
+        isCompleted: true,
+        completedById: ctx.userId,
+        completedAt: new Date(),
+        completionNotes: data.completionNotes,
+      },
+      include: {
+        completedBy: { select: { id: true, firstName: true, lastName: true } },
+      },
+    });
+
+    return {
+      id: updated.id,
+      stepOrder: updated.stepOrder,
+      title: updated.title,
+      description: updated.description,
+      isRequired: updated.isRequired,
+      isCompleted: updated.isCompleted,
+      completedBy: updated.completedBy,
+      completedAt: updated.completedAt?.toISOString() ?? null,
+      completionNotes: updated.completionNotes,
+    };
+  }
+
+  async uncompleteStep(ctx: TenantContext, workOrderId: string, stepId: string) {
+    // Verify work order exists
+    const workOrder = await this.prisma.workOrder.findFirst({
+      where: { id: workOrderId, tenantId: ctx.tenantId },
+    });
+
+    if (!workOrder) {
+      throw new NotFoundException('Work order not found');
+    }
+
+    const step = await this.prisma.workOrderStep.findFirst({
+      where: { id: stepId, workOrderId },
+    });
+
+    if (!step) {
+      throw new NotFoundException('Step not found');
+    }
+
+    if (!step.isCompleted) {
+      throw new BadRequestException('Step is not completed');
+    }
+
+    const updated = await this.prisma.workOrderStep.update({
+      where: { id: stepId },
+      data: {
+        isCompleted: false,
+        completedById: null,
+        completedAt: null,
+        completionNotes: null,
+      },
+    });
+
+    return {
+      id: updated.id,
+      stepOrder: updated.stepOrder,
+      title: updated.title,
+      description: updated.description,
+      isRequired: updated.isRequired,
+      isCompleted: updated.isCompleted,
+      completedBy: null,
+      completedAt: null,
+      completionNotes: null,
     };
   }
 }
