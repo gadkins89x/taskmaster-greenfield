@@ -219,4 +219,181 @@ export class WorkOrdersController {
   ) {
     return this.workOrdersService.uncompleteStep(ctx, id, stepId);
   }
+
+  // ============================================================================
+  // Photos
+  // ============================================================================
+
+  @Post(':id/photos')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Upload a photo to a work order' })
+  async uploadPhoto(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      dataUrl: string;
+      filename: string;
+      caption?: string;
+      category?: string;
+    },
+  ) {
+    return this.workOrdersService.uploadPhoto(ctx, id, body);
+  }
+
+  @Patch(':id/photos/:photoId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Update photo caption/category' })
+  async updatePhoto(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('photoId') photoId: string,
+    @Body() body: { caption?: string; category?: string },
+  ) {
+    return this.workOrdersService.updatePhoto(ctx, id, photoId, body);
+  }
+
+  @Delete(':id/photos/:photoId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Delete a photo' })
+  async deletePhoto(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('photoId') photoId: string,
+  ) {
+    return this.workOrdersService.deletePhoto(ctx, id, photoId);
+  }
+
+  // ============================================================================
+  // Labor Tracking
+  // ============================================================================
+
+  @Post(':id/labor')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Add a labor entry' })
+  async addLaborEntry(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      startTime: string;
+      endTime?: string;
+      hours?: number;
+      description?: string;
+      laborType?: string;
+    },
+  ) {
+    return this.workOrdersService.addLaborEntry(ctx, id, body);
+  }
+
+  @Patch(':id/labor/:laborId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Update a labor entry' })
+  async updateLaborEntry(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('laborId') laborId: string,
+    @Body() body: {
+      startTime?: string;
+      endTime?: string;
+      hours?: number;
+      description?: string;
+      laborType?: string;
+    },
+  ) {
+    return this.workOrdersService.updateLaborEntry(ctx, id, laborId, body);
+  }
+
+  @Delete(':id/labor/:laborId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Delete a labor entry' })
+  async deleteLaborEntry(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('laborId') laborId: string,
+  ) {
+    return this.workOrdersService.deleteLaborEntry(ctx, id, laborId);
+  }
+
+  @Post(':id/labor/start')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Start labor timer' })
+  async startLaborTimer(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+  ) {
+    return this.workOrdersService.startLaborTimer(ctx, id);
+  }
+
+  @Post(':id/labor/:laborId/stop')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Stop labor timer' })
+  async stopLaborTimer(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('laborId') laborId: string,
+    @Body() body?: { description?: string },
+  ) {
+    return this.workOrdersService.stopLaborTimer(ctx, id, laborId, body);
+  }
+
+  // ============================================================================
+  // Parts
+  // ============================================================================
+
+  @Post(':id/parts')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Add a part to work order' })
+  async addPart(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Body() body: {
+      inventoryItemId?: string;
+      partNumber?: string;
+      partName: string;
+      quantity: number;
+      unitCost?: number;
+      notes?: string;
+    },
+  ) {
+    return this.workOrdersService.addPart(ctx, id, body);
+  }
+
+  @Patch(':id/parts/:partId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Update a part' })
+  async updatePart(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('partId') partId: string,
+    @Body() body: {
+      quantity?: number;
+      unitCost?: number;
+      notes?: string;
+      status?: string;
+    },
+  ) {
+    return this.workOrdersService.updatePart(ctx, id, partId, body);
+  }
+
+  @Delete(':id/parts/:partId')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Delete a part' })
+  async deletePart(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('partId') partId: string,
+  ) {
+    return this.workOrdersService.deletePart(ctx, id, partId);
+  }
+
+  @Post(':id/parts/:partId/return')
+  @Permissions('work_orders:update')
+  @ApiOperation({ summary: 'Return a part to inventory' })
+  async returnPart(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+    @Param('partId') partId: string,
+    @Body() body: { quantity: number; notes?: string },
+  ) {
+    return this.workOrdersService.returnPart(ctx, id, partId, body);
+  }
 }
