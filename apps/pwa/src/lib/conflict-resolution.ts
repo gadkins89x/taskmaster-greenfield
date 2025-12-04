@@ -50,7 +50,7 @@ export async function getConflictedItems(): Promise<ConflictItem[]> {
         serverUpdatedAt: serverData.updatedAt,
         fieldConflicts,
       });
-    } catch (error) {
+    } catch {
       // Server version may have been deleted
       conflicts.push({
         id: `workOrder:${wo.id}`,
@@ -85,7 +85,8 @@ export async function getConflictedItems(): Promise<ConflictItem[]> {
         serverUpdatedAt: serverData.updatedAt,
         fieldConflicts,
       });
-    } catch (error) {
+    } catch {
+      // Server version may have been deleted
       conflicts.push({
         id: `asset:${asset.id}`,
         entityType: 'asset',

@@ -220,7 +220,7 @@ export class AssetsService {
     return { success: true };
   }
 
-  private mapAsset(asset: any) {
+  private mapAsset(asset: Prisma.AssetGetPayload<{ include: { location: true } }>) {
     return {
       id: asset.id,
       name: asset.name,

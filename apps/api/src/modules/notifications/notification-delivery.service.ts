@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { EmailService } from './email.service';
 import { PushService } from './push.service';
@@ -102,7 +103,7 @@ export class NotificationDeliveryService {
         type: payload.type,
         title: payload.title,
         body: payload.body,
-        data: payload.data as any,
+        data: payload.data as Prisma.InputJsonValue | undefined,
         isRead: false,
       },
     });

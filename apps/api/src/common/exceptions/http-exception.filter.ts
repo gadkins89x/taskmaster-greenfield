@@ -10,6 +10,18 @@ import { Request, Response } from 'express';
 import { Prisma } from '@/generated/prisma/client';
 import { v4 as uuid } from 'uuid';
 
+/** Extended Request with custom properties added by interceptors */
+interface ExtendedRequest extends Request {
+  requestId?: string;
+}
+
+/** Shape of HttpException response object */
+interface HttpExceptionResponse {
+  message?: string | string[];
+  error?: string;
+  details?: Array<{ field: string; message: string }>;
+}
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
@@ -17,8 +29,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const requestId = (request as any).requestId || uuid();
+    const request = ctx.getRequest<ExtendedRequest>();
+    const requestId = request.requestId || uuid();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
@@ -32,15 +44,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object') {
-        const res = exceptionResponse as any;
-        message = res.message || message;
+        const res = exceptionResponse as HttpExceptionResponse;
+        message = (typeof res.message === 'string' ? res.message : message);
         error = res.error || exception.name;
         details = res.details;
 
         // Handle class-validator errors
         if (Array.isArray(res.message)) {
           details = res.message.map((msg: string) => {
-            const [field, ...rest] = msg.split(' ');
+            const [field] = msg.split(' ');
             return { field: field || 'unknown', message: msg };
           });
           message = 'Validation failed';
@@ -49,7 +61,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       // Handle Prisma errors
       switch (exception.code) {
-        case 'P2002':
+        case 'P2002': {
           status = HttpStatus.CONFLICT;
           error = 'Conflict';
           message = 'A record with this value already exists';
@@ -61,6 +73,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             }));
           }
           break;
+        }
         case 'P2025':
           status = HttpStatus.NOT_FOUND;
           error = 'Not Found';

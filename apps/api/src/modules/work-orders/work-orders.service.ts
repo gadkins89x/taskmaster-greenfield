@@ -2,6 +2,133 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException, 
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import { NotificationsService } from '../notifications/notifications.service';
+import { Prisma } from '@/generated/prisma/client';
+
+// Type definitions for Prisma query results with includes
+// Base type with common includes
+type WorkOrderBase = Prisma.WorkOrderGetPayload<{
+  include: {
+    asset: true;
+    location: true;
+    assignedTo: true;
+    createdBy: true;
+    steps: {
+      include: {
+        completedBy: {
+          select: { id: true; firstName: true; lastName: true };
+        };
+      };
+    };
+  };
+}>;
+
+// Full type with all possible includes (some may be undefined)
+type WorkOrderWithDetails = WorkOrderBase & {
+  comments?: Prisma.WorkOrderCommentGetPayload<{
+    include: {
+      user: {
+        select: { id: true; firstName: true; lastName: true; avatarUrl: true };
+      };
+    };
+  }>[];
+  signatures?: Prisma.WorkOrderSignatureGetPayload<{
+    include: {
+      user: {
+        select: { id: true; firstName: true; lastName: true };
+      };
+    };
+  }>[];
+  photos?: Prisma.WorkOrderPhotoGetPayload<{
+    include: {
+      uploadedBy: {
+        select: { id: true; firstName: true; lastName: true };
+      };
+    };
+  }>[];
+  laborEntries?: Prisma.WorkOrderLaborGetPayload<{
+    include: {
+      user: {
+        select: { id: true; firstName: true; lastName: true };
+      };
+    };
+  }>[];
+  partsUsed?: Prisma.WorkOrderPartGetPayload<{
+    include: {
+      inventoryItem: {
+        select: { id: true; itemNumber: true; name: true; currentStock: true };
+      };
+      addedBy: {
+        select: { id: true; firstName: true; lastName: true };
+      };
+    };
+  }>[];
+};
+
+type _WorkOrderStepWithCompletedBy = Prisma.WorkOrderStepGetPayload<{
+  include: {
+    completedBy: {
+      select: { id: true; firstName: true; lastName: true };
+    };
+  };
+}>;
+
+type _WorkOrderCommentWithUser = Prisma.WorkOrderCommentGetPayload<{
+  include: {
+    user: {
+      select: { id: true; firstName: true; lastName: true; avatarUrl: true };
+    };
+  };
+}>;
+
+type WorkOrderCommentWithReplies = Prisma.WorkOrderCommentGetPayload<{
+  include: {
+    user: {
+      select: { id: true; firstName: true; lastName: true; avatarUrl: true };
+    };
+    replies: {
+      include: {
+        user: {
+          select: { id: true; firstName: true; lastName: true; avatarUrl: true };
+        };
+      };
+    };
+  };
+}>;
+
+type _WorkOrderSignatureWithUser = Prisma.WorkOrderSignatureGetPayload<{
+  include: {
+    user: {
+      select: { id: true; firstName: true; lastName: true };
+    };
+  };
+}>;
+
+type WorkOrderPhotoWithUploadedBy = Prisma.WorkOrderPhotoGetPayload<{
+  include: {
+    uploadedBy: {
+      select: { id: true; firstName: true; lastName: true };
+    };
+  };
+}>;
+
+type WorkOrderLaborWithUser = Prisma.WorkOrderLaborGetPayload<{
+  include: {
+    user: {
+      select: { id: true; firstName: true; lastName: true };
+    };
+  };
+}>;
+
+type WorkOrderPartWithDetails = Prisma.WorkOrderPartGetPayload<{
+  include: {
+    inventoryItem: {
+      select: { id: true; itemNumber: true; name: true; currentStock: true };
+    };
+    addedBy: {
+      select: { id: true; firstName: true; lastName: true };
+    };
+  };
+}>;
 
 @Injectable()
 export class WorkOrdersService {
@@ -175,11 +302,16 @@ export class WorkOrdersService {
         location: true,
         assignedTo: true,
         createdBy: true,
-        steps: { orderBy: { stepOrder: 'asc' } },
+        steps: {
+          orderBy: { stepOrder: 'asc' },
+          include: {
+            completedBy: { select: { id: true, firstName: true, lastName: true } },
+          },
+        },
       },
     });
 
-    return this.mapWorkOrderDetail(workOrder);
+    return this.mapWorkOrderDetail(workOrder as WorkOrderWithDetails);
   }
 
   async update(ctx: TenantContext, id: string, data: {
@@ -288,7 +420,7 @@ export class WorkOrdersService {
     return `${prefix}${nextNumber.toString().padStart(4, '0')}`;
   }
 
-  private mapWorkOrderDetail(wo: any) {
+  private mapWorkOrderDetail(wo: WorkOrderWithDetails) {
     return {
       id: wo.id,
       workOrderNumber: wo.workOrderNumber,
@@ -329,7 +461,7 @@ export class WorkOrdersService {
       estimatedHours: wo.estimatedHours,
       actualHours: wo.actualHours,
       completionNotes: wo.completionNotes,
-      steps: wo.steps?.map((s: any) => ({
+      steps: wo.steps?.map((s) => ({
         id: s.id,
         stepOrder: s.stepOrder,
         title: s.title,
@@ -340,20 +472,20 @@ export class WorkOrdersService {
         completedAt: s.completedAt?.toISOString() ?? null,
         completionNotes: s.completionNotes,
       })) ?? [],
-      comments: wo.comments?.map((c: any) => ({
+      comments: wo.comments?.map((c) => ({
         id: c.id,
         content: c.content,
         user: c.user,
         isInternal: c.isInternal,
         createdAt: c.createdAt.toISOString(),
       })) ?? [],
-      signatures: wo.signatures?.map((s: any) => ({
+      signatures: wo.signatures?.map((s) => ({
         id: s.id,
         user: s.user,
         type: s.type,
         signedAt: s.signedAt.toISOString(),
       })) ?? [],
-      photos: wo.photos?.map((p: any) => ({
+      photos: wo.photos?.map((p) => ({
         id: p.id,
         filename: p.filename,
         mimeType: p.mimeType,
@@ -364,7 +496,7 @@ export class WorkOrdersService {
         uploadedBy: p.uploadedBy,
         createdAt: p.createdAt.toISOString(),
       })) ?? [],
-      laborEntries: wo.laborEntries?.map((l: any) => ({
+      laborEntries: wo.laborEntries?.map((l) => ({
         id: l.id,
         userId: l.userId,
         user: l.user,
@@ -376,7 +508,7 @@ export class WorkOrdersService {
         hourlyRate: l.hourlyRate ? Number(l.hourlyRate) : null,
         createdAt: l.createdAt.toISOString(),
       })) ?? [],
-      partsUsed: wo.partsUsed?.map((p: any) => ({
+      partsUsed: wo.partsUsed?.map((p) => ({
         id: p.id,
         inventoryItemId: p.inventoryItemId,
         partNumber: p.partNumber,
@@ -584,14 +716,14 @@ export class WorkOrdersService {
     return { success: true };
   }
 
-  private mapComment(comment: any) {
+  private mapComment(comment: WorkOrderCommentWithReplies) {
     return {
       id: comment.id,
       content: comment.content,
       user: comment.user,
       isInternal: comment.isInternal,
       parentId: comment.parentId,
-      replies: comment.replies?.map((r: any) => ({
+      replies: comment.replies?.map((r) => ({
         id: r.id,
         content: r.content,
         user: r.user,
@@ -938,7 +1070,7 @@ export class WorkOrdersService {
     return { success: true };
   }
 
-  private mapPhoto(photo: any) {
+  private mapPhoto(photo: WorkOrderPhotoWithUploadedBy) {
     return {
       id: photo.id,
       filename: photo.filename,
@@ -1147,7 +1279,7 @@ export class WorkOrdersService {
     return this.mapLabor(updated);
   }
 
-  private mapLabor(labor: any) {
+  private mapLabor(labor: WorkOrderLaborWithUser) {
     return {
       id: labor.id,
       userId: labor.userId,
@@ -1415,7 +1547,7 @@ export class WorkOrdersService {
     return this.mapPart(updated);
   }
 
-  private mapPart(part: any) {
+  private mapPart(part: WorkOrderPartWithDetails) {
     return {
       id: part.id,
       inventoryItemId: part.inventoryItemId,

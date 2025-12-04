@@ -7,7 +7,7 @@ import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
 describe('WorkOrdersService', () => {
   let service: WorkOrdersService;
-  let prismaService: PrismaService;
+  let _prismaService: PrismaService;
 
   const mockTenantContext: TenantContext = {
     userId: 'user-123',
@@ -65,7 +65,7 @@ describe('WorkOrdersService', () => {
     }).compile();
 
     service = module.get<WorkOrdersService>(WorkOrdersService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    _prismaService = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });
@@ -203,7 +203,7 @@ describe('WorkOrdersService', () => {
         completedAt: new Date(),
       });
 
-      const result = await service.completeStep(
+      await service.completeStep(
         mockTenantContext,
         workOrderId,
         stepId,

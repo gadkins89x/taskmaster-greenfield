@@ -154,7 +154,7 @@ const SelectSeparator = React.forwardRef<
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 // Native HTML Select for simple use cases with onChange
-export interface NativeSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {}
+export type NativeSelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProps>(
   ({ className, children, ...props }, ref) => {

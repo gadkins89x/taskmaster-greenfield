@@ -23,12 +23,7 @@ export interface ApiError {
 class ApiClient {
   private accessToken: string | null = getInitialToken();
 
-  constructor() {
-    console.log('[ApiClient] Initialized with token:', this.accessToken ? 'present' : 'null');
-  }
-
   setAccessToken(token: string | null) {
-    console.log('[ApiClient] setAccessToken called:', token ? 'token present' : 'null');
     this.accessToken = token;
   }
 
@@ -43,9 +38,6 @@ class ApiClient {
 
     if (this.accessToken) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${this.accessToken}`;
-      console.log('[ApiClient] Adding auth header for:', endpoint);
-    } else {
-      console.log('[ApiClient] No token for request:', endpoint);
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {

@@ -31,8 +31,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await authApi.login(data);
-          console.log('[AuthStore] Login response:', response);
-          console.log('[AuthStore] Access token:', response.accessToken ? 'present' : 'missing');
           apiClient.setAccessToken(response.accessToken);
           set({
             user: response.user,

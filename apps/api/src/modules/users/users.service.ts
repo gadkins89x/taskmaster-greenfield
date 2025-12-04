@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import * as argon2 from 'argon2';
@@ -303,7 +304,11 @@ export class UsersService {
     return this.findById(ctx, id);
   }
 
-  private mapUser(user: any) {
+  private mapUser(
+    user: Prisma.UserGetPayload<{
+      include: { userRoles: { include: { role: true } } };
+    }>,
+  ) {
     return {
       id: user.id,
       email: user.email,
@@ -312,7 +317,7 @@ export class UsersService {
       phone: user.phone,
       avatarUrl: user.avatarUrl,
       isActive: user.isActive,
-      roles: user.userRoles?.map((ur: any) => ({
+      roles: user.userRoles?.map((ur) => ({
         id: ur.role.id,
         name: ur.role.name,
       })) ?? [],
