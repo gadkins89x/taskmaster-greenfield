@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="4" fill="#0f172a"/>
+  <g fill="#ffffff" transform="translate(4, 4) scale(0.15)">
+    <path d="M85 20c-15 0-29 5-40 14l28 28v22H51L23 56C14 67 9 81 9 96c0 39 32 71 71 71s71-32 71-71-32-71-71-71zm0 114c-24 0-43-19-43-43s19-43 43-43 43 19 43 43-19 43-43 43z"/>
+    <path d="M75 116l-16-16-10 10 26 26 46-46-10-10z"/>
+  </g>
+  <text x="16" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">TM</text>
+</svg>

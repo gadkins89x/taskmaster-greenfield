@@ -24,12 +24,17 @@ export const configSchema = z.object({
   S3_ACCESS_KEY: z.string().optional(),
   S3_SECRET_KEY: z.string().optional(),
 
-  // Email (optional for now)
+  // Email (optional)
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().email().optional(),
+
+  // Web Push (VAPID) - optional, required for push notifications
+  VAPID_SUBJECT: z.string().optional(),
+  VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
 
   // CORS
   CORS_ORIGIN: z.string().optional().default('http://localhost:5173'),
