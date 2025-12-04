@@ -50,13 +50,11 @@ class SyncService {
   }
 
   private handleOnline() {
-    console.log('[Sync] Online - starting sync');
     this.startPeriodicSync();
     this.sync(); // Immediate sync when coming online
   }
 
   private handleOffline() {
-    console.log('[Sync] Offline - stopping sync');
     this.stopPeriodicSync();
   }
 

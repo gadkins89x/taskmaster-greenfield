@@ -37,7 +37,6 @@ export async function getPushStatus(): Promise<PushStatus> {
 // Helper function to register push notifications
 export async function registerPushNotifications(): Promise<boolean> {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    console.log('Push notifications are not supported');
     return false;
   }
 
@@ -45,7 +44,6 @@ export async function registerPushNotifications(): Promise<boolean> {
     // Get VAPID public key from server
     const { publicKey } = await getVapidPublicKey();
     if (!publicKey) {
-      console.log('Push notifications not configured on server');
       return false;
     }
 

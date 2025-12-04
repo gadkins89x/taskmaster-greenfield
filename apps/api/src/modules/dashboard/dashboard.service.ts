@@ -100,7 +100,7 @@ export class DashboardService {
   }
 
   private async getInventoryStats(tenantId: string) {
-    const [items, lowStockResult, outOfStock, totalValue] = await Promise.all([
+    const [items, lowStockResult, outOfStock] = await Promise.all([
       this.prisma.inventoryItem.count({
         where: { tenantId, isActive: true },
       }),
@@ -114,12 +114,6 @@ export class DashboardService {
       `,
       this.prisma.inventoryItem.count({
         where: { tenantId, isActive: true, currentStock: 0 },
-      }),
-      this.prisma.inventoryItem.aggregate({
-        where: { tenantId, isActive: true },
-        _sum: {
-          currentStock: true,
-        },
       }),
     ]);
     const lowStock = Number(lowStockResult[0]?.count ?? 0);

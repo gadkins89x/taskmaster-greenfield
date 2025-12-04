@@ -87,28 +87,70 @@ export class EmailService implements OnModuleInit {
     }
   }
 
-  private async sendViaSendGrid(options: EmailOptions): Promise<boolean> {
-    // Placeholder for SendGrid integration
-    // const sgMail = require('@sendgrid/mail');
-    // sgMail.setApiKey(this.configService.get('SENDGRID_API_KEY'));
-    // await sgMail.send({
-    //   to: options.to,
-    //   from: { email: this.fromEmail, name: this.fromName },
-    //   subject: options.subject,
-    //   text: options.text,
-    //   html: options.html,
-    // });
-    this.logger.log('SendGrid email sent (placeholder)');
-    return true;
+  /**
+   * SendGrid Email Provider (STUB - Not Yet Implemented)
+   *
+   * To implement SendGrid integration:
+   * 1. Install the SendGrid SDK: pnpm add @sendgrid/mail
+   * 2. Add SENDGRID_API_KEY to your environment variables
+   * 3. Set EMAIL_PROVIDER=sendgrid in your environment
+   *
+   * Example implementation:
+   * ```typescript
+   * import sgMail from '@sendgrid/mail';
+   *
+   * sgMail.setApiKey(this.configService.get('SENDGRID_API_KEY'));
+   * await sgMail.send({
+   *   to: options.to,
+   *   from: { email: this.fromEmail, name: this.fromName },
+   *   subject: options.subject,
+   *   text: options.text,
+   *   html: options.html,
+   * });
+   * ```
+   *
+   * @see https://docs.sendgrid.com/for-developers/sending-email/quickstart-nodejs
+   */
+  private async sendViaSendGrid(_options: EmailOptions): Promise<boolean> {
+    this.logger.warn('SendGrid provider selected but not implemented. Email not sent.');
+    this.logger.log('To implement SendGrid, see the documentation in email.service.ts');
+    return false;
   }
 
-  private async sendViaSES(options: EmailOptions): Promise<boolean> {
-    // Placeholder for AWS SES integration
-    // const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
-    // const client = new SESClient({ region: this.configService.get('AWS_REGION') });
-    // await client.send(new SendEmailCommand({...}));
-    this.logger.log('AWS SES email sent (placeholder)');
-    return true;
+  /**
+   * AWS SES Email Provider (STUB - Not Yet Implemented)
+   *
+   * To implement AWS SES integration:
+   * 1. Install the AWS SDK: pnpm add @aws-sdk/client-ses
+   * 2. Configure AWS credentials (via environment variables or IAM role)
+   * 3. Add AWS_REGION to your environment variables
+   * 4. Set EMAIL_PROVIDER=ses in your environment
+   * 5. Verify your sender email/domain in the AWS SES console
+   *
+   * Example implementation:
+   * ```typescript
+   * import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+   *
+   * const client = new SESClient({ region: this.configService.get('AWS_REGION') });
+   * await client.send(new SendEmailCommand({
+   *   Source: `${this.fromName} <${this.fromEmail}>`,
+   *   Destination: { ToAddresses: Array.isArray(options.to) ? options.to : [options.to] },
+   *   Message: {
+   *     Subject: { Data: options.subject },
+   *     Body: {
+   *       Html: { Data: options.html },
+   *       Text: { Data: options.text },
+   *     },
+   *   },
+   * }));
+   * ```
+   *
+   * @see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/ses-examples.html
+   */
+  private async sendViaSES(_options: EmailOptions): Promise<boolean> {
+    this.logger.warn('AWS SES provider selected but not implemented. Email not sent.');
+    this.logger.log('To implement AWS SES, see the documentation in email.service.ts');
+    return false;
   }
 
   private async sendViaSMTP(options: EmailOptions): Promise<boolean> {

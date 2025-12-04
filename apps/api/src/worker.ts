@@ -4,6 +4,13 @@ import { z } from 'zod';
 import { configSchema } from './common/config/config.schema';
 import nodemailer from 'nodemailer';
 import webPush from 'web-push';
+import pino from 'pino';
+
+// Initialize logger
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
+});
 
 // Load and validate environment
 const env = configSchema.parse(process.env);
@@ -81,7 +88,7 @@ async function processEmailJob(job: Job): Promise<void> {
 
   const transporter = getEmailTransporter();
   if (!transporter) {
-    console.log(`[Email] Skipping email to ${data.to} - no SMTP configured`);
+    logger.info({ to: data.to }, 'Skipping email - no SMTP configured');
     return;
   }
 
@@ -93,14 +100,14 @@ async function processEmailJob(job: Job): Promise<void> {
     text: data.text,
   });
 
-  console.log(`[Email] Sent email to ${data.to}: ${data.subject}`);
+  logger.info({ to: data.to, subject: data.subject }, 'Email sent successfully');
 }
 
 async function processPushNotificationJob(job: Job): Promise<void> {
   const data = PushNotificationJobSchema.parse(job.data);
 
   if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
-    console.log('[Push] Skipping push notification - no VAPID keys configured');
+    logger.info('Skipping push notification - no VAPID keys configured');
     return;
   }
 
@@ -115,11 +122,11 @@ async function processPushNotificationJob(job: Job): Promise<void> {
       },
       JSON.stringify(data.payload),
     );
-    console.log(`[Push] Sent push notification: ${data.payload.title}`);
+    logger.info({ title: data.payload.title }, 'Push notification sent');
   } catch (error) {
     if ((error as { statusCode?: number }).statusCode === 410) {
       // Subscription expired, should be removed from database
-      console.log(`[Push] Subscription expired: ${data.subscription.endpoint}`);
+      logger.warn({ endpoint: data.subscription.endpoint }, 'Push subscription expired');
       throw new Error('SUBSCRIPTION_EXPIRED');
     }
     throw error;
@@ -129,7 +136,7 @@ async function processPushNotificationJob(job: Job): Promise<void> {
 async function processAggregationJob(job: Job): Promise<void> {
   const data = AggregationJobSchema.parse(job.data);
 
-  console.log(`[Aggregation] Processing ${data.type} aggregation for tenant ${data.tenantId}`);
+  logger.info({ type: data.type, tenantId: data.tenantId }, 'Processing aggregation job');
 
   // This is a placeholder - actual aggregation would query the database
   // and compute metrics like:
@@ -138,7 +145,7 @@ async function processAggregationJob(job: Job): Promise<void> {
   // - Parts used
   // - Labor hours
 
-  console.log(`[Aggregation] Completed ${data.type} aggregation for tenant ${data.tenantId}`);
+  logger.info({ type: data.type, tenantId: data.tenantId }, 'Aggregation job completed');
 }
 
 // Create workers
@@ -176,15 +183,15 @@ const aggregationWorker = new Worker(
 // Worker event handlers
 function setupWorkerEvents(worker: Worker, name: string) {
   worker.on('completed', (job) => {
-    console.log(`[${name}] Job ${job.id} completed`);
+    logger.info({ worker: name, jobId: job.id }, 'Job completed');
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[${name}] Job ${job?.id} failed:`, err.message);
+    logger.error({ worker: name, jobId: job?.id, error: err.message }, 'Job failed');
   });
 
   worker.on('error', (err) => {
-    console.error(`[${name}] Worker error:`, err.message);
+    logger.error({ worker: name, error: err.message }, 'Worker error');
   });
 }
 
@@ -194,19 +201,19 @@ setupWorkerEvents(aggregationWorker, 'Aggregation');
 
 // Graceful shutdown
 async function shutdown() {
-  console.log('Shutting down workers...');
+  logger.info('Shutting down workers...');
   await Promise.all([
     emailWorker.close(),
     pushWorker.close(),
     aggregationWorker.close(),
   ]);
   await connection.quit();
-  console.log('Workers shut down gracefully');
+  logger.info('Workers shut down gracefully');
   process.exit(0);
 }
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-console.log('TaskMaster Worker started');
-console.log('Listening for jobs on queues: email, push-notification, aggregation');
+logger.info('TaskMaster Worker started');
+logger.info({ queues: ['email', 'push-notification', 'aggregation'] }, 'Listening for jobs');

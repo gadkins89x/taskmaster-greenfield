@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -75,9 +75,12 @@ async function bootstrap() {
     SwaggerModule.setup('api/docs', app, document);
   }
 
+  const logger = new Logger('Bootstrap');
   await app.listen(port);
-  console.log(`🚀 TaskMaster API running on port ${port}`);
-  console.log(`📚 API Docs available at http://localhost:${port}/api/docs`);
+  logger.log(`TaskMaster API running on port ${port}`);
+  if (!isProduction) {
+    logger.log(`API Docs available at http://localhost:${port}/api/docs`);
+  }
 }
 
 bootstrap();

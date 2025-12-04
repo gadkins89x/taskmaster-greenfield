@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
@@ -198,7 +199,14 @@ export class RolesService {
     return this.findById(ctx, id);
   }
 
-  private mapRole(role: any) {
+  private mapRole(
+    role: Prisma.RoleGetPayload<{
+      include: {
+        rolePermissions: { include: { permission: true } };
+        _count: { select: { userRoles: true } };
+      };
+    }>,
+  ) {
     return {
       id: role.id,
       name: role.name,
@@ -206,9 +214,9 @@ export class RolesService {
       isSystem: role.isSystem,
       userCount: role._count.userRoles,
       permissions: role.rolePermissions.map(
-        (rp: any) => `${rp.permission.resource}:${rp.permission.action}`,
+        (rp) => `${rp.permission.resource}:${rp.permission.action}`,
       ),
-      permissionIds: role.rolePermissions.map((rp: any) => rp.permission.id),
+      permissionIds: role.rolePermissions.map((rp) => rp.permission.id),
       createdAt: role.createdAt.toISOString(),
       updatedAt: role.updatedAt.toISOString(),
     };

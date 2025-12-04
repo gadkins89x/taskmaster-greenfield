@@ -14,6 +14,11 @@ import { AuthenticationService } from './authentication.service';
 import { Public } from '../../common/auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
 import { LoginDto, RegisterDto } from './dto';
+import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+
+interface RequestWithUser extends Request {
+  user: TenantContext;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -99,7 +104,7 @@ export class AuthenticationController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user info' })
-  async me(@Req() req: Request) {
-    return (req as any).user;
+  async me(@Req() req: RequestWithUser) {
+    return req.user;
   }
 }

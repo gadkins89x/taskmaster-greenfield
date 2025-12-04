@@ -173,16 +173,20 @@ export class PushService implements OnModuleInit {
         JSON.stringify(payload),
       );
       this.logger.debug(`Push notification sent: ${payload.title}`);
-    } catch (error: any) {
-      if (error.statusCode === 404 || error.statusCode === 410) {
-        // Subscription has expired or is invalid - remove it
-        await this.prisma.pushSubscription.deleteMany({
-          where: { endpoint: subscription.endpoint },
-        });
-        this.logger.log('Removed expired/invalid push subscription');
-      } else {
-        this.logger.error(`Failed to send push notification: ${error.message}`);
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'statusCode' in error) {
+        const statusCode = (error as { statusCode: number }).statusCode;
+        if (statusCode === 404 || statusCode === 410) {
+          // Subscription has expired or is invalid - remove it
+          await this.prisma.pushSubscription.deleteMany({
+            where: { endpoint: subscription.endpoint },
+          });
+          this.logger.log('Removed expired/invalid push subscription');
+          return;
+        }
       }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send push notification: ${errorMessage}`);
     }
   }
 

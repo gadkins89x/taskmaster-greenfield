@@ -201,7 +201,7 @@ export class AuditService {
     };
   }
 
-  private mapAuditLog(log: any) {
+  private mapAuditLog(log: Prisma.AuditLogGetPayload<{ include: { user: { select: { id: true; firstName: true; lastName: true } } } }>) {
     return {
       id: log.id,
       entityType: log.entityType,

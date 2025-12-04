@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 export interface BarcodeScannerConfig {
@@ -45,7 +45,11 @@ export function useBarcodeScanner(
   const [error, setError] = useState<string | null>(null);
   const [lastScannedCode, setLastScannedCode] = useState<string | null>(null);
 
-  const mergedConfig = { ...DEFAULT_CONFIG, ...config };
+  const mergedConfig = useMemo(
+    () => ({ ...DEFAULT_CONFIG, ...config }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [config.fps, config.qrbox, config.aspectRatio, config.disableFlip, config.formatsToSupport]
+  );
 
   const handleScanSuccess = useCallback(
     (decodedText: string) => {

@@ -10,7 +10,6 @@ import {
   IsEnum,
   IsDateString,
   IsArray,
-  ArrayMinSize,
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';

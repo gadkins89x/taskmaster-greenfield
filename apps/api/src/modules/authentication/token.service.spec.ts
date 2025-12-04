@@ -8,7 +8,7 @@ import { UnauthorizedException } from '@nestjs/common';
 describe('TokenService', () => {
   let service: TokenService;
   let jwtService: JwtService;
-  let prismaService: PrismaService;
+  let _prismaService: PrismaService;
 
   const mockJwtService = {
     sign: jest.fn().mockReturnValue('mock-jwt-token'),
@@ -45,7 +45,7 @@ describe('TokenService', () => {
 
     service = module.get<TokenService>(TokenService);
     jwtService = module.get<JwtService>(JwtService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    _prismaService = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });

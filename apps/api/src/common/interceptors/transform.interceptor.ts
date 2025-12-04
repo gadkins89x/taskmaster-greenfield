@@ -8,6 +8,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Request } from 'express';
 
+/** Extended Request with custom properties added by interceptors */
+interface ExtendedRequest extends Request {
+  requestId?: string;
+}
+
 export interface ApiResponse<T> {
   data: T;
   meta?: {
@@ -20,6 +25,21 @@ export interface ApiResponse<T> {
   };
 }
 
+/** Response that already has data wrapper */
+interface WrappedResponse<T> {
+  data: T;
+  meta?: ApiResponse<T>['meta'];
+}
+
+/** Type guard to check if response is already wrapped */
+function isWrappedResponse<T>(response: unknown): response is WrappedResponse<T> {
+  return (
+    response !== null &&
+    typeof response === 'object' &&
+    'data' in response
+  );
+}
+
 @Injectable()
 export class TransformInterceptor<T>
   implements NestInterceptor<T, ApiResponse<T>>
@@ -28,13 +48,13 @@ export class TransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const requestId = (request as any).requestId || 'unknown';
+    const request = context.switchToHttp().getRequest<ExtendedRequest>();
+    const requestId = request.requestId || 'unknown';
 
     return next.handle().pipe(
-      map((responseData) => {
+      map((responseData: T | WrappedResponse<T>) => {
         // If already wrapped (e.g., paginated responses), just add meta
-        if (responseData && typeof responseData === 'object' && 'data' in responseData) {
+        if (isWrappedResponse<T>(responseData)) {
           return {
             ...responseData,
             meta: {
@@ -47,7 +67,7 @@ export class TransformInterceptor<T>
 
         // Wrap simple responses
         return {
-          data: responseData,
+          data: responseData as T,
           meta: {
             requestId,
             timestamp: new Date().toISOString(),

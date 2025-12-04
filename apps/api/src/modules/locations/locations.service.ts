@@ -3,6 +3,22 @@ import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
+interface LocationNode {
+  id: string;
+  name: string;
+  code: string;
+  type: string;
+  parentId: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  metadata: Prisma.JsonValue;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  children: LocationNode[];
+}
+
 @Injectable()
 export class LocationsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -260,9 +276,9 @@ export class LocationsService {
     return ancestors;
   }
 
-  private buildTree(locations: any[]) {
-    const map = new Map();
-    const roots: any[] = [];
+  private buildTree(locations: Prisma.LocationGetPayload<Record<string, never>>[]): LocationNode[] {
+    const map = new Map<string, LocationNode>();
+    const roots: LocationNode[] = [];
 
     locations.forEach((loc) => {
       map.set(loc.id, { ...this.mapLocation(loc), children: [] });
@@ -270,8 +286,13 @@ export class LocationsService {
 
     locations.forEach((loc) => {
       const node = map.get(loc.id);
+      if (!node) return;
+
       if (loc.parentId && map.has(loc.parentId)) {
-        map.get(loc.parentId).children.push(node);
+        const parent = map.get(loc.parentId);
+        if (parent) {
+          parent.children.push(node);
+        }
       } else {
         roots.push(node);
       }
@@ -280,7 +301,7 @@ export class LocationsService {
     return roots;
   }
 
-  private mapLocation(location: any) {
+  private mapLocation(location: Prisma.LocationGetPayload<Record<string, never>>) {
     return {
       id: location.id,
       name: location.name,
