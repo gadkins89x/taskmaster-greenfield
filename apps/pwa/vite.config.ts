@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.ico', 'icons/*.png'],
+      includeAssets: ['favicon.svg', 'icons/*.svg'],
       manifest: {
         name: 'TaskMaster CMMS',
         short_name: 'TaskMaster',
@@ -20,14 +20,15 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/icons/icon-192.png',
+            src: '/icons/icon-192.svg',
             sizes: '192x192',
-            type: 'image/png',
+            type: 'image/svg+xml',
           },
           {
-            src: '/icons/icon-512.png',
+            src: '/icons/icon-512.svg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/svg+xml',
+            purpose: 'any maskable',
           },
         ],
       },
