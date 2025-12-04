@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Select } from '../../components/ui/select';
+import { NativeSelect } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Card } from '../../components/ui/card';
 import { LoadingScreen } from '../../components/ui/spinner';
@@ -115,7 +115,7 @@ export function WorkOrdersListPage() {
 
         {showFilters && (
           <div className="flex flex-wrap gap-2 rounded-lg border bg-card p-3">
-            <Select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-40"
@@ -126,8 +126,8 @@ export function WorkOrdersListPage() {
                   {label}
                 </option>
               ))}
-            </Select>
-            <Select
+            </NativeSelect>
+            <NativeSelect
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="w-40"
@@ -138,7 +138,7 @@ export function WorkOrdersListPage() {
                   {label}
                 </option>
               ))}
-            </Select>
+            </NativeSelect>
             {hasFilters && (
               <Button
                 variant="ghost"
@@ -183,7 +183,7 @@ export function WorkOrdersListPage() {
             const StatusIcon = status.icon;
 
             return (
-              <Link key={wo.id} to={`/work-orders/${wo.id}`}>
+              <Link key={wo.id} to="/work-orders/$workOrderId" params={{ workOrderId: wo.id }}>
                 <Card className="p-4 transition-colors hover:bg-accent/50">
                   <div className="flex items-start gap-3">
                     {/* Status Icon */}

@@ -4,6 +4,7 @@ import {
   createRootRoute,
   Outlet,
   redirect,
+  useParams,
 } from '@tanstack/react-router';
 import { LoginPage } from './pages/login';
 import { DashboardPage } from './pages/dashboard';
@@ -71,10 +72,15 @@ const workOrderNewRoute = createRoute({
   component: WorkOrderCreatePage,
 });
 
+function WorkOrderDetailWrapper() {
+  const { workOrderId } = useParams({ strict: false });
+  return <WorkOrderDetailPage workOrderId={workOrderId as string} />;
+}
+
 const workOrderDetailRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/work-orders/$workOrderId',
-  component: ({ params }) => <WorkOrderDetailPage workOrderId={params.workOrderId} />,
+  component: WorkOrderDetailWrapper,
 });
 
 // Inventory routes
@@ -84,10 +90,15 @@ const inventoryRoute = createRoute({
   component: InventoryListPage,
 });
 
+function InventoryDetailWrapper() {
+  const { itemId } = useParams({ strict: false });
+  return <InventoryDetailPage itemId={itemId as string} />;
+}
+
 const inventoryDetailRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/inventory/$itemId',
-  component: ({ params }) => <InventoryDetailPage itemId={params.itemId} />,
+  component: InventoryDetailWrapper,
 });
 
 // Assets routes
@@ -97,10 +108,15 @@ const assetsRoute = createRoute({
   component: AssetsListPage,
 });
 
+function AssetDetailWrapper() {
+  const { assetId } = useParams({ strict: false });
+  return <AssetDetailPage assetId={assetId as string} />;
+}
+
 const assetDetailRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/assets/$assetId',
-  component: ({ params }) => <AssetDetailPage assetId={params.assetId} />,
+  component: AssetDetailWrapper,
 });
 
 // Scheduling routes
@@ -116,10 +132,15 @@ const schedulingNewRoute = createRoute({
   component: ScheduleCreatePage,
 });
 
+function ScheduleDetailWrapper() {
+  const { scheduleId } = useParams({ strict: false });
+  return <ScheduleDetailPage scheduleId={scheduleId as string} />;
+}
+
 const schedulingDetailRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: '/scheduling/$scheduleId',
-  component: ({ params }) => <ScheduleDetailPage scheduleId={params.scheduleId} />,
+  component: ScheduleDetailWrapper,
 });
 
 // Settings route

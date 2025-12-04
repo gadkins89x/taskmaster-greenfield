@@ -7,7 +7,7 @@ import { ArrowLeft, Plus, Trash2, GripVertical } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Select } from '../../components/ui/select';
+import { NativeSelect } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useCreateWorkOrder } from '../../hooks/use-work-orders';
@@ -137,22 +137,22 @@ export function WorkOrderCreatePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="priority">Priority *</Label>
-                <Select id="priority" {...register('priority')}>
+                <NativeSelect id="priority" {...register('priority')}>
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
                   <option value="critical">Critical</option>
-                </Select>
+                </NativeSelect>
               </div>
 
               <div>
                 <Label htmlFor="type">Type *</Label>
-                <Select id="type" {...register('type')}>
+                <NativeSelect id="type" {...register('type')}>
                   <option value="reactive">Reactive</option>
                   <option value="preventive">Preventive</option>
                   <option value="predictive">Predictive</option>
                   <option value="inspection">Inspection</option>
-                </Select>
+                </NativeSelect>
               </div>
             </div>
 

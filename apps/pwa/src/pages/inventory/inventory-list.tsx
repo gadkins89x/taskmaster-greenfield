@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Select } from '../../components/ui/select';
+import { NativeSelect } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Card } from '../../components/ui/card';
 import { LoadingScreen } from '../../components/ui/spinner';
@@ -106,7 +106,7 @@ export function InventoryListPage() {
 
         {showFilters && (
           <div className="flex flex-wrap gap-2 rounded-lg border bg-card p-3">
-            <Select
+            <NativeSelect
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               className="w-40"
@@ -117,7 +117,7 @@ export function InventoryListPage() {
                   {cat}
                 </option>
               ))}
-            </Select>
+            </NativeSelect>
             <label className="flex items-center gap-2 px-3 py-2">
               <input
                 type="checkbox"
@@ -162,7 +162,7 @@ export function InventoryListPage() {
             const isOutOfStock = item.currentStock === 0;
 
             return (
-              <Link key={item.id} to={`/inventory/${item.id}`}>
+              <Link key={item.id} to="/inventory/$itemId" params={{ itemId: item.id }}>
                 <Card className="p-4 transition-colors hover:bg-accent/50">
                   <div className="flex items-start gap-3">
                     {/* Icon */}

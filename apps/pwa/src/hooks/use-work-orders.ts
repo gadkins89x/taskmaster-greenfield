@@ -240,7 +240,7 @@ export function useUploadPhoto() {
       data,
     }: {
       workOrderId: string;
-      data: { file: File; caption?: string; category?: string };
+      data: { dataUrl: string; filename: string; caption?: string; category?: string };
     }) => uploadPhoto(workOrderId, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -273,12 +273,12 @@ export function useUpdatePhotoCaption() {
     mutationFn: ({
       workOrderId,
       photoId,
-      caption,
+      data,
     }: {
       workOrderId: string;
       photoId: string;
-      caption: string;
-    }) => updatePhotoCaption(workOrderId, photoId, caption),
+      data: { caption?: string; category?: string };
+    }) => updatePhotoCaption(workOrderId, photoId, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: workOrderKeys.detail(variables.workOrderId),
@@ -302,7 +302,7 @@ export function useAddLaborEntry() {
         endTime?: string;
         hours?: number;
         description?: string;
-        laborType?: string;
+        laborType?: 'regular' | 'overtime' | 'travel';
       };
     }) => addLaborEntry(workOrderId, data),
     onSuccess: (_, variables) => {
@@ -330,7 +330,7 @@ export function useUpdateLaborEntry() {
         endTime?: string;
         hours?: number;
         description?: string;
-        laborType?: string;
+        laborType?: 'regular' | 'overtime' | 'travel';
       };
     }) => updateLaborEntry(workOrderId, entryId, data),
     onSuccess: (_, variables) => {
@@ -361,16 +361,10 @@ export function useStartLaborTimer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      workOrderId,
-      data,
-    }: {
-      workOrderId: string;
-      data: { description?: string; laborType?: string };
-    }) => startLaborTimer(workOrderId, data),
-    onSuccess: (_, variables) => {
+    mutationFn: (workOrderId: string) => startLaborTimer(workOrderId),
+    onSuccess: (_, workOrderId) => {
       queryClient.invalidateQueries({
-        queryKey: workOrderKeys.detail(variables.workOrderId),
+        queryKey: workOrderKeys.detail(workOrderId),
       });
     },
   });

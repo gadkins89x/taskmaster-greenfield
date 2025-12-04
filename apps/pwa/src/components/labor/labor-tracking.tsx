@@ -15,17 +15,22 @@ interface LaborTrackingProps {
   readOnly?: boolean;
 }
 
-const LABOR_TYPES = [
+type LaborType = 'regular' | 'overtime' | 'travel';
+
+const LABOR_TYPES: { value: LaborType; label: string }[] = [
   { value: 'regular', label: 'Regular' },
   { value: 'overtime', label: 'Overtime' },
   { value: 'travel', label: 'Travel' },
-  { value: 'training', label: 'Training' },
 ];
 
 export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: LaborTrackingProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    hours: string;
+    description: string;
+    laborType: LaborType;
+  }>({
     hours: '',
     description: '',
     laborType: 'regular',
@@ -41,13 +46,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
   const activeTimer = laborEntries.find((entry) => !entry.endTime);
 
   const handleStartTimer = () => {
-    startLaborTimer.mutate({
-      workOrderId,
-      data: {
-        description: formData.description || undefined,
-        laborType: formData.laborType,
-      },
-    });
+    startLaborTimer.mutate(workOrderId);
     setFormData({ hours: '', description: '', laborType: 'regular' });
   };
 
@@ -148,7 +147,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
             <div>
               <select
                 value={formData.laborType}
-                onChange={(e) => setFormData({ ...formData, laborType: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, laborType: e.target.value as LaborType })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               >
                 {LABOR_TYPES.map((type) => (
@@ -192,7 +191,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                     <select
                       value={formData.laborType}
-                      onChange={(e) => setFormData({ ...formData, laborType: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, laborType: e.target.value as LaborType })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     >
                       {LABOR_TYPES.map((type) => (
@@ -302,7 +301,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                   <select
                     value={formData.laborType}
-                    onChange={(e) => setFormData({ ...formData, laborType: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, laborType: e.target.value as LaborType })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   >
                     {LABOR_TYPES.map((type) => (
