@@ -140,7 +140,7 @@ export function PartsTracking({ workOrderId, partsUsed, readOnly = false }: Part
 
   const totalCost = partsUsed
     .filter((p) => p.totalCost && p.status === 'used')
-    .reduce((sum, p) => sum + (p.totalCost || 0), 0);
+    .reduce((sum, p) => sum + Number(p.totalCost || 0), 0);
 
   return (
     <div className="space-y-4">
@@ -236,10 +236,10 @@ export function PartsTracking({ workOrderId, partsUsed, readOnly = false }: Part
                   <div className="mt-1 text-sm text-gray-600">
                     <span>Qty: {part.quantity}</span>
                     {part.unitCost && (
-                      <span className="ml-3">@ ${part.unitCost.toFixed(2)}</span>
+                      <span className="ml-3">@ ${Number(part.unitCost).toFixed(2)}</span>
                     )}
                     {part.totalCost && (
-                      <span className="ml-3 font-medium">= ${part.totalCost.toFixed(2)}</span>
+                      <span className="ml-3 font-medium">= ${Number(part.totalCost).toFixed(2)}</span>
                     )}
                   </div>
                   {part.notes && <p className="text-sm text-gray-500 mt-1">{part.notes}</p>}

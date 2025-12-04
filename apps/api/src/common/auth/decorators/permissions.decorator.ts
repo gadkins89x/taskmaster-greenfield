@@ -8,3 +8,6 @@ export const PERMISSIONS_KEY = 'permissions';
  */
 export const Permissions = (...permissions: string[]) =>
   SetMetadata(PERMISSIONS_KEY, permissions);
+
+// Alias for backwards compatibility
+export const RequirePermissions = Permissions;

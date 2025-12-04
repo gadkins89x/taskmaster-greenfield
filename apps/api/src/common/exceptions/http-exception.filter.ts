@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@/generated/prisma/client';
 import { v4 as uuid } from 'uuid';
 
 @Catch()

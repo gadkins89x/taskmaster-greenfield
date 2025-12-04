@@ -106,7 +106,7 @@ export function DashboardPage() {
           icon={Wrench}
           label="In Progress"
           value={stats?.workOrders.inProgress ?? 0}
-          subValue={`Avg ${stats?.workOrders.avgCompletionTime?.toFixed(1) ?? '0'} hrs`}
+          subValue={`Avg ${stats?.workOrders.avgCompletionTime ? Number(stats.workOrders.avgCompletionTime).toFixed(1) : '0'} hrs`}
           color="text-orange-500"
           loading={statsLoading}
         />
@@ -286,7 +286,7 @@ export function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{tech.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {tech.workOrdersCompleted} completed • {tech.hoursLogged.toFixed(1)}h logged
+                      {tech.workOrdersCompleted} completed • {Number(tech.hoursLogged).toFixed(1)}h logged
                     </p>
                   </div>
                 </div>

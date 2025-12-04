@@ -647,7 +647,7 @@ export class WorkOrdersService {
           entityId: workOrderId,
         },
         include: {
-          user: { select: { id: true, firstName: true, lastName: true } },
+          user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -658,7 +658,7 @@ export class WorkOrdersService {
       id: string;
       type: 'comment' | 'step_completed' | 'status_change' | 'created' | 'updated';
       timestamp: Date;
-      user: { id: string; firstName: string; lastName: string; avatarUrl?: string } | null;
+      user: { id: string; firstName: string; lastName: string; avatarUrl: string | null } | null;
       data: Record<string, unknown>;
     };
 

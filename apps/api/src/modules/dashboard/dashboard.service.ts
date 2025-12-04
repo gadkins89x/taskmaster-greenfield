@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
@@ -99,17 +100,18 @@ export class DashboardService {
   }
 
   private async getInventoryStats(tenantId: string) {
-    const [items, lowStock, outOfStock, totalValue] = await Promise.all([
+    const [items, lowStockResult, outOfStock, totalValue] = await Promise.all([
       this.prisma.inventoryItem.count({
         where: { tenantId, isActive: true },
       }),
-      this.prisma.inventoryItem.count({
-        where: {
-          tenantId,
-          isActive: true,
-          currentStock: { lte: this.prisma.inventoryItem.fields.reorderPoint },
-        },
-      }),
+      // Use raw query to compare current_stock with reorder_point field
+      this.prisma.$queryRaw<[{ count: bigint }]>`
+        SELECT COUNT(*) as count
+        FROM inventory_items
+        WHERE tenant_id = ${tenantId}::uuid
+          AND is_active = true
+          AND current_stock <= reorder_point
+      `,
       this.prisma.inventoryItem.count({
         where: { tenantId, isActive: true, currentStock: 0 },
       }),
@@ -120,6 +122,7 @@ export class DashboardService {
         },
       }),
     ]);
+    const lowStock = Number(lowStockResult[0]?.count ?? 0);
 
     // Calculate total value with a raw query for multiplication
     const valueResult = await this.prisma.$queryRaw<[{ total: number | null }]>`
@@ -220,22 +223,24 @@ export class DashboardService {
     }
 
     // Get created and completed work orders grouped by date
+    // Use Prisma.raw() to inject groupBy as literal SQL since DATE_TRUNC expects a string literal
+    const groupByLiteral = Prisma.raw(`'${groupBy}'`);
     const [created, completed] = await Promise.all([
       this.prisma.$queryRaw<{ date: Date; count: bigint }[]>`
-        SELECT DATE_TRUNC(${groupBy}, created_at) as date, COUNT(*) as count
+        SELECT DATE_TRUNC(${groupByLiteral}, created_at) as date, COUNT(*) as count
         FROM work_orders
         WHERE tenant_id = ${ctx.tenantId}::uuid
           AND created_at >= ${startDate}
-        GROUP BY DATE_TRUNC(${groupBy}, created_at)
+        GROUP BY 1
         ORDER BY date
       `,
       this.prisma.$queryRaw<{ date: Date; count: bigint }[]>`
-        SELECT DATE_TRUNC(${groupBy}, completed_at) as date, COUNT(*) as count
+        SELECT DATE_TRUNC(${groupByLiteral}, completed_at) as date, COUNT(*) as count
         FROM work_orders
         WHERE tenant_id = ${ctx.tenantId}::uuid
           AND completed_at >= ${startDate}
           AND status = 'completed'
-        GROUP BY DATE_TRUNC(${groupBy}, completed_at)
+        GROUP BY 1
         ORDER BY date
       `,
     ]);

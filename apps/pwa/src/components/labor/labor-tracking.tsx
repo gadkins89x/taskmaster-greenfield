@@ -111,7 +111,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
 
   const totalHours = laborEntries
     .filter((e) => e.hours)
-    .reduce((sum, e) => sum + (e.hours || 0), 0);
+    .reduce((sum, e) => sum + Number(e.hours || 0), 0);
 
   return (
     <div className="space-y-4">
@@ -235,7 +235,7 @@ export function LaborTracking({ workOrderId, laborEntries, readOnly = false }: L
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900">
-                      {entry.hours?.toFixed(2) || '—'} hours
+                      {entry.hours ? Number(entry.hours).toFixed(2) : '—'} hours
                     </span>
                     <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
                       {LABOR_TYPES.find((t) => t.value === entry.laborType)?.label || entry.laborType}

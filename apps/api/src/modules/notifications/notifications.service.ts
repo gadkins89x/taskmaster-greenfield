@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import {
@@ -23,7 +24,7 @@ export class NotificationsService {
         type: dto.type,
         title: dto.title,
         body: dto.body,
-        data: dto.data ?? null,
+        data: dto.data ? (dto.data as Prisma.InputJsonValue) : Prisma.JsonNull,
         isRead: false,
       },
     });
@@ -42,7 +43,7 @@ export class NotificationsService {
         type: dto.type,
         title: dto.title,
         body: dto.body,
-        data: dto.data ?? null,
+        data: dto.data ? (dto.data as Prisma.InputJsonValue) : undefined,
         isRead: false,
       })),
     });

@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
@@ -54,7 +55,7 @@ export class LocationsService {
         address: data.address,
         latitude: data.latitude,
         longitude: data.longitude,
-        metadata: data.metadata,
+        metadata: data.metadata as Prisma.InputJsonValue | undefined,
       },
     });
 
@@ -130,7 +131,7 @@ export class LocationsService {
         address: data.address,
         latitude: data.latitude,
         longitude: data.longitude,
-        metadata: data.metadata,
+        metadata: data.metadata as Prisma.InputJsonValue | undefined,
         isActive: data.isActive,
       },
     });

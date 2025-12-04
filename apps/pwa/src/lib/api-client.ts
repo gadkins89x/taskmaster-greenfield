@@ -1,5 +1,19 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
+// Initialize token from localStorage synchronously to avoid race conditions
+function getInitialToken(): string | null {
+  try {
+    const stored = localStorage.getItem('taskmaster-auth');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed?.state?.accessToken || null;
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return null;
+}
+
 export interface ApiError {
   message: string;
   statusCode: number;
@@ -7,9 +21,14 @@ export interface ApiError {
 }
 
 class ApiClient {
-  private accessToken: string | null = null;
+  private accessToken: string | null = getInitialToken();
+
+  constructor() {
+    console.log('[ApiClient] Initialized with token:', this.accessToken ? 'present' : 'null');
+  }
 
   setAccessToken(token: string | null) {
+    console.log('[ApiClient] setAccessToken called:', token ? 'token present' : 'null');
     this.accessToken = token;
   }
 
@@ -24,6 +43,9 @@ class ApiClient {
 
     if (this.accessToken) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${this.accessToken}`;
+      console.log('[ApiClient] Adding auth header for:', endpoint);
+    } else {
+      console.log('[ApiClient] No token for request:', endpoint);
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -45,7 +67,22 @@ class ApiClient {
       return {} as T;
     }
 
-    return response.json();
+    const json = await response.json();
+
+    // The API wraps all responses in { data: T, meta: {...} } format
+    // For paginated responses (with meta.total), preserve the full structure
+    // For non-paginated responses, unwrap to just return the data
+    if (json && typeof json === 'object' && 'data' in json) {
+      const meta = json.meta as { total?: number } | undefined;
+      // If meta has pagination fields (total), return full response for pagination
+      if (meta && typeof meta.total === 'number') {
+        return json as T;
+      }
+      // Otherwise unwrap the data
+      return json.data as T;
+    }
+
+    return json;
   }
 
   async get<T>(endpoint: string, options?: RequestInit): Promise<T> {

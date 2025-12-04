@@ -17,8 +17,8 @@ COPY packages/shared/package.json ./packages/shared/
 # Copy prisma schema for generation
 COPY apps/api/prisma ./apps/api/prisma/
 
-# Install all dependencies
-RUN pnpm install --frozen-lockfile
+# Install all dependencies (not using frozen-lockfile in dev for flexibility)
+RUN pnpm install
 
 # Generate Prisma client
 WORKDIR /app/apps/api

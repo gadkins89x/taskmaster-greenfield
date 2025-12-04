@@ -305,7 +305,7 @@ export function InventoryDetailPage({ itemId }: InventoryDetailPageProps) {
           {item.unitCost && (
             <div className="p-4">
               <div className="text-sm text-muted-foreground">Unit Cost</div>
-              <div className="font-medium">${item.unitCost.toFixed(2)}</div>
+              <div className="font-medium">${Number(item.unitCost).toFixed(2)}</div>
             </div>
           )}
         </CardContent>

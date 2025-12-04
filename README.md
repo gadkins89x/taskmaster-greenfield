@@ -82,7 +82,7 @@ TaskMaster CMMS is a comprehensive maintenance management platform that enables 
 | Technology | Purpose |
 |------------|---------|
 | [Docker](https://www.docker.com/) | Containerization |
-| [Traefik 3.2](https://traefik.io/) | Reverse proxy & routing |
+| [nginx](https://nginx.org/) | Reverse proxy & routing |
 | [pnpm](https://pnpm.io/) | Fast, disk-efficient package manager |
 
 ---
@@ -201,7 +201,7 @@ pnpm dev
 - **Frontend**: http://localhost:5173
 - **API**: http://localhost:3000
 - **API Docs**: http://localhost:3000/api/docs
-- **Traefik Dashboard**: http://localhost:8080 (when using full Docker setup)
+- **App (via nginx)**: http://localhost (when using full Docker setup)
 
 ### Demo Credentials
 

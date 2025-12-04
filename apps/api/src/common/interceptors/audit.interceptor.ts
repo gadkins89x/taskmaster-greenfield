@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Reflector } from '@nestjs/core';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { AUDIT_METADATA_KEY, AuditMetadata } from '../decorators/audit.decorator';
 
@@ -103,7 +104,7 @@ export class AuditInterceptor implements NestInterceptor {
                 entityType: auditMetadata.entityType,
                 entityId,
                 action,
-                changes,
+                changes: changes ? (changes as Prisma.InputJsonValue) : undefined,
                 ipAddress,
                 userAgent,
               },

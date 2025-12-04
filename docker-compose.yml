@@ -45,23 +45,25 @@ services:
   # =============================================================================
   # REVERSE PROXY
   # =============================================================================
-  traefik:
-    image: traefik:v3.2
-    container_name: taskmaster-traefik
-    command:
-      - "--api.insecure=true"
-      - "--api.dashboard=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--log.level=DEBUG"
+  nginx:
+    image: nginx:alpine
+    container_name: taskmaster-nginx
     ports:
       - "80:80"
-      - "8080:8080"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - pwa
     networks:
       - taskmaster-net
+    profiles:
+      - full
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # =============================================================================
   # BACKEND API (for containerized development)
@@ -90,11 +92,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=PathPrefix(`/api`) || PathPrefix(`/auth`)"
-      - "traefik.http.routers.api.entrypoints=web"
-      - "traefik.http.services.api.loadbalancer.server.port=3000"
     networks:
       - taskmaster-net
     profiles:
@@ -113,13 +110,7 @@ services:
       - /app/node_modules
       - /app/apps/pwa/node_modules
     environment:
-      VITE_API_URL: http://localhost/api
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pwa.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.pwa.entrypoints=web"
-      - "traefik.http.routers.pwa.priority=1"
-      - "traefik.http.services.pwa.loadbalancer.server.port=5173"
+      VITE_API_URL: http://localhost/api/v1
     networks:
       - taskmaster-net
     profiles:

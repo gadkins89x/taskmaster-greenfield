@@ -21,7 +21,7 @@ TaskMaster is a next-generation Computerized Maintenance Management System (CMMS
 | **State Management** | TanStack Query + Zustand | 5.x |
 | **Offline Storage** | Dexie.js | 4.x |
 | **PWA Toolkit** | Workbox | 7.x |
-| **Reverse Proxy** | Traefik | 3.6 |
+| **Reverse Proxy** | nginx | alpine |
 
 ### Architecture Principles
 
@@ -885,7 +885,7 @@ interface ApiError {
 
 ```
 ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│  Client  │────▶│  Traefik │────▶│   API    │────▶│   Redis  │
+│  Client  │────▶│  nginx   │────▶│   API    │────▶│   Redis  │
 │   PWA    │     │  (TLS)   │     │  Server  │     │ Sessions │
 └──────────┘     └──────────┘     └──────────┘     └──────────┘
      │                                  │

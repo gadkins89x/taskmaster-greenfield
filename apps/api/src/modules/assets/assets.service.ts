@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
@@ -66,7 +67,7 @@ export class AssetsService {
         parentAssetId: data.parentAssetId,
         purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
         warrantyExpires: data.warrantyExpires ? new Date(data.warrantyExpires) : null,
-        specifications: data.specifications,
+        specifications: data.specifications as Prisma.InputJsonValue | undefined,
       },
       include: {
         location: true,
@@ -151,7 +152,7 @@ export class AssetsService {
         warrantyExpires: data.warrantyExpires !== undefined
           ? (data.warrantyExpires ? new Date(data.warrantyExpires) : null)
           : undefined,
-        specifications: data.specifications,
+        specifications: data.specifications as Prisma.InputJsonValue | undefined,
       },
       include: {
         location: true,

@@ -42,7 +42,7 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
   private aggregationQueue: Queue;
 
   constructor(private readonly configService: ConfigService) {
-    const redisUrl = this.configService.get<string>('REDIS_URL');
+    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
     this.connection = new Redis(redisUrl, {
       maxRetriesPerRequest: null,
     });

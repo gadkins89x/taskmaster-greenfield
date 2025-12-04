@@ -70,7 +70,6 @@ export class AuthenticationService {
           data: {
             userId: newUser.id,
             roleId: defaultRole.id,
-            assignedAt: new Date(),
           },
         });
       }
