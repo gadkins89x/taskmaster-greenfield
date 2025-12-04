@@ -68,12 +68,13 @@ services:
   # =============================================================================
   api:
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: apps/api/Dockerfile.dev
     container_name: taskmaster-api
     volumes:
-      - ./apps/api:/app
+      - .:/app
       - /app/node_modules
+      - /app/apps/api/node_modules
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://taskmaster:taskmaster@postgres:5432/taskmaster?schema=public
@@ -104,12 +105,13 @@ services:
   # =============================================================================
   pwa:
     build:
-      context: ./apps/pwa
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: apps/pwa/Dockerfile.dev
     container_name: taskmaster-pwa
     volumes:
-      - ./apps/pwa:/app
+      - .:/app
       - /app/node_modules
+      - /app/apps/pwa/node_modules
     environment:
       VITE_API_URL: http://localhost/api
     labels:
