@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PrismaService } from '../common/database/prisma.service';
+import { RedisService } from '../common/redis/redis.service';
 import { Public } from '../common/auth/decorators/public.decorator';
 
 @ApiTags('health')
@@ -8,7 +9,10 @@ import { Public } from '../common/auth/decorators/public.decorator';
 export class HealthController {
   private readonly startTime = Date.now();
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   @Get()
   @Public()
@@ -28,8 +32,12 @@ export class HealthController {
       checks.database = { status: 'unhealthy' };
     }
 
-    // Redis check (placeholder - implement when Redis is set up)
-    checks.redis = { status: 'healthy', latencyMs: 1 };
+    // Redis check
+    const redisHealth = await this.redis.ping();
+    checks.redis = {
+      status: redisHealth.healthy ? 'healthy' : 'unhealthy',
+      latencyMs: redisHealth.latencyMs,
+    };
 
     // Storage check
     checks.storage = { status: 'healthy' };
@@ -48,12 +56,26 @@ export class HealthController {
   @Public()
   @ApiOperation({ summary: 'Readiness probe for Kubernetes' })
   async ready() {
+    const errors: string[] = [];
+
+    // Check database
     try {
       await this.prisma.$queryRaw`SELECT 1`;
-      return 'OK';
     } catch {
-      throw new Error('Database not ready');
+      errors.push('Database not ready');
     }
+
+    // Check Redis
+    const redisHealth = await this.redis.ping();
+    if (!redisHealth.healthy) {
+      errors.push('Redis not ready');
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join(', '));
+    }
+
+    return 'OK';
   }
 
   @Get('live')

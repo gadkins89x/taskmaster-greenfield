@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 
 // Common modules
 import { DatabaseModule } from './common/database/database.module';
+import { RedisModule } from './common/redis/redis.module';
+import { QueueModule } from './common/queue/queue.module';
 import { AuthModule } from './common/auth/auth.module';
 
 // Feature modules
@@ -23,6 +26,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './health/health.module';
 
 import { configSchema } from './common/config/config.schema';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 
 @Module({
   imports: [
@@ -56,6 +60,8 @@ import { configSchema } from './common/config/config.schema';
 
     // Common modules
     DatabaseModule,
+    RedisModule,
+    QueueModule,
     AuthModule,
 
     // Feature modules
@@ -72,6 +78,12 @@ import { configSchema } from './common/config/config.schema';
     NotificationsModule,
     DashboardModule,
     HealthModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
   ],
 })
 export class AppModule {}

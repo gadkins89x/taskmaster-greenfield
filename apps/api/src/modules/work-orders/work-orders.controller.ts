@@ -16,6 +16,7 @@ import { PermissionsGuard } from '../../common/auth/guards/permissions.guard';
 import { Permissions } from '../../common/auth/decorators/permissions.decorator';
 import { TenantCtx } from '../../common/auth/decorators/current-user.decorator';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { Audit } from '../../common/decorators/audit.decorator';
 
 @ApiTags('work-orders')
 @ApiBearerAuth()
@@ -57,6 +58,7 @@ export class WorkOrdersController {
 
   @Post()
   @Permissions('work_orders:create')
+  @Audit({ entityType: 'WorkOrder' })
   @ApiOperation({ summary: 'Create a new work order' })
   async create(
     @TenantCtx() ctx: TenantContext,
@@ -78,6 +80,7 @@ export class WorkOrdersController {
 
   @Patch(':id')
   @Permissions('work_orders:update')
+  @Audit({ entityType: 'WorkOrder', idParam: 'id' })
   @ApiOperation({ summary: 'Update a work order' })
   async update(
     @TenantCtx() ctx: TenantContext,
@@ -97,6 +100,7 @@ export class WorkOrdersController {
 
   @Post(':id/start')
   @Permissions('work_orders:update')
+  @Audit({ entityType: 'WorkOrder', idParam: 'id' })
   @ApiOperation({ summary: 'Start working on a work order' })
   async start(@TenantCtx() ctx: TenantContext, @Param('id') id: string) {
     return this.workOrdersService.start(ctx, id);
@@ -104,6 +108,7 @@ export class WorkOrdersController {
 
   @Post(':id/complete')
   @Permissions('work_orders:update')
+  @Audit({ entityType: 'WorkOrder', idParam: 'id' })
   @ApiOperation({ summary: 'Complete a work order' })
   async complete(
     @TenantCtx() ctx: TenantContext,
