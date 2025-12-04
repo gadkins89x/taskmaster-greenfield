@@ -39,7 +39,6 @@ export function AssetsListPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<AssetStatus | 'all'>('all');
-  const [showScanner, setShowScanner] = useState(false);
 
   const { data, isLoading, error } = useAssets({
     search: search || undefined,
@@ -47,9 +46,10 @@ export function AssetsListPage() {
     limit: 50,
   });
 
-  const handleAssetFound = (result: { type: 'asset'; id: string }) => {
-    setShowScanner(false);
-    navigate({ to: '/assets/$assetId', params: { assetId: result.id } });
+  const handleScanComplete = (result: { type: string; code: string; data?: unknown; error?: string }) => {
+    if (result.data && typeof result.data === 'object' && 'id' in result.data) {
+      navigate({ to: '/assets/$assetId', params: { assetId: (result.data as { id: string }).id } });
+    }
   };
 
   if (isLoading) {
@@ -78,13 +78,15 @@ export function AssetsListPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Assets</h1>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setShowScanner(true)}
-        >
-          <QrCode className="h-5 w-5" />
-        </Button>
+        <BarcodeScannerModal
+          mode="asset"
+          onScanComplete={handleScanComplete}
+          trigger={
+            <Button variant="outline" size="icon">
+              <QrCode className="h-5 w-5" />
+            </Button>
+          }
+        />
       </div>
 
       {/* Search and Filters */}
@@ -190,13 +192,6 @@ export function AssetsListPage() {
         </div>
       )}
 
-      {/* Barcode Scanner Modal */}
-      <BarcodeScannerModal
-        open={showScanner}
-        onOpenChange={setShowScanner}
-        onResult={handleAssetFound}
-        mode="asset"
-      />
     </div>
   );
 }

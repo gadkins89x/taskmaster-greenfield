@@ -8,19 +8,19 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "docker compose up -d && npm run dev:apps",
-    "dev:apps": "npm run dev --workspaces --if-present",
-    "dev:api": "npm run dev -w apps/api",
-    "dev:pwa": "npm run dev -w apps/pwa",
-    "build": "npm run build --workspaces --if-present",
-    "build:api": "npm run build -w apps/api",
-    "build:pwa": "npm run build -w apps/pwa",
-    "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "test:e2e": "npm run test:e2e --workspaces --if-present",
-    "db:migrate": "npm run prisma:migrate -w apps/api",
-    "db:seed": "npm run prisma:seed -w apps/api",
-    "db:studio": "npm run prisma:studio -w apps/api",
+    "dev": "docker compose up -d && pnpm run dev:apps",
+    "dev:apps": "pnpm run -r --parallel dev",
+    "dev:api": "pnpm --filter @taskmaster/api dev",
+    "dev:pwa": "pnpm --filter @taskmaster/pwa dev",
+    "build": "pnpm run -r build",
+    "build:api": "pnpm --filter @taskmaster/api build",
+    "build:pwa": "pnpm --filter @taskmaster/pwa build",
+    "lint": "pnpm run -r lint",
+    "test": "pnpm run -r test",
+    "test:e2e": "pnpm run -r test:e2e",
+    "db:migrate": "pnpm --filter @taskmaster/api prisma:migrate",
+    "db:seed": "pnpm --filter @taskmaster/api prisma:seed",
+    "db:studio": "pnpm --filter @taskmaster/api prisma:studio",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
@@ -29,8 +29,18 @@
   },
   "engines": {
     "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "pnpm": ">=9.0.0"
   },
   "author": "TaskMaster Team",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "prisma",
+      "@prisma/engines",
+      "@prisma/client",
+      "argon2",
+      "esbuild",
+      "@nestjs/core"
+    ]
+  }
 }

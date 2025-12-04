@@ -10,7 +10,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   useResolveConflict,

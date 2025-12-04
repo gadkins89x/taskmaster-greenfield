@@ -57,9 +57,10 @@ export async function registerPushNotifications(): Promise<boolean> {
 
     if (!subscription) {
       // Subscribe to push
+      const applicationServerKey = urlBase64ToUint8Array(publicKey);
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
+        applicationServerKey: applicationServerKey.buffer as ArrayBuffer,
       });
     }
 

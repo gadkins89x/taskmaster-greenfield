@@ -38,7 +38,7 @@ export async function getConflictedItems(): Promise<ConflictItem[]> {
   for (const wo of conflictedWorkOrders) {
     try {
       const serverData = await apiClient.get<OfflineWorkOrder>(`/work-orders/${wo.id}`);
-      const fieldConflicts = compareFields(wo, serverData);
+      const fieldConflicts = compareFields(wo as unknown as Record<string, unknown>, serverData as unknown as Record<string, unknown>);
 
       conflicts.push({
         id: `workOrder:${wo.id}`,
@@ -73,7 +73,7 @@ export async function getConflictedItems(): Promise<ConflictItem[]> {
   for (const asset of conflictedAssets) {
     try {
       const serverData = await apiClient.get<OfflineAsset>(`/assets/${asset.id}`);
-      const fieldConflicts = compareFields(asset, serverData);
+      const fieldConflicts = compareFields(asset as unknown as Record<string, unknown>, serverData as unknown as Record<string, unknown>);
 
       conflicts.push({
         id: `asset:${asset.id}`,
@@ -366,7 +366,7 @@ export async function markAsConflict(
       await db.assets.update(entityId, {
         _syncStatus: 'conflict',
         _serverVersion: serverVersion,
-      });
+      } as Partial<OfflineAsset>);
       break;
   }
 }
