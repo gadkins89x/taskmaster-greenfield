@@ -32,5 +32,15 @@
     "pnpm": ">=9.0.0"
   },
   "author": "TaskMaster Team",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "prisma",
+      "@prisma/engines",
+      "@prisma/client",
+      "argon2",
+      "esbuild",
+      "@nestjs/core"
+    ]
+  }
 }
