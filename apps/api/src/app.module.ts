@@ -9,6 +9,7 @@ import { DatabaseModule } from './common/database/database.module';
 import { RedisModule } from './common/redis/redis.module';
 import { QueueModule } from './common/queue/queue.module';
 import { AuthModule } from './common/auth/auth.module';
+import { StorageModule } from './common/storage/storage.module';
 
 // Feature modules
 import { TenantsModule } from './modules/tenants/tenants.module';
@@ -23,6 +24,7 @@ import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { TeamsModule } from './modules/teams/teams.module';
 import { HealthModule } from './health/health.module';
 
 import { configSchema } from './common/config/config.schema';
@@ -63,6 +65,7 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
     RedisModule,
     QueueModule,
     AuthModule,
+    StorageModule.forRoot(),
 
     // Feature modules
     TenantsModule,
@@ -77,6 +80,7 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
     AuditModule,
     NotificationsModule,
     DashboardModule,
+    TeamsModule,
     HealthModule,
   ],
   providers: [

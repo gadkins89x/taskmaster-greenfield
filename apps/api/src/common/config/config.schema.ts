@@ -25,11 +25,15 @@ export const configSchema = z.object({
   S3_SECRET_KEY: z.string().optional(),
 
   // Email (optional)
+  EMAIL_PROVIDER: z.enum(['console', 'resend', 'smtp']).default('console'),
+  RESEND_API_KEY: z.string().optional(),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().email().optional(),
+  EMAIL_FROM: z.string().email().optional().default('noreply@taskmaster.app'),
+  EMAIL_FROM_NAME: z.string().optional().default('TaskMaster CMMS'),
 
   // Web Push (VAPID) - optional, required for push notifications
   VAPID_SUBJECT: z.string().optional(),

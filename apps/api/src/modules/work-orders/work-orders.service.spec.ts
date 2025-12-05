@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { WorkOrdersService } from './work-orders.service';
 import { PrismaService } from '../../common/database/prisma.service';
-import { AuditService } from '../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 
 describe('WorkOrdersService', () => {
@@ -26,6 +26,7 @@ describe('WorkOrdersService', () => {
       count: jest.fn(),
     },
     workOrderStep: {
+      findFirst: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
     },
@@ -51,8 +52,10 @@ describe('WorkOrdersService', () => {
     },
   };
 
-  const mockAuditService = {
-    log: jest.fn(),
+  const mockNotificationsService = {
+    sendNotification: jest.fn(),
+    sendWorkOrderAssignment: jest.fn(),
+    sendWorkOrderStatusChange: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -60,7 +63,7 @@ describe('WorkOrdersService', () => {
       providers: [
         WorkOrdersService,
         { provide: PrismaService, useValue: mockPrismaService },
-        { provide: AuditService, useValue: mockAuditService },
+        { provide: NotificationsService, useValue: mockNotificationsService },
       ],
     }).compile();
 
@@ -114,9 +117,28 @@ describe('WorkOrdersService', () => {
         id: workOrderId,
         workOrderNumber: 'WO-2025-0001',
         title: 'Test WO',
+        description: 'Test description',
         status: 'completed',
+        priority: 'medium',
+        type: 'reactive',
+        dueDate: null,
+        estimatedHours: null,
+        startedAt: new Date(),
         completedAt: new Date(),
+        completionNotes: 'All tasks finished',
+        actualHours: 4,
         version: 2,
+        tenantId: mockTenantContext.tenantId,
+        assetId: null,
+        locationId: null,
+        assignedToId: null,
+        createdById: 'user-456',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        asset: null,
+        location: null,
+        assignedTo: null,
+        createdBy: { id: 'user-456', firstName: 'Creator', lastName: 'User' },
         steps: [],
         comments: [],
         photos: [],
@@ -156,8 +178,28 @@ describe('WorkOrdersService', () => {
         id: workOrderId,
         workOrderNumber: 'WO-2025-0001',
         title: 'Test WO',
+        description: 'Test description',
         status: 'in_progress',
+        priority: 'medium',
+        type: 'reactive',
+        dueDate: null,
+        estimatedHours: null,
         startedAt: new Date(),
+        completedAt: null,
+        completionNotes: null,
+        actualHours: null,
+        version: 1,
+        tenantId: mockTenantContext.tenantId,
+        assetId: null,
+        locationId: null,
+        assignedToId: null,
+        createdById: 'user-456',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        asset: null,
+        location: null,
+        assignedTo: null,
+        createdBy: { id: 'user-456', firstName: 'Creator', lastName: 'User' },
         steps: [],
         comments: [],
         photos: [],
@@ -187,8 +229,40 @@ describe('WorkOrdersService', () => {
       // Mock findById to verify access
       mockPrismaService.workOrder.findFirst.mockResolvedValue({
         id: workOrderId,
+        workOrderNumber: 'WO-2025-0001',
+        title: 'Test WO',
+        description: 'Test description',
+        status: 'in_progress',
+        priority: 'medium',
+        type: 'reactive',
+        dueDate: null,
+        estimatedHours: null,
+        startedAt: new Date(),
+        completedAt: null,
+        completionNotes: null,
+        actualHours: null,
+        version: 1,
         tenantId: mockTenantContext.tenantId,
-        steps: [{ id: stepId, title: 'Test Step' }],
+        assetId: null,
+        locationId: null,
+        assignedToId: null,
+        createdById: 'user-456',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        asset: null,
+        location: null,
+        assignedTo: null,
+        createdBy: { id: 'user-456', firstName: 'Creator', lastName: 'User' },
+        steps: [{
+          id: stepId,
+          title: 'Test Step',
+          stepOrder: 1,
+          isRequired: true,
+          isCompleted: false,
+          completedBy: null,
+          completedAt: null,
+          completionNotes: null,
+        }],
         comments: [],
         photos: [],
         laborEntries: [],
@@ -196,14 +270,35 @@ describe('WorkOrdersService', () => {
         signatures: [],
       });
 
+      // Mock step findFirst
+      mockPrismaService.workOrderStep.findFirst.mockResolvedValue({
+        id: stepId,
+        workOrderId,
+        stepOrder: 1,
+        title: 'Test Step',
+        description: null,
+        isRequired: true,
+        isCompleted: false,
+        completedById: null,
+        completedAt: null,
+        completionNotes: null,
+      });
+
       mockPrismaService.workOrderStep.update.mockResolvedValue({
         id: stepId,
+        workOrderId,
+        stepOrder: 1,
+        title: 'Test Step',
+        description: null,
+        isRequired: true,
         isCompleted: true,
         completedById: mockTenantContext.userId,
         completedAt: new Date(),
+        completionNotes: 'Step done',
+        completedBy: { id: mockTenantContext.userId, firstName: 'Test', lastName: 'User' },
       });
 
-      await service.completeStep(
+      const result = await service.completeStep(
         mockTenantContext,
         workOrderId,
         stepId,
@@ -218,7 +313,9 @@ describe('WorkOrdersService', () => {
           completedAt: expect.any(Date),
           completionNotes: 'Step done',
         }),
+        include: expect.any(Object),
       });
+      expect(result.isCompleted).toBe(true);
     });
   });
 });

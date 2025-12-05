@@ -196,6 +196,7 @@ export type TenantWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   users?: Prisma.UserListRelationFilter
   roles?: Prisma.RoleListRelationFilter
+  teams?: Prisma.TeamListRelationFilter
   locations?: Prisma.LocationListRelationFilter
   assets?: Prisma.AssetListRelationFilter
   workOrders?: Prisma.WorkOrderListRelationFilter
@@ -214,6 +215,7 @@ export type TenantOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   roles?: Prisma.RoleOrderByRelationAggregateInput
+  teams?: Prisma.TeamOrderByRelationAggregateInput
   locations?: Prisma.LocationOrderByRelationAggregateInput
   assets?: Prisma.AssetOrderByRelationAggregateInput
   workOrders?: Prisma.WorkOrderOrderByRelationAggregateInput
@@ -235,6 +237,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   users?: Prisma.UserListRelationFilter
   roles?: Prisma.RoleListRelationFilter
+  teams?: Prisma.TeamListRelationFilter
   locations?: Prisma.LocationListRelationFilter
   assets?: Prisma.AssetListRelationFilter
   workOrders?: Prisma.WorkOrderListRelationFilter
@@ -279,6 +282,7 @@ export type TenantCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -297,6 +301,7 @@ export type TenantUncheckedCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -315,6 +320,7 @@ export type TenantUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -333,6 +339,7 @@ export type TenantUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -444,6 +451,20 @@ export type TenantUpdateOneRequiredWithoutRolesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutRolesInput, Prisma.TenantUpdateWithoutRolesInput>, Prisma.TenantUncheckedUpdateWithoutRolesInput>
 }
 
+export type TenantCreateNestedOneWithoutTeamsInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTeamsInput, Prisma.TenantUncheckedCreateWithoutTeamsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTeamsInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutTeamsNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTeamsInput, Prisma.TenantUncheckedCreateWithoutTeamsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTeamsInput
+  upsert?: Prisma.TenantUpsertWithoutTeamsInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTeamsInput, Prisma.TenantUpdateWithoutTeamsInput>, Prisma.TenantUncheckedUpdateWithoutTeamsInput>
+}
+
 export type TenantCreateNestedOneWithoutLocationsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutLocationsInput, Prisma.TenantUncheckedCreateWithoutLocationsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutLocationsInput
@@ -537,6 +558,7 @@ export type TenantCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -554,6 +576,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -587,6 +610,7 @@ export type TenantUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -604,6 +628,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -621,6 +646,7 @@ export type TenantCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -638,6 +664,7 @@ export type TenantUncheckedCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -671,6 +698,7 @@ export type TenantUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -688,6 +716,95 @@ export type TenantUncheckedUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
+  workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutTenantNestedInput
+  inventoryItems?: Prisma.InventoryItemUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutTeamsInput = {
+  id?: string
+  name: string
+  slug: string
+  settings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
+  assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
+  workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutTenantInput
+  inventoryItems?: Prisma.InventoryItemCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutTeamsInput = {
+  id?: string
+  name: string
+  slug: string
+  settings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
+  workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutTenantInput
+  inventoryItems?: Prisma.InventoryItemUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutTeamsInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTeamsInput, Prisma.TenantUncheckedCreateWithoutTeamsInput>
+}
+
+export type TenantUpsertWithoutTeamsInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutTeamsInput, Prisma.TenantUncheckedUpdateWithoutTeamsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTeamsInput, Prisma.TenantUncheckedCreateWithoutTeamsInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutTeamsInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutTeamsInput, Prisma.TenantUncheckedUpdateWithoutTeamsInput>
+}
+
+export type TenantUpdateWithoutTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  settings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
+  workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutTenantNestedInput
+  inventoryItems?: Prisma.InventoryItemUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  settings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -706,6 +823,7 @@ export type TenantCreateWithoutLocationsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutTenantInput
@@ -723,6 +841,7 @@ export type TenantUncheckedCreateWithoutLocationsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutTenantInput
@@ -756,6 +875,7 @@ export type TenantUpdateWithoutLocationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutTenantNestedInput
@@ -773,6 +893,7 @@ export type TenantUncheckedUpdateWithoutLocationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutTenantNestedInput
@@ -790,6 +911,7 @@ export type TenantCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutTenantInput
@@ -807,6 +929,7 @@ export type TenantUncheckedCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutTenantInput
@@ -840,6 +963,7 @@ export type TenantUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutTenantNestedInput
@@ -857,6 +981,7 @@ export type TenantUncheckedUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutTenantNestedInput
@@ -874,6 +999,7 @@ export type TenantCreateWithoutWorkOrdersInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutTenantInput
@@ -891,6 +1017,7 @@ export type TenantUncheckedCreateWithoutWorkOrdersInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutTenantInput
@@ -924,6 +1051,7 @@ export type TenantUpdateWithoutWorkOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutTenantNestedInput
@@ -941,6 +1069,7 @@ export type TenantUncheckedUpdateWithoutWorkOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutTenantNestedInput
@@ -958,6 +1087,7 @@ export type TenantCreateWithoutMaintenanceSchedulesInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -975,6 +1105,7 @@ export type TenantUncheckedCreateWithoutMaintenanceSchedulesInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -1008,6 +1139,7 @@ export type TenantUpdateWithoutMaintenanceSchedulesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -1025,6 +1157,7 @@ export type TenantUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -1042,6 +1175,7 @@ export type TenantCreateWithoutInventoryItemsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -1059,6 +1193,7 @@ export type TenantUncheckedCreateWithoutInventoryItemsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -1092,6 +1227,7 @@ export type TenantUpdateWithoutInventoryItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -1109,6 +1245,7 @@ export type TenantUncheckedUpdateWithoutInventoryItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -1126,6 +1263,7 @@ export type TenantCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutTenantInput
@@ -1143,6 +1281,7 @@ export type TenantUncheckedCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutTenantInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutTenantInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutTenantInput
   workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutTenantInput
@@ -1176,6 +1315,7 @@ export type TenantUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutTenantNestedInput
@@ -1193,6 +1333,7 @@ export type TenantUncheckedUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutTenantNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutTenantNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutTenantNestedInput
   workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -1208,6 +1349,7 @@ export type TenantUncheckedUpdateWithoutAuditLogsInput = {
 export type TenantCountOutputType = {
   users: number
   roles: number
+  teams: number
   locations: number
   assets: number
   workOrders: number
@@ -1219,6 +1361,7 @@ export type TenantCountOutputType = {
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | TenantCountOutputTypeCountUsersArgs
   roles?: boolean | TenantCountOutputTypeCountRolesArgs
+  teams?: boolean | TenantCountOutputTypeCountTeamsArgs
   locations?: boolean | TenantCountOutputTypeCountLocationsArgs
   assets?: boolean | TenantCountOutputTypeCountAssetsArgs
   workOrders?: boolean | TenantCountOutputTypeCountWorkOrdersArgs
@@ -1249,6 +1392,13 @@ export type TenantCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Types.Ex
  */
 export type TenantCountOutputTypeCountRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RoleWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountTeamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeamWhereInput
 }
 
 /**
@@ -1304,6 +1454,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   updatedAt?: boolean
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   roles?: boolean | Prisma.Tenant$rolesArgs<ExtArgs>
+  teams?: boolean | Prisma.Tenant$teamsArgs<ExtArgs>
   locations?: boolean | Prisma.Tenant$locationsArgs<ExtArgs>
   assets?: boolean | Prisma.Tenant$assetsArgs<ExtArgs>
   workOrders?: boolean | Prisma.Tenant$workOrdersArgs<ExtArgs>
@@ -1347,6 +1498,7 @@ export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   roles?: boolean | Prisma.Tenant$rolesArgs<ExtArgs>
+  teams?: boolean | Prisma.Tenant$teamsArgs<ExtArgs>
   locations?: boolean | Prisma.Tenant$locationsArgs<ExtArgs>
   assets?: boolean | Prisma.Tenant$assetsArgs<ExtArgs>
   workOrders?: boolean | Prisma.Tenant$workOrdersArgs<ExtArgs>
@@ -1363,6 +1515,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     roles: Prisma.$RolePayload<ExtArgs>[]
+    teams: Prisma.$TeamPayload<ExtArgs>[]
     locations: Prisma.$LocationPayload<ExtArgs>[]
     assets: Prisma.$AssetPayload<ExtArgs>[]
     workOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
@@ -1774,6 +1927,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Tenant$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   roles<T extends Prisma.Tenant$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teams<T extends Prisma.Tenant$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locations<T extends Prisma.Tenant$locationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$locationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assets<T extends Prisma.Tenant$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workOrders<T extends Prisma.Tenant$workOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$workOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2249,6 +2403,30 @@ export type Tenant$rolesArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.RoleScalarFieldEnum | Prisma.RoleScalarFieldEnum[]
+}
+
+/**
+ * Tenant.teams
+ */
+export type Tenant$teamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
+  orderBy?: Prisma.TeamOrderByWithRelationInput | Prisma.TeamOrderByWithRelationInput[]
+  cursor?: Prisma.TeamWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
 }
 
 /**

@@ -58,6 +58,8 @@ export const ModelName = {
   UserRole: 'UserRole',
   RolePermission: 'RolePermission',
   RefreshToken: 'RefreshToken',
+  Team: 'Team',
+  UserTeam: 'UserTeam',
   Location: 'Location',
   Asset: 'Asset',
   WorkOrder: 'WorkOrder',
@@ -176,9 +178,36 @@ export const RefreshTokenScalarFieldEnum = {
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
+export const TeamScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  color: 'color',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeamScalarFieldEnum = (typeof TeamScalarFieldEnum)[keyof typeof TeamScalarFieldEnum]
+
+
+export const UserTeamScalarFieldEnum = {
+  userId: 'userId',
+  teamId: 'teamId',
+  role: 'role',
+  isPrimary: 'isPrimary',
+  joinedAt: 'joinedAt'
+} as const
+
+export type UserTeamScalarFieldEnum = (typeof UserTeamScalarFieldEnum)[keyof typeof UserTeamScalarFieldEnum]
+
+
 export const LocationScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  teamId: 'teamId',
   parentId: 'parentId',
   name: 'name',
   code: 'code',
@@ -198,6 +227,7 @@ export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typ
 export const AssetScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  teamId: 'teamId',
   locationId: 'locationId',
   parentAssetId: 'parentAssetId',
   name: 'name',
@@ -220,6 +250,7 @@ export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof As
 export const WorkOrderScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  teamId: 'teamId',
   workOrderNumber: 'workOrderNumber',
   assetId: 'assetId',
   locationId: 'locationId',
@@ -392,6 +423,7 @@ export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFiel
 export const MaintenanceScheduleScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  teamId: 'teamId',
   name: 'name',
   description: 'description',
   assetId: 'assetId',
@@ -445,6 +477,7 @@ export type ScheduledWorkOrderScalarFieldEnum = (typeof ScheduledWorkOrderScalar
 export const InventoryItemScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
+  teamId: 'teamId',
   itemNumber: 'itemNumber',
   name: 'name',
   description: 'description',

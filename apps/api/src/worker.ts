@@ -1,6 +1,9 @@
 import { Worker, Job } from 'bullmq';
 import Redis from 'ioredis';
 import { z } from 'zod';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@/generated/prisma/client';
 import { configSchema } from './common/config/config.schema';
 import nodemailer from 'nodemailer';
 import webPush from 'web-push';
@@ -19,6 +22,11 @@ const env = configSchema.parse(process.env);
 const connection = new Redis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
 });
+
+// Prisma client for database operations
+const pool = new Pool({ connectionString: env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // Job payload schemas
 const EmailJobSchema = z.object({
@@ -138,14 +146,139 @@ async function processAggregationJob(job: Job): Promise<void> {
 
   logger.info({ type: data.type, tenantId: data.tenantId }, 'Processing aggregation job');
 
-  // This is a placeholder - actual aggregation would query the database
-  // and compute metrics like:
-  // - Work orders completed
-  // - Average completion time
-  // - Parts used
-  // - Labor hours
+  const { tenantId, type, date } = data;
+  const targetDate = new Date(date);
 
-  logger.info({ type: data.type, tenantId: data.tenantId }, 'Aggregation job completed');
+  // Calculate date range based on aggregation type
+  let startDate: Date;
+  let endDate: Date;
+
+  switch (type) {
+    case 'daily':
+      startDate = new Date(targetDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(targetDate);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'weekly':
+      startDate = new Date(targetDate);
+      startDate.setDate(startDate.getDate() - startDate.getDay()); // Start of week (Sunday)
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 6);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'monthly':
+      startDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+      endDate = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0, 23, 59, 59, 999);
+      break;
+  }
+
+  // Aggregate work order metrics
+  const workOrderStats = await prisma.workOrder.groupBy({
+    by: ['status'],
+    where: {
+      tenantId,
+      createdAt: { gte: startDate, lte: endDate },
+    },
+    _count: { id: true },
+  });
+
+  const completedWorkOrders = await prisma.workOrder.findMany({
+    where: {
+      tenantId,
+      status: 'completed',
+      completedAt: { gte: startDate, lte: endDate },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      completedAt: true,
+      actualHours: true,
+      estimatedHours: true,
+    },
+  });
+
+  // Calculate completion metrics
+  const totalCompleted = completedWorkOrders.length;
+  const totalActualHours = completedWorkOrders.reduce((sum, wo) => sum + (wo.actualHours || 0), 0);
+  const totalEstimatedHours = completedWorkOrders.reduce((sum, wo) => sum + (wo.estimatedHours || 0), 0);
+
+  // Calculate average completion time (in hours)
+  let avgCompletionTime = 0;
+  if (totalCompleted > 0) {
+    const completionTimes = completedWorkOrders
+      .filter(wo => wo.completedAt && wo.createdAt)
+      .map(wo => {
+        const created = new Date(wo.createdAt).getTime();
+        const completed = new Date(wo.completedAt!).getTime();
+        return (completed - created) / (1000 * 60 * 60); // Hours
+      });
+    avgCompletionTime = completionTimes.length > 0
+      ? completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length
+      : 0;
+  }
+
+  // Aggregate labor hours
+  const laborStats = await prisma.workOrderLabor.aggregate({
+    where: {
+      workOrder: { tenantId },
+      startTime: { gte: startDate, lte: endDate },
+    },
+    _sum: { hours: true },
+    _count: true,
+  });
+
+  // Aggregate parts usage
+  const partsUsage = await prisma.workOrderPart.aggregate({
+    where: {
+      workOrder: { tenantId },
+      createdAt: { gte: startDate, lte: endDate },
+    },
+    _sum: { quantity: true, totalCost: true },
+    _count: true,
+  });
+
+  // Count by status
+  const statusCounts = Object.fromEntries(
+    workOrderStats.map(stat => [stat.status, stat._count.id])
+  );
+
+  // Log the aggregated metrics (in production, store these in an analytics table)
+  const metrics = {
+    tenantId,
+    period: type,
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+    workOrders: {
+      total: Object.values(statusCounts).reduce((a: number, b) => a + (b as number), 0),
+      byStatus: statusCounts,
+      completed: totalCompleted,
+      avgCompletionTimeHours: Math.round(avgCompletionTime * 100) / 100,
+    },
+    labor: {
+      totalEntries: laborStats._count,
+      totalHours: laborStats._sum.hours?.toNumber() || 0,
+    },
+    parts: {
+      totalUsed: partsUsage._count,
+      totalQuantity: partsUsage._sum.quantity || 0,
+      totalCost: partsUsage._sum.totalCost?.toNumber() || 0,
+    },
+    efficiency: {
+      actualVsEstimated: totalEstimatedHours > 0
+        ? Math.round((totalActualHours / totalEstimatedHours) * 100)
+        : null,
+    },
+  };
+
+  logger.info({ metrics }, 'Aggregation metrics computed');
+
+  // Store in Redis for dashboard queries (cache for 24 hours)
+  const cacheKey = `metrics:${tenantId}:${type}:${date}`;
+  await connection.setex(cacheKey, 86400, JSON.stringify(metrics));
+
+  logger.info({ type, tenantId, cacheKey }, 'Aggregation job completed');
 }
 
 // Create workers
@@ -207,6 +340,8 @@ async function shutdown() {
     pushWorker.close(),
     aggregationWorker.close(),
   ]);
+  await prisma.$disconnect();
+  await pool.end();
   await connection.quit();
   logger.info('Workers shut down gracefully');
   process.exit(0);

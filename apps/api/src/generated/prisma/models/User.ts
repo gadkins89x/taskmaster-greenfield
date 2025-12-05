@@ -240,6 +240,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   userRoles?: Prisma.UserRoleListRelationFilter
+  userTeams?: Prisma.UserTeamListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   createdWorkOrders?: Prisma.WorkOrderListRelationFilter
   assignedWorkOrders?: Prisma.WorkOrderListRelationFilter
@@ -272,6 +273,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
   userRoles?: Prisma.UserRoleOrderByRelationAggregateInput
+  userTeams?: Prisma.UserTeamOrderByRelationAggregateInput
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
   createdWorkOrders?: Prisma.WorkOrderOrderByRelationAggregateInput
   assignedWorkOrders?: Prisma.WorkOrderOrderByRelationAggregateInput
@@ -308,6 +310,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   userRoles?: Prisma.UserRoleListRelationFilter
+  userTeams?: Prisma.UserTeamListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   createdWorkOrders?: Prisma.WorkOrderListRelationFilter
   assignedWorkOrders?: Prisma.WorkOrderListRelationFilter
@@ -375,6 +378,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -406,6 +410,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -437,6 +442,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -468,6 +474,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -675,6 +682,20 @@ export type UserUpdateOneRequiredWithoutRefreshTokensNestedInput = {
   upsert?: Prisma.UserUpsertWithoutRefreshTokensInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.UserUpdateWithoutRefreshTokensInput>, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type UserCreateNestedOneWithoutUserTeamsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserTeamsInput, Prisma.UserUncheckedCreateWithoutUserTeamsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserTeamsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserTeamsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserTeamsInput, Prisma.UserUncheckedCreateWithoutUserTeamsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserTeamsInput
+  upsert?: Prisma.UserUpsertWithoutUserTeamsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserTeamsInput, Prisma.UserUpdateWithoutUserTeamsInput>, Prisma.UserUncheckedUpdateWithoutUserTeamsInput>
 }
 
 export type UserCreateNestedOneWithoutCreatedWorkOrdersInput = {
@@ -894,6 +915,7 @@ export type UserCreateWithoutTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -924,6 +946,7 @@ export type UserUncheckedCreateWithoutTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -998,6 +1021,7 @@ export type UserCreateWithoutUserRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -1028,6 +1052,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -1074,6 +1099,7 @@ export type UserUpdateWithoutUserRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -1104,6 +1130,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -1135,6 +1162,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
   completedSteps?: Prisma.WorkOrderStepCreateNestedManyWithoutCompletedByInput
@@ -1165,6 +1193,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
   completedSteps?: Prisma.WorkOrderStepUncheckedCreateNestedManyWithoutCompletedByInput
@@ -1211,6 +1240,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
   completedSteps?: Prisma.WorkOrderStepUpdateManyWithoutCompletedByNestedInput
@@ -1241,6 +1271,147 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
+  createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+  completedSteps?: Prisma.WorkOrderStepUncheckedUpdateManyWithoutCompletedByNestedInput
+  comments?: Prisma.WorkOrderCommentUncheckedUpdateManyWithoutUserNestedInput
+  signatures?: Prisma.WorkOrderSignatureUncheckedUpdateManyWithoutUserNestedInput
+  uploadedPhotos?: Prisma.WorkOrderPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  laborEntries?: Prisma.WorkOrderLaborUncheckedUpdateManyWithoutUserNestedInput
+  partsAdded?: Prisma.WorkOrderPartUncheckedUpdateManyWithoutAddedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutPerformedByNestedInput
+  assignedSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUserTeamsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  avatarUrl?: string | null
+  isActive?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
+  assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
+  completedSteps?: Prisma.WorkOrderStepCreateNestedManyWithoutCompletedByInput
+  comments?: Prisma.WorkOrderCommentCreateNestedManyWithoutUserInput
+  signatures?: Prisma.WorkOrderSignatureCreateNestedManyWithoutUserInput
+  uploadedPhotos?: Prisma.WorkOrderPhotoCreateNestedManyWithoutUploadedByInput
+  laborEntries?: Prisma.WorkOrderLaborCreateNestedManyWithoutUserInput
+  partsAdded?: Prisma.WorkOrderPartCreateNestedManyWithoutAddedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutPerformedByInput
+  assignedSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutUserTeamsInput = {
+  id?: string
+  tenantId: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  avatarUrl?: string | null
+  isActive?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+  completedSteps?: Prisma.WorkOrderStepUncheckedCreateNestedManyWithoutCompletedByInput
+  comments?: Prisma.WorkOrderCommentUncheckedCreateNestedManyWithoutUserInput
+  signatures?: Prisma.WorkOrderSignatureUncheckedCreateNestedManyWithoutUserInput
+  uploadedPhotos?: Prisma.WorkOrderPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  laborEntries?: Prisma.WorkOrderLaborUncheckedCreateNestedManyWithoutUserInput
+  partsAdded?: Prisma.WorkOrderPartUncheckedCreateNestedManyWithoutAddedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutPerformedByInput
+  assignedSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutUserTeamsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserTeamsInput, Prisma.UserUncheckedCreateWithoutUserTeamsInput>
+}
+
+export type UserUpsertWithoutUserTeamsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserTeamsInput, Prisma.UserUncheckedUpdateWithoutUserTeamsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserTeamsInput, Prisma.UserUncheckedCreateWithoutUserTeamsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserTeamsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserTeamsInput, Prisma.UserUncheckedUpdateWithoutUserTeamsInput>
+}
+
+export type UserUpdateWithoutUserTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
+  assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
+  completedSteps?: Prisma.WorkOrderStepUpdateManyWithoutCompletedByNestedInput
+  comments?: Prisma.WorkOrderCommentUpdateManyWithoutUserNestedInput
+  signatures?: Prisma.WorkOrderSignatureUpdateManyWithoutUserNestedInput
+  uploadedPhotos?: Prisma.WorkOrderPhotoUpdateManyWithoutUploadedByNestedInput
+  laborEntries?: Prisma.WorkOrderLaborUpdateManyWithoutUserNestedInput
+  partsAdded?: Prisma.WorkOrderPartUpdateManyWithoutAddedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutPerformedByNestedInput
+  assignedSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
   completedSteps?: Prisma.WorkOrderStepUncheckedUpdateManyWithoutCompletedByNestedInput
@@ -1271,6 +1442,7 @@ export type UserCreateWithoutCreatedWorkOrdersInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
   completedSteps?: Prisma.WorkOrderStepCreateNestedManyWithoutCompletedByInput
@@ -1301,6 +1473,7 @@ export type UserUncheckedCreateWithoutCreatedWorkOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
   completedSteps?: Prisma.WorkOrderStepUncheckedCreateNestedManyWithoutCompletedByInput
@@ -1336,6 +1509,7 @@ export type UserCreateWithoutAssignedWorkOrdersInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   completedSteps?: Prisma.WorkOrderStepCreateNestedManyWithoutCompletedByInput
@@ -1366,6 +1540,7 @@ export type UserUncheckedCreateWithoutAssignedWorkOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   completedSteps?: Prisma.WorkOrderStepUncheckedCreateNestedManyWithoutCompletedByInput
@@ -1412,6 +1587,7 @@ export type UserUpdateWithoutCreatedWorkOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
   completedSteps?: Prisma.WorkOrderStepUpdateManyWithoutCompletedByNestedInput
@@ -1442,6 +1618,7 @@ export type UserUncheckedUpdateWithoutCreatedWorkOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
   completedSteps?: Prisma.WorkOrderStepUncheckedUpdateManyWithoutCompletedByNestedInput
@@ -1483,6 +1660,7 @@ export type UserUpdateWithoutAssignedWorkOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   completedSteps?: Prisma.WorkOrderStepUpdateManyWithoutCompletedByNestedInput
@@ -1513,6 +1691,7 @@ export type UserUncheckedUpdateWithoutAssignedWorkOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   completedSteps?: Prisma.WorkOrderStepUncheckedUpdateManyWithoutCompletedByNestedInput
@@ -1543,6 +1722,7 @@ export type UserCreateWithoutCompletedStepsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -1573,6 +1753,7 @@ export type UserUncheckedCreateWithoutCompletedStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -1619,6 +1800,7 @@ export type UserUpdateWithoutCompletedStepsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -1649,6 +1831,7 @@ export type UserUncheckedUpdateWithoutCompletedStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -1679,6 +1862,7 @@ export type UserCreateWithoutCommentsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -1709,6 +1893,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -1755,6 +1940,7 @@ export type UserUpdateWithoutCommentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -1785,6 +1971,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -1815,6 +2002,7 @@ export type UserCreateWithoutSignaturesInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -1845,6 +2033,7 @@ export type UserUncheckedCreateWithoutSignaturesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -1891,6 +2080,7 @@ export type UserUpdateWithoutSignaturesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -1921,6 +2111,7 @@ export type UserUncheckedUpdateWithoutSignaturesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -1951,6 +2142,7 @@ export type UserCreateWithoutUploadedPhotosInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -1981,6 +2173,7 @@ export type UserUncheckedCreateWithoutUploadedPhotosInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2027,6 +2220,7 @@ export type UserUpdateWithoutUploadedPhotosInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2057,6 +2251,7 @@ export type UserUncheckedUpdateWithoutUploadedPhotosInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2087,6 +2282,7 @@ export type UserCreateWithoutLaborEntriesInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2117,6 +2313,7 @@ export type UserUncheckedCreateWithoutLaborEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2163,6 +2360,7 @@ export type UserUpdateWithoutLaborEntriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2193,6 +2391,7 @@ export type UserUncheckedUpdateWithoutLaborEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2223,6 +2422,7 @@ export type UserCreateWithoutPartsAddedInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2253,6 +2453,7 @@ export type UserUncheckedCreateWithoutPartsAddedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2299,6 +2500,7 @@ export type UserUpdateWithoutPartsAddedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2329,6 +2531,7 @@ export type UserUncheckedUpdateWithoutPartsAddedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2359,6 +2562,7 @@ export type UserCreateWithoutNotificationsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2389,6 +2593,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2435,6 +2640,7 @@ export type UserUpdateWithoutNotificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2465,6 +2671,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2495,6 +2702,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2525,6 +2733,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2571,6 +2780,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2601,6 +2811,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2631,6 +2842,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2661,6 +2873,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2707,6 +2920,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2737,6 +2951,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2767,6 +2982,7 @@ export type UserCreateWithoutAssignedSchedulesInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2797,6 +3013,7 @@ export type UserUncheckedCreateWithoutAssignedSchedulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2843,6 +3060,7 @@ export type UserUpdateWithoutAssignedSchedulesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -2873,6 +3091,7 @@ export type UserUncheckedUpdateWithoutAssignedSchedulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -2903,6 +3122,7 @@ export type UserCreateWithoutInventoryTransactionsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -2933,6 +3153,7 @@ export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -2979,6 +3200,7 @@ export type UserUpdateWithoutInventoryTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -3009,6 +3231,7 @@ export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -3039,6 +3262,7 @@ export type UserCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutUsersInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssignedToInput
@@ -3069,6 +3293,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  userTeams?: Prisma.UserTeamUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
@@ -3115,6 +3340,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutUsersNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -3145,6 +3371,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -3188,6 +3415,7 @@ export type UserUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUpdateManyWithoutAssignedToNestedInput
@@ -3218,6 +3446,7 @@ export type UserUncheckedUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  userTeams?: Prisma.UserTeamUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   createdWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedWorkOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -3256,6 +3485,7 @@ export type UserUncheckedUpdateManyWithoutTenantInput = {
 
 export type UserCountOutputType = {
   userRoles: number
+  userTeams: number
   refreshTokens: number
   createdWorkOrders: number
   assignedWorkOrders: number
@@ -3275,6 +3505,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   userRoles?: boolean | UserCountOutputTypeCountUserRolesArgs
+  userTeams?: boolean | UserCountOutputTypeCountUserTeamsArgs
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
   createdWorkOrders?: boolean | UserCountOutputTypeCountCreatedWorkOrdersArgs
   assignedWorkOrders?: boolean | UserCountOutputTypeCountAssignedWorkOrdersArgs
@@ -3307,6 +3538,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountUserRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserRoleWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserTeamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserTeamWhereInput
 }
 
 /**
@@ -3430,6 +3668,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   userRoles?: boolean | Prisma.User$userRolesArgs<ExtArgs>
+  userTeams?: boolean | Prisma.User$userTeamsArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   createdWorkOrders?: boolean | Prisma.User$createdWorkOrdersArgs<ExtArgs>
   assignedWorkOrders?: boolean | Prisma.User$assignedWorkOrdersArgs<ExtArgs>
@@ -3499,6 +3738,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   userRoles?: boolean | Prisma.User$userRolesArgs<ExtArgs>
+  userTeams?: boolean | Prisma.User$userTeamsArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   createdWorkOrders?: boolean | Prisma.User$createdWorkOrdersArgs<ExtArgs>
   assignedWorkOrders?: boolean | Prisma.User$assignedWorkOrdersArgs<ExtArgs>
@@ -3528,6 +3768,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
     userRoles: Prisma.$UserRolePayload<ExtArgs>[]
+    userTeams: Prisma.$UserTeamPayload<ExtArgs>[]
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
     createdWorkOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
     assignedWorkOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
@@ -3953,6 +4194,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   userRoles<T extends Prisma.User$userRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userTeams<T extends Prisma.User$userTeamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userTeamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserTeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdWorkOrders<T extends Prisma.User$createdWorkOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdWorkOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedWorkOrders<T extends Prisma.User$assignedWorkOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedWorkOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4426,6 +4668,30 @@ export type User$userRolesArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.UserRoleScalarFieldEnum | Prisma.UserRoleScalarFieldEnum[]
+}
+
+/**
+ * User.userTeams
+ */
+export type User$userTeamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserTeam
+   */
+  select?: Prisma.UserTeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserTeam
+   */
+  omit?: Prisma.UserTeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserTeamInclude<ExtArgs> | null
+  where?: Prisma.UserTeamWhereInput
+  orderBy?: Prisma.UserTeamOrderByWithRelationInput | Prisma.UserTeamOrderByWithRelationInput[]
+  cursor?: Prisma.UserTeamWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserTeamScalarFieldEnum | Prisma.UserTeamScalarFieldEnum[]
 }
 
 /**

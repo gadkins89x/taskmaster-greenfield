@@ -7,6 +7,7 @@ import {
   getLastSyncTime,
   updateLastSyncTime,
   type OfflineWorkOrder,
+  type OfflineInventoryItem,
   type SyncQueueItem,
 } from './db';
 import { apiClient } from './api-client';
@@ -153,7 +154,9 @@ class SyncService {
       case 'asset':
         await this.syncAsset(entityId, operation, payload);
         break;
-      // Add more entity types as needed
+      case 'inventoryItem':
+        await this.syncInventoryItem(entityId, operation, payload);
+        break;
       default:
         console.warn(`[Sync] Unknown entity type: ${entityType}`);
     }
@@ -223,6 +226,26 @@ class SyncService {
     await db.assets.update(id, { _syncStatus: 'synced' });
   }
 
+  private async syncInventoryItem(
+    id: string,
+    operation: SyncQueueItem['operation'],
+    payload: unknown
+  ): Promise<void> {
+    switch (operation) {
+      case 'create':
+        await apiClient.post('/inventory', payload);
+        break;
+      case 'update':
+        await apiClient.patch(`/inventory/${id}`, payload);
+        break;
+      case 'delete':
+        await apiClient.delete(`/inventory/${id}`);
+        break;
+    }
+
+    await db.inventoryItems.update(id, { _syncStatus: 'synced' });
+  }
+
   private async pullChanges(): Promise<void> {
     // Pull work orders
     await this.pullWorkOrders();
@@ -232,6 +255,9 @@ class SyncService {
 
     // Pull locations (usually don't change often)
     await this.pullLocations();
+
+    // Pull inventory items (for parts lookup offline)
+    await this.pullInventory();
   }
 
   private async pullWorkOrders(): Promise<void> {
@@ -325,6 +351,37 @@ class SyncService {
       console.error('[Sync] Error pulling locations:', error);
     }
   }
+
+  private async pullInventory(): Promise<void> {
+    const lastSync = await getLastSyncTime('inventory');
+    const params = lastSync ? `?since=${encodeURIComponent(lastSync)}` : '';
+
+    try {
+      const response = await apiClient.get<{ data: OfflineInventoryItem[]; serverTime: string }>(
+        `/inventory${params}`
+      );
+
+      await db.transaction('rw', db.inventoryItems, async () => {
+        for (const item of response.data) {
+          const existing = await db.inventoryItems.get(item.id);
+
+          // Skip if local version is newer (pending sync)
+          if (existing?._syncStatus === 'pending') {
+            continue;
+          }
+
+          await db.inventoryItems.put({
+            ...item,
+            _syncStatus: 'synced',
+          });
+        }
+      });
+
+      await updateLastSyncTime('inventory', response.serverTime);
+    } catch (error) {
+      console.error('[Sync] Error pulling inventory:', error);
+    }
+  }
 }
 
 // Export singleton instance
@@ -373,4 +430,38 @@ export async function updateWorkOrderOffline(
       version: workOrder.version,
     });
   }
+}
+
+// Helper function to get inventory item from offline cache
+export async function getInventoryItemOffline(id: string): Promise<OfflineInventoryItem | undefined> {
+  return db.inventoryItems.get(id);
+}
+
+// Helper function to get all inventory items from offline cache
+export async function getAllInventoryOffline(): Promise<OfflineInventoryItem[]> {
+  return db.inventoryItems.toArray();
+}
+
+// Helper function to search inventory items offline
+export async function searchInventoryOffline(query: string): Promise<OfflineInventoryItem[]> {
+  const lowerQuery = query.toLowerCase();
+  return db.inventoryItems
+    .filter(item =>
+      item.name.toLowerCase().includes(lowerQuery) ||
+      item.itemNumber.toLowerCase().includes(lowerQuery) ||
+      (item.description?.toLowerCase().includes(lowerQuery) ?? false)
+    )
+    .toArray();
+}
+
+// Helper function to get inventory items by category offline
+export async function getInventoryByCategoryOffline(category: string): Promise<OfflineInventoryItem[]> {
+  return db.inventoryItems.where('category').equals(category).toArray();
+}
+
+// Helper function to get low stock items offline
+export async function getLowStockItemsOffline(): Promise<OfflineInventoryItem[]> {
+  return db.inventoryItems
+    .filter(item => item.currentStock <= item.reorderPoint)
+    .toArray();
 }

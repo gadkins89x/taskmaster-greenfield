@@ -41,6 +41,7 @@ export type WorkOrderSumAggregateOutputType = {
 export type WorkOrderMinAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   workOrderNumber: string | null
   assetId: string | null
   locationId: string | null
@@ -65,6 +66,7 @@ export type WorkOrderMinAggregateOutputType = {
 export type WorkOrderMaxAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   workOrderNumber: string | null
   assetId: string | null
   locationId: string | null
@@ -89,6 +91,7 @@ export type WorkOrderMaxAggregateOutputType = {
 export type WorkOrderCountAggregateOutputType = {
   id: number
   tenantId: number
+  teamId: number
   workOrderNumber: number
   assetId: number
   locationId: number
@@ -127,6 +130,7 @@ export type WorkOrderSumAggregateInputType = {
 export type WorkOrderMinAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   workOrderNumber?: true
   assetId?: true
   locationId?: true
@@ -151,6 +155,7 @@ export type WorkOrderMinAggregateInputType = {
 export type WorkOrderMaxAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   workOrderNumber?: true
   assetId?: true
   locationId?: true
@@ -175,6 +180,7 @@ export type WorkOrderMaxAggregateInputType = {
 export type WorkOrderCountAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   workOrderNumber?: true
   assetId?: true
   locationId?: true
@@ -286,6 +292,7 @@ export type WorkOrderGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type WorkOrderGroupByOutputType = {
   id: string
   tenantId: string
+  teamId: string | null
   workOrderNumber: string
   assetId: string | null
   locationId: string | null
@@ -333,6 +340,7 @@ export type WorkOrderWhereInput = {
   NOT?: Prisma.WorkOrderWhereInput | Prisma.WorkOrderWhereInput[]
   id?: Prisma.UuidFilter<"WorkOrder"> | string
   tenantId?: Prisma.UuidFilter<"WorkOrder"> | string
+  teamId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   workOrderNumber?: Prisma.StringFilter<"WorkOrder"> | string
   assetId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   locationId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
@@ -353,6 +361,7 @@ export type WorkOrderWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   asset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -369,6 +378,7 @@ export type WorkOrderWhereInput = {
 export type WorkOrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   workOrderNumber?: Prisma.SortOrder
   assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -389,6 +399,7 @@ export type WorkOrderOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  team?: Prisma.TeamOrderByWithRelationInput
   asset?: Prisma.AssetOrderByWithRelationInput
   location?: Prisma.LocationOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
@@ -409,6 +420,7 @@ export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.WorkOrderWhereInput[]
   NOT?: Prisma.WorkOrderWhereInput | Prisma.WorkOrderWhereInput[]
   tenantId?: Prisma.UuidFilter<"WorkOrder"> | string
+  teamId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   workOrderNumber?: Prisma.StringFilter<"WorkOrder"> | string
   assetId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   locationId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
@@ -429,6 +441,7 @@ export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkOrder"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   asset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -445,6 +458,7 @@ export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
 export type WorkOrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   workOrderNumber?: Prisma.SortOrder
   assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -477,6 +491,7 @@ export type WorkOrderScalarWhereWithAggregatesInput = {
   NOT?: Prisma.WorkOrderScalarWhereWithAggregatesInput | Prisma.WorkOrderScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"WorkOrder"> | string
   tenantId?: Prisma.UuidWithAggregatesFilter<"WorkOrder"> | string
+  teamId?: Prisma.UuidNullableWithAggregatesFilter<"WorkOrder"> | string | null
   workOrderNumber?: Prisma.StringWithAggregatesFilter<"WorkOrder"> | string
   assetId?: Prisma.UuidNullableWithAggregatesFilter<"WorkOrder"> | string | null
   locationId?: Prisma.UuidNullableWithAggregatesFilter<"WorkOrder"> | string | null
@@ -516,6 +531,7 @@ export type WorkOrderCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -532,6 +548,7 @@ export type WorkOrderCreateInput = {
 export type WorkOrderUncheckedCreateInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -578,6 +595,7 @@ export type WorkOrderUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -594,6 +612,7 @@ export type WorkOrderUpdateInput = {
 export type WorkOrderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -625,6 +644,7 @@ export type WorkOrderUncheckedUpdateInput = {
 export type WorkOrderCreateManyInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -668,6 +688,7 @@ export type WorkOrderUpdateManyMutationInput = {
 export type WorkOrderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -707,6 +728,7 @@ export type WorkOrderTenantIdWorkOrderNumberCompoundUniqueInput = {
 export type WorkOrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   workOrderNumber?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
@@ -737,6 +759,7 @@ export type WorkOrderAvgOrderByAggregateInput = {
 export type WorkOrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   workOrderNumber?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
@@ -761,6 +784,7 @@ export type WorkOrderMaxOrderByAggregateInput = {
 export type WorkOrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   workOrderNumber?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
@@ -916,6 +940,48 @@ export type WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput = {
   connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
   update?: Prisma.WorkOrderUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.WorkOrderUpdateWithWhereUniqueWithoutAssignedToInput[]
   updateMany?: Prisma.WorkOrderUpdateManyWithWhereWithoutAssignedToInput | Prisma.WorkOrderUpdateManyWithWhereWithoutAssignedToInput[]
+  deleteMany?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
+}
+
+export type WorkOrderCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput> | Prisma.WorkOrderCreateWithoutTeamInput[] | Prisma.WorkOrderUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutTeamInput | Prisma.WorkOrderCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.WorkOrderCreateManyTeamInputEnvelope
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+}
+
+export type WorkOrderUncheckedCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput> | Prisma.WorkOrderCreateWithoutTeamInput[] | Prisma.WorkOrderUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutTeamInput | Prisma.WorkOrderCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.WorkOrderCreateManyTeamInputEnvelope
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+}
+
+export type WorkOrderUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput> | Prisma.WorkOrderCreateWithoutTeamInput[] | Prisma.WorkOrderUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutTeamInput | Prisma.WorkOrderCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.WorkOrderUpsertWithWhereUniqueWithoutTeamInput | Prisma.WorkOrderUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.WorkOrderCreateManyTeamInputEnvelope
+  set?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  disconnect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  delete?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  update?: Prisma.WorkOrderUpdateWithWhereUniqueWithoutTeamInput | Prisma.WorkOrderUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.WorkOrderUpdateManyWithWhereWithoutTeamInput | Prisma.WorkOrderUpdateManyWithWhereWithoutTeamInput[]
+  deleteMany?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
+}
+
+export type WorkOrderUncheckedUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput> | Prisma.WorkOrderCreateWithoutTeamInput[] | Prisma.WorkOrderUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.WorkOrderCreateOrConnectWithoutTeamInput | Prisma.WorkOrderCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.WorkOrderUpsertWithWhereUniqueWithoutTeamInput | Prisma.WorkOrderUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.WorkOrderCreateManyTeamInputEnvelope
+  set?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  disconnect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  delete?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  connect?: Prisma.WorkOrderWhereUniqueInput | Prisma.WorkOrderWhereUniqueInput[]
+  update?: Prisma.WorkOrderUpdateWithWhereUniqueWithoutTeamInput | Prisma.WorkOrderUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.WorkOrderUpdateManyWithWhereWithoutTeamInput | Prisma.WorkOrderUpdateManyWithWhereWithoutTeamInput[]
   deleteMany?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
 }
 
@@ -1134,6 +1200,7 @@ export type WorkOrderCreateWithoutTenantInput = {
   version?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -1149,6 +1216,7 @@ export type WorkOrderCreateWithoutTenantInput = {
 
 export type WorkOrderUncheckedCreateWithoutTenantInput = {
   id?: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1209,6 +1277,7 @@ export type WorkOrderScalarWhereInput = {
   NOT?: Prisma.WorkOrderScalarWhereInput | Prisma.WorkOrderScalarWhereInput[]
   id?: Prisma.UuidFilter<"WorkOrder"> | string
   tenantId?: Prisma.UuidFilter<"WorkOrder"> | string
+  teamId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   workOrderNumber?: Prisma.StringFilter<"WorkOrder"> | string
   assetId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
   locationId?: Prisma.UuidNullableFilter<"WorkOrder"> | string | null
@@ -1248,6 +1317,7 @@ export type WorkOrderCreateWithoutCreatedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   assignedTo?: Prisma.UserCreateNestedOneWithoutAssignedWorkOrdersInput
@@ -1263,6 +1333,7 @@ export type WorkOrderCreateWithoutCreatedByInput = {
 export type WorkOrderUncheckedCreateWithoutCreatedByInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1318,6 +1389,7 @@ export type WorkOrderCreateWithoutAssignedToInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -1333,6 +1405,7 @@ export type WorkOrderCreateWithoutAssignedToInput = {
 export type WorkOrderUncheckedCreateWithoutAssignedToInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1402,7 +1475,7 @@ export type WorkOrderUpdateManyWithWhereWithoutAssignedToInput = {
   data: Prisma.XOR<Prisma.WorkOrderUpdateManyMutationInput, Prisma.WorkOrderUncheckedUpdateManyWithoutAssignedToInput>
 }
 
-export type WorkOrderCreateWithoutLocationInput = {
+export type WorkOrderCreateWithoutTeamInput = {
   id?: string
   workOrderNumber: string
   title: string
@@ -1421,6 +1494,95 @@ export type WorkOrderCreateWithoutLocationInput = {
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
+  location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
+  assignedTo?: Prisma.UserCreateNestedOneWithoutAssignedWorkOrdersInput
+  steps?: Prisma.WorkOrderStepCreateNestedManyWithoutWorkOrderInput
+  comments?: Prisma.WorkOrderCommentCreateNestedManyWithoutWorkOrderInput
+  signatures?: Prisma.WorkOrderSignatureCreateNestedManyWithoutWorkOrderInput
+  photos?: Prisma.WorkOrderPhotoCreateNestedManyWithoutWorkOrderInput
+  scheduledWorkOrders?: Prisma.ScheduledWorkOrderCreateNestedManyWithoutWorkOrderInput
+  laborEntries?: Prisma.WorkOrderLaborCreateNestedManyWithoutWorkOrderInput
+  partsUsed?: Prisma.WorkOrderPartCreateNestedManyWithoutWorkOrderInput
+}
+
+export type WorkOrderUncheckedCreateWithoutTeamInput = {
+  id?: string
+  tenantId: string
+  workOrderNumber: string
+  assetId?: string | null
+  locationId?: string | null
+  createdById: string
+  assignedToId?: string | null
+  title: string
+  description?: string | null
+  type?: string
+  priority?: string
+  status?: string
+  dueDate?: Date | string | null
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  estimatedHours?: number | null
+  actualHours?: number | null
+  completionNotes?: string | null
+  version?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  steps?: Prisma.WorkOrderStepUncheckedCreateNestedManyWithoutWorkOrderInput
+  comments?: Prisma.WorkOrderCommentUncheckedCreateNestedManyWithoutWorkOrderInput
+  signatures?: Prisma.WorkOrderSignatureUncheckedCreateNestedManyWithoutWorkOrderInput
+  photos?: Prisma.WorkOrderPhotoUncheckedCreateNestedManyWithoutWorkOrderInput
+  scheduledWorkOrders?: Prisma.ScheduledWorkOrderUncheckedCreateNestedManyWithoutWorkOrderInput
+  laborEntries?: Prisma.WorkOrderLaborUncheckedCreateNestedManyWithoutWorkOrderInput
+  partsUsed?: Prisma.WorkOrderPartUncheckedCreateNestedManyWithoutWorkOrderInput
+}
+
+export type WorkOrderCreateOrConnectWithoutTeamInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput>
+}
+
+export type WorkOrderCreateManyTeamInputEnvelope = {
+  data: Prisma.WorkOrderCreateManyTeamInput | Prisma.WorkOrderCreateManyTeamInput[]
+  skipDuplicates?: boolean
+}
+
+export type WorkOrderUpsertWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  update: Prisma.XOR<Prisma.WorkOrderUpdateWithoutTeamInput, Prisma.WorkOrderUncheckedUpdateWithoutTeamInput>
+  create: Prisma.XOR<Prisma.WorkOrderCreateWithoutTeamInput, Prisma.WorkOrderUncheckedCreateWithoutTeamInput>
+}
+
+export type WorkOrderUpdateWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.WorkOrderWhereUniqueInput
+  data: Prisma.XOR<Prisma.WorkOrderUpdateWithoutTeamInput, Prisma.WorkOrderUncheckedUpdateWithoutTeamInput>
+}
+
+export type WorkOrderUpdateManyWithWhereWithoutTeamInput = {
+  where: Prisma.WorkOrderScalarWhereInput
+  data: Prisma.XOR<Prisma.WorkOrderUpdateManyMutationInput, Prisma.WorkOrderUncheckedUpdateManyWithoutTeamInput>
+}
+
+export type WorkOrderCreateWithoutLocationInput = {
+  id?: string
+  workOrderNumber: string
+  title: string
+  description?: string | null
+  type?: string
+  priority?: string
+  status?: string
+  dueDate?: Date | string | null
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  estimatedHours?: number | null
+  actualHours?: number | null
+  completionNotes?: string | null
+  version?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
+  asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
   assignedTo?: Prisma.UserCreateNestedOneWithoutAssignedWorkOrdersInput
   steps?: Prisma.WorkOrderStepCreateNestedManyWithoutWorkOrderInput
@@ -1435,6 +1597,7 @@ export type WorkOrderCreateWithoutLocationInput = {
 export type WorkOrderUncheckedCreateWithoutLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   createdById: string
@@ -1506,6 +1669,7 @@ export type WorkOrderCreateWithoutAssetInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
   assignedTo?: Prisma.UserCreateNestedOneWithoutAssignedWorkOrdersInput
@@ -1521,6 +1685,7 @@ export type WorkOrderCreateWithoutAssetInput = {
 export type WorkOrderUncheckedCreateWithoutAssetInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   locationId?: string | null
   createdById: string
@@ -1592,6 +1757,7 @@ export type WorkOrderCreateWithoutStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -1607,6 +1773,7 @@ export type WorkOrderCreateWithoutStepsInput = {
 export type WorkOrderUncheckedCreateWithoutStepsInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1668,6 +1835,7 @@ export type WorkOrderUpdateWithoutStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -1683,6 +1851,7 @@ export type WorkOrderUpdateWithoutStepsInput = {
 export type WorkOrderUncheckedUpdateWithoutStepsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1728,6 +1897,7 @@ export type WorkOrderCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -1743,6 +1913,7 @@ export type WorkOrderCreateWithoutCommentsInput = {
 export type WorkOrderUncheckedCreateWithoutCommentsInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1804,6 +1975,7 @@ export type WorkOrderUpdateWithoutCommentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -1819,6 +1991,7 @@ export type WorkOrderUpdateWithoutCommentsInput = {
 export type WorkOrderUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1864,6 +2037,7 @@ export type WorkOrderCreateWithoutSignaturesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -1879,6 +2053,7 @@ export type WorkOrderCreateWithoutSignaturesInput = {
 export type WorkOrderUncheckedCreateWithoutSignaturesInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -1940,6 +2115,7 @@ export type WorkOrderUpdateWithoutSignaturesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -1955,6 +2131,7 @@ export type WorkOrderUpdateWithoutSignaturesInput = {
 export type WorkOrderUncheckedUpdateWithoutSignaturesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2000,6 +2177,7 @@ export type WorkOrderCreateWithoutPhotosInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -2015,6 +2193,7 @@ export type WorkOrderCreateWithoutPhotosInput = {
 export type WorkOrderUncheckedCreateWithoutPhotosInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2076,6 +2255,7 @@ export type WorkOrderUpdateWithoutPhotosInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2091,6 +2271,7 @@ export type WorkOrderUpdateWithoutPhotosInput = {
 export type WorkOrderUncheckedUpdateWithoutPhotosInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2136,6 +2317,7 @@ export type WorkOrderCreateWithoutLaborEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -2151,6 +2333,7 @@ export type WorkOrderCreateWithoutLaborEntriesInput = {
 export type WorkOrderUncheckedCreateWithoutLaborEntriesInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2212,6 +2395,7 @@ export type WorkOrderUpdateWithoutLaborEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2227,6 +2411,7 @@ export type WorkOrderUpdateWithoutLaborEntriesInput = {
 export type WorkOrderUncheckedUpdateWithoutLaborEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2272,6 +2457,7 @@ export type WorkOrderCreateWithoutPartsUsedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -2287,6 +2473,7 @@ export type WorkOrderCreateWithoutPartsUsedInput = {
 export type WorkOrderUncheckedCreateWithoutPartsUsedInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2348,6 +2535,7 @@ export type WorkOrderUpdateWithoutPartsUsedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2363,6 +2551,7 @@ export type WorkOrderUpdateWithoutPartsUsedInput = {
 export type WorkOrderUncheckedUpdateWithoutPartsUsedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2408,6 +2597,7 @@ export type WorkOrderCreateWithoutScheduledWorkOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutWorkOrdersInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkOrdersInput
   asset?: Prisma.AssetCreateNestedOneWithoutWorkOrdersInput
   location?: Prisma.LocationCreateNestedOneWithoutWorkOrdersInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedWorkOrdersInput
@@ -2423,6 +2613,7 @@ export type WorkOrderCreateWithoutScheduledWorkOrdersInput = {
 export type WorkOrderUncheckedCreateWithoutScheduledWorkOrdersInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2484,6 +2675,7 @@ export type WorkOrderUpdateWithoutScheduledWorkOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2499,6 +2691,7 @@ export type WorkOrderUpdateWithoutScheduledWorkOrdersInput = {
 export type WorkOrderUncheckedUpdateWithoutScheduledWorkOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2528,6 +2721,7 @@ export type WorkOrderUncheckedUpdateWithoutScheduledWorkOrdersInput = {
 
 export type WorkOrderCreateManyTenantInput = {
   id?: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2566,6 +2760,7 @@ export type WorkOrderUpdateWithoutTenantInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2581,6 +2776,7 @@ export type WorkOrderUpdateWithoutTenantInput = {
 
 export type WorkOrderUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2611,6 +2807,7 @@ export type WorkOrderUncheckedUpdateWithoutTenantInput = {
 
 export type WorkOrderUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2635,6 +2832,7 @@ export type WorkOrderUncheckedUpdateManyWithoutTenantInput = {
 export type WorkOrderCreateManyCreatedByInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2658,6 +2856,7 @@ export type WorkOrderCreateManyCreatedByInput = {
 export type WorkOrderCreateManyAssignedToInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   locationId?: string | null
@@ -2696,6 +2895,7 @@ export type WorkOrderUpdateWithoutCreatedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   assignedTo?: Prisma.UserUpdateOneWithoutAssignedWorkOrdersNestedInput
@@ -2711,6 +2911,7 @@ export type WorkOrderUpdateWithoutCreatedByInput = {
 export type WorkOrderUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2741,6 +2942,7 @@ export type WorkOrderUncheckedUpdateWithoutCreatedByInput = {
 export type WorkOrderUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2779,6 +2981,7 @@ export type WorkOrderUpdateWithoutAssignedToInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
@@ -2794,6 +2997,7 @@ export type WorkOrderUpdateWithoutAssignedToInput = {
 export type WorkOrderUncheckedUpdateWithoutAssignedToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2824,6 +3028,7 @@ export type WorkOrderUncheckedUpdateWithoutAssignedToInput = {
 export type WorkOrderUncheckedUpdateManyWithoutAssignedToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2844,9 +3049,120 @@ export type WorkOrderUncheckedUpdateManyWithoutAssignedToInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type WorkOrderCreateManyTeamInput = {
+  id?: string
+  tenantId: string
+  workOrderNumber: string
+  assetId?: string | null
+  locationId?: string | null
+  createdById: string
+  assignedToId?: string | null
+  title: string
+  description?: string | null
+  type?: string
+  priority?: string
+  status?: string
+  dueDate?: Date | string | null
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  estimatedHours?: number | null
+  actualHours?: number | null
+  completionNotes?: string | null
+  version?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WorkOrderUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  actualHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
+  location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
+  assignedTo?: Prisma.UserUpdateOneWithoutAssignedWorkOrdersNestedInput
+  steps?: Prisma.WorkOrderStepUpdateManyWithoutWorkOrderNestedInput
+  comments?: Prisma.WorkOrderCommentUpdateManyWithoutWorkOrderNestedInput
+  signatures?: Prisma.WorkOrderSignatureUpdateManyWithoutWorkOrderNestedInput
+  photos?: Prisma.WorkOrderPhotoUpdateManyWithoutWorkOrderNestedInput
+  scheduledWorkOrders?: Prisma.ScheduledWorkOrderUpdateManyWithoutWorkOrderNestedInput
+  laborEntries?: Prisma.WorkOrderLaborUpdateManyWithoutWorkOrderNestedInput
+  partsUsed?: Prisma.WorkOrderPartUpdateManyWithoutWorkOrderNestedInput
+}
+
+export type WorkOrderUncheckedUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  actualHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  steps?: Prisma.WorkOrderStepUncheckedUpdateManyWithoutWorkOrderNestedInput
+  comments?: Prisma.WorkOrderCommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+  signatures?: Prisma.WorkOrderSignatureUncheckedUpdateManyWithoutWorkOrderNestedInput
+  photos?: Prisma.WorkOrderPhotoUncheckedUpdateManyWithoutWorkOrderNestedInput
+  scheduledWorkOrders?: Prisma.ScheduledWorkOrderUncheckedUpdateManyWithoutWorkOrderNestedInput
+  laborEntries?: Prisma.WorkOrderLaborUncheckedUpdateManyWithoutWorkOrderNestedInput
+  partsUsed?: Prisma.WorkOrderPartUncheckedUpdateManyWithoutWorkOrderNestedInput
+}
+
+export type WorkOrderUncheckedUpdateManyWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  actualHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type WorkOrderCreateManyLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   assetId?: string | null
   createdById: string
@@ -2885,6 +3201,7 @@ export type WorkOrderUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   asset?: Prisma.AssetUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
   assignedTo?: Prisma.UserUpdateOneWithoutAssignedWorkOrdersNestedInput
@@ -2900,6 +3217,7 @@ export type WorkOrderUpdateWithoutLocationInput = {
 export type WorkOrderUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2930,6 +3248,7 @@ export type WorkOrderUncheckedUpdateWithoutLocationInput = {
 export type WorkOrderUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2953,6 +3272,7 @@ export type WorkOrderUncheckedUpdateManyWithoutLocationInput = {
 export type WorkOrderCreateManyAssetInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   workOrderNumber: string
   locationId?: string | null
   createdById: string
@@ -2991,6 +3311,7 @@ export type WorkOrderUpdateWithoutAssetInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutWorkOrdersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkOrdersNestedInput
   location?: Prisma.LocationUpdateOneWithoutWorkOrdersNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedWorkOrdersNestedInput
   assignedTo?: Prisma.UserUpdateOneWithoutAssignedWorkOrdersNestedInput
@@ -3006,6 +3327,7 @@ export type WorkOrderUpdateWithoutAssetInput = {
 export type WorkOrderUncheckedUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3036,6 +3358,7 @@ export type WorkOrderUncheckedUpdateWithoutAssetInput = {
 export type WorkOrderUncheckedUpdateManyWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workOrderNumber?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3144,6 +3467,7 @@ export type WorkOrderCountOutputTypeCountPartsUsedArgs<ExtArgs extends runtime.T
 export type WorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   workOrderNumber?: boolean
   assetId?: boolean
   locationId?: boolean
@@ -3164,6 +3488,7 @@ export type WorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3181,6 +3506,7 @@ export type WorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type WorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   workOrderNumber?: boolean
   assetId?: boolean
   locationId?: boolean
@@ -3201,6 +3527,7 @@ export type WorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3210,6 +3537,7 @@ export type WorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   workOrderNumber?: boolean
   assetId?: boolean
   locationId?: boolean
@@ -3230,6 +3558,7 @@ export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3239,6 +3568,7 @@ export type WorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type WorkOrderSelectScalar = {
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   workOrderNumber?: boolean
   assetId?: boolean
   locationId?: boolean
@@ -3260,9 +3590,10 @@ export type WorkOrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "workOrderNumber" | "assetId" | "locationId" | "createdById" | "assignedToId" | "title" | "description" | "type" | "priority" | "status" | "dueDate" | "startedAt" | "completedAt" | "estimatedHours" | "actualHours" | "completionNotes" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
+export type WorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "teamId" | "workOrderNumber" | "assetId" | "locationId" | "createdById" | "assignedToId" | "title" | "description" | "type" | "priority" | "status" | "dueDate" | "startedAt" | "completedAt" | "estimatedHours" | "actualHours" | "completionNotes" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
 export type WorkOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3278,6 +3609,7 @@ export type WorkOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 export type WorkOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3285,6 +3617,7 @@ export type WorkOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 }
 export type WorkOrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.WorkOrder$teamArgs<ExtArgs>
   asset?: boolean | Prisma.WorkOrder$assetArgs<ExtArgs>
   location?: boolean | Prisma.WorkOrder$locationArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3295,6 +3628,7 @@ export type $WorkOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   name: "WorkOrder"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    team: Prisma.$TeamPayload<ExtArgs> | null
     asset: Prisma.$AssetPayload<ExtArgs> | null
     location: Prisma.$LocationPayload<ExtArgs> | null
     createdBy: Prisma.$UserPayload<ExtArgs>
@@ -3310,6 +3644,7 @@ export type $WorkOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     tenantId: string
+    teamId: string | null
     workOrderNumber: string
     assetId: string | null
     locationId: string | null
@@ -3724,6 +4059,7 @@ readonly fields: WorkOrderFieldRefs;
 export interface Prisma__WorkOrderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  team<T extends Prisma.WorkOrder$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   asset<T extends Prisma.WorkOrder$assetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$assetArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   location<T extends Prisma.WorkOrder$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkOrder$locationArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -3766,6 +4102,7 @@ export interface Prisma__WorkOrderClient<T, Null = never, ExtArgs extends runtim
 export interface WorkOrderFieldRefs {
   readonly id: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly tenantId: Prisma.FieldRef<"WorkOrder", 'String'>
+  readonly teamId: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly workOrderNumber: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly assetId: Prisma.FieldRef<"WorkOrder", 'String'>
   readonly locationId: Prisma.FieldRef<"WorkOrder", 'String'>
@@ -4178,6 +4515,25 @@ export type WorkOrderDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Limit how many WorkOrders to delete.
    */
   limit?: number
+}
+
+/**
+ * WorkOrder.team
+ */
+export type WorkOrder$teamArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
 }
 
 /**

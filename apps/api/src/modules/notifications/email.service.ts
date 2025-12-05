@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
+import { Resend } from 'resend';
 
 export interface EmailOptions {
   to: string | string[];
@@ -27,6 +28,7 @@ export class EmailService implements OnModuleInit {
   private readonly fromName: string;
   private readonly baseUrl: string;
   private smtpTransporter: Transporter | null = null;
+  private resendClient: Resend | null = null;
 
   constructor(private configService: ConfigService) {
     this.fromEmail = this.configService.get<string>('EMAIL_FROM', 'noreply@taskmaster.app');
@@ -37,7 +39,15 @@ export class EmailService implements OnModuleInit {
   async onModuleInit() {
     const provider = this.configService.get<string>('EMAIL_PROVIDER', 'console');
 
-    if (provider === 'smtp') {
+    if (provider === 'resend') {
+      const apiKey = this.configService.get<string>('RESEND_API_KEY');
+      if (apiKey) {
+        this.resendClient = new Resend(apiKey);
+        this.logger.log('Resend email client initialized successfully');
+      } else {
+        this.logger.warn('Resend provider selected but RESEND_API_KEY not set. Falling back to console logging.');
+      }
+    } else if (provider === 'smtp') {
       try {
         this.smtpTransporter = nodemailer.createTransport({
           host: this.configService.get<string>('SMTP_HOST', 'localhost'),
@@ -61,15 +71,11 @@ export class EmailService implements OnModuleInit {
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
-      // In production, integrate with email provider (SendGrid, AWS SES, etc.)
-      // For now, log the email details
       const provider = this.configService.get<string>('EMAIL_PROVIDER', 'console');
 
       switch (provider) {
-        case 'sendgrid':
-          return this.sendViaSendGrid(options);
-        case 'ses':
-          return this.sendViaSES(options);
+        case 'resend':
+          return this.sendViaResend(options);
         case 'smtp':
           return this.sendViaSMTP(options);
         default:
@@ -88,69 +94,39 @@ export class EmailService implements OnModuleInit {
   }
 
   /**
-   * SendGrid Email Provider (STUB - Not Yet Implemented)
-   *
-   * To implement SendGrid integration:
-   * 1. Install the SendGrid SDK: pnpm add @sendgrid/mail
-   * 2. Add SENDGRID_API_KEY to your environment variables
-   * 3. Set EMAIL_PROVIDER=sendgrid in your environment
-   *
-   * Example implementation:
-   * ```typescript
-   * import sgMail from '@sendgrid/mail';
-   *
-   * sgMail.setApiKey(this.configService.get('SENDGRID_API_KEY'));
-   * await sgMail.send({
-   *   to: options.to,
-   *   from: { email: this.fromEmail, name: this.fromName },
-   *   subject: options.subject,
-   *   text: options.text,
-   *   html: options.html,
-   * });
-   * ```
-   *
-   * @see https://docs.sendgrid.com/for-developers/sending-email/quickstart-nodejs
+   * Resend Email Provider
+   * @see https://resend.com/docs
    */
-  private async sendViaSendGrid(_options: EmailOptions): Promise<boolean> {
-    this.logger.warn('SendGrid provider selected but not implemented. Email not sent.');
-    this.logger.log('To implement SendGrid, see the documentation in email.service.ts');
-    return false;
-  }
+  private async sendViaResend(options: EmailOptions): Promise<boolean> {
+    if (!this.resendClient) {
+      this.logger.warn('Resend client not initialized, logging email instead');
+      this.logger.log(`Email would be sent via Resend:
+        To: ${Array.isArray(options.to) ? options.to.join(', ') : options.to}
+        Subject: ${options.subject}
+      `);
+      return true;
+    }
 
-  /**
-   * AWS SES Email Provider (STUB - Not Yet Implemented)
-   *
-   * To implement AWS SES integration:
-   * 1. Install the AWS SDK: pnpm add @aws-sdk/client-ses
-   * 2. Configure AWS credentials (via environment variables or IAM role)
-   * 3. Add AWS_REGION to your environment variables
-   * 4. Set EMAIL_PROVIDER=ses in your environment
-   * 5. Verify your sender email/domain in the AWS SES console
-   *
-   * Example implementation:
-   * ```typescript
-   * import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-   *
-   * const client = new SESClient({ region: this.configService.get('AWS_REGION') });
-   * await client.send(new SendEmailCommand({
-   *   Source: `${this.fromName} <${this.fromEmail}>`,
-   *   Destination: { ToAddresses: Array.isArray(options.to) ? options.to : [options.to] },
-   *   Message: {
-   *     Subject: { Data: options.subject },
-   *     Body: {
-   *       Html: { Data: options.html },
-   *       Text: { Data: options.text },
-   *     },
-   *   },
-   * }));
-   * ```
-   *
-   * @see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/ses-examples.html
-   */
-  private async sendViaSES(_options: EmailOptions): Promise<boolean> {
-    this.logger.warn('AWS SES provider selected but not implemented. Email not sent.');
-    this.logger.log('To implement AWS SES, see the documentation in email.service.ts');
-    return false;
+    try {
+      const { error } = await this.resendClient.emails.send({
+        from: `${this.fromName} <${this.fromEmail}>`,
+        to: Array.isArray(options.to) ? options.to : [options.to],
+        subject: options.subject,
+        html: options.html,
+        text: options.text,
+      });
+
+      if (error) {
+        this.logger.error(`Failed to send email via Resend: ${error.message}`);
+        return false;
+      }
+
+      this.logger.log(`Resend email sent to ${Array.isArray(options.to) ? options.to.join(', ') : options.to}`);
+      return true;
+    } catch (error) {
+      this.logger.error('Failed to send email via Resend', error);
+      return false;
+    }
   }
 
   private async sendViaSMTP(options: EmailOptions): Promise<boolean> {

@@ -23,6 +23,7 @@ model Tenant {
   // Relations
   users                User[]
   roles                Role[]
+  teams                Team[]
   locations            Location[]
   assets               Asset[]
   workOrders           WorkOrder[]
@@ -50,6 +51,7 @@ model User {
   // Relations
   tenant                   Tenant                   @relation(fields: [tenantId], references: [id])
   userRoles                UserRole[]
+  userTeams                UserTeam[]
   refreshTokens            RefreshToken[]
   createdWorkOrders        WorkOrder[]              @relation("CreatedBy")
   assignedWorkOrders       WorkOrder[]              @relation("AssignedTo")
@@ -142,12 +144,57 @@ model RefreshToken {
 }
 
 // =============================================================================
+// TEAMS (Internal Multi-Tenancy)
+// =============================================================================
+
+model Team {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String
+  code        String   // Short code like "MAINT", "ACCT", "OPS"
+  description String?
+  color       String?  // Hex color for UI display
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant               Tenant                @relation(fields: [tenantId], references: [id])
+  members              UserTeam[]
+  workOrders           WorkOrder[]
+  assets               Asset[]
+  inventoryItems       InventoryItem[]
+  maintenanceSchedules MaintenanceSchedule[]
+  locations            Location[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("teams")
+}
+
+model UserTeam {
+  userId    String   @map("user_id") @db.Uuid
+  teamId    String   @map("team_id") @db.Uuid
+  role      String   @default("member") // member, lead, admin
+  isPrimary Boolean  @default(false) @map("is_primary") // User's primary team
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@id([userId, teamId])
+  @@index([teamId])
+  @@map("user_teams")
+}
+
+// =============================================================================
 // LOCATIONS
 // =============================================================================
 
 model Location {
   id        String   @id @default(uuid()) @db.Uuid
   tenantId  String   @map("tenant_id") @db.Uuid
+  teamId    String?  @map("team_id") @db.Uuid // Optional team scope (null = visible to all teams)
   parentId  String?  @map("parent_id") @db.Uuid
   name      String
   code      String
@@ -162,6 +209,7 @@ model Location {
 
   // Relations
   tenant               Tenant                @relation(fields: [tenantId], references: [id])
+  team                 Team?                 @relation(fields: [teamId], references: [id])
   parent               Location?             @relation("LocationHierarchy", fields: [parentId], references: [id])
   children             Location[]            @relation("LocationHierarchy")
   assets               Asset[]
@@ -171,6 +219,7 @@ model Location {
 
   @@unique([tenantId, code])
   @@index([tenantId])
+  @@index([teamId])
   @@index([parentId])
   @@map("locations")
 }
@@ -182,6 +231,7 @@ model Location {
 model Asset {
   id              String   @id @default(uuid()) @db.Uuid
   tenantId        String   @map("tenant_id") @db.Uuid
+  teamId          String?  @map("team_id") @db.Uuid // Optional team scope (null = visible to all teams)
   locationId      String?  @map("location_id") @db.Uuid
   parentAssetId   String?  @map("parent_asset_id") @db.Uuid
   name            String
@@ -199,6 +249,7 @@ model Asset {
 
   // Relations
   tenant               Tenant                @relation(fields: [tenantId], references: [id])
+  team                 Team?                 @relation(fields: [teamId], references: [id])
   location             Location?             @relation(fields: [locationId], references: [id])
   parentAsset          Asset?                @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
   childAssets          Asset[]               @relation("AssetHierarchy")
@@ -207,6 +258,7 @@ model Asset {
 
   @@unique([tenantId, assetTag])
   @@index([tenantId])
+  @@index([teamId])
   @@index([locationId])
   @@index([status])
   @@map("assets")
@@ -219,6 +271,7 @@ model Asset {
 model WorkOrder {
   id              String    @id @default(uuid()) @db.Uuid
   tenantId        String    @map("tenant_id") @db.Uuid
+  teamId          String?   @map("team_id") @db.Uuid // Optional team scope (null = visible to all teams)
   workOrderNumber String    @map("work_order_number")
   assetId         String?   @map("asset_id") @db.Uuid
   locationId      String?   @map("location_id") @db.Uuid
@@ -241,6 +294,7 @@ model WorkOrder {
 
   // Relations
   tenant            Tenant               @relation(fields: [tenantId], references: [id])
+  team              Team?                @relation(fields: [teamId], references: [id])
   asset             Asset?               @relation(fields: [assetId], references: [id])
   location          Location?            @relation(fields: [locationId], references: [id])
   createdBy         User                 @relation("CreatedBy", fields: [createdById], references: [id])
@@ -255,6 +309,7 @@ model WorkOrder {
 
   @@unique([tenantId, workOrderNumber])
   @@index([tenantId])
+  @@index([teamId])
   @@index([status])
   @@index([priority])
   @@index([assignedToId])
@@ -472,6 +527,7 @@ model PushSubscription {
 model MaintenanceSchedule {
   id              String   @id @default(uuid()) @db.Uuid
   tenantId        String   @map("tenant_id") @db.Uuid
+  teamId          String?  @map("team_id") @db.Uuid // Optional team scope (null = visible to all teams)
   name            String
   description     String?
   assetId         String?  @map("asset_id") @db.Uuid
@@ -506,6 +562,7 @@ model MaintenanceSchedule {
 
   // Relations
   tenant     Tenant                   @relation(fields: [tenantId], references: [id])
+  team       Team?                    @relation(fields: [teamId], references: [id])
   asset      Asset?                   @relation(fields: [assetId], references: [id])
   location   Location?                @relation(fields: [locationId], references: [id])
   assignedTo User?                    @relation("ScheduleAssignedTo", fields: [assignedToId], references: [id])
@@ -513,6 +570,7 @@ model MaintenanceSchedule {
   generatedWorkOrders ScheduledWorkOrder[]
 
   @@index([tenantId])
+  @@index([teamId])
   @@index([assetId])
   @@index([locationId])
   @@index([isActive, nextDueDate])
@@ -557,6 +615,7 @@ model ScheduledWorkOrder {
 model InventoryItem {
   id              String   @id @default(uuid()) @db.Uuid
   tenantId        String   @map("tenant_id") @db.Uuid
+  teamId          String?  @map("team_id") @db.Uuid // Optional team scope (null = visible to all teams)
   itemNumber      String   @map("item_number")
   name            String
   description     String?
@@ -577,12 +636,14 @@ model InventoryItem {
 
   // Relations
   tenant         Tenant                 @relation(fields: [tenantId], references: [id])
+  team           Team?                  @relation(fields: [teamId], references: [id])
   location       Location?              @relation(fields: [locationId], references: [id])
   transactions   InventoryTransaction[]
   workOrderParts WorkOrderPart[]
 
   @@unique([tenantId, itemNumber])
   @@index([tenantId])
+  @@index([teamId])
   @@index([category])
   @@index([barcode])
   @@index([currentStock])

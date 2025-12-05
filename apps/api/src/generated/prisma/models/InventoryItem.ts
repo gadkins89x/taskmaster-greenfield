@@ -45,6 +45,7 @@ export type InventoryItemSumAggregateOutputType = {
 export type InventoryItemMinAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   itemNumber: string | null
   name: string | null
   description: string | null
@@ -67,6 +68,7 @@ export type InventoryItemMinAggregateOutputType = {
 export type InventoryItemMaxAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   itemNumber: string | null
   name: string | null
   description: string | null
@@ -89,6 +91,7 @@ export type InventoryItemMaxAggregateOutputType = {
 export type InventoryItemCountAggregateOutputType = {
   id: number
   tenantId: number
+  teamId: number
   itemNumber: number
   name: number
   description: number
@@ -129,6 +132,7 @@ export type InventoryItemSumAggregateInputType = {
 export type InventoryItemMinAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   itemNumber?: true
   name?: true
   description?: true
@@ -151,6 +155,7 @@ export type InventoryItemMinAggregateInputType = {
 export type InventoryItemMaxAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   itemNumber?: true
   name?: true
   description?: true
@@ -173,6 +178,7 @@ export type InventoryItemMaxAggregateInputType = {
 export type InventoryItemCountAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   itemNumber?: true
   name?: true
   description?: true
@@ -282,6 +288,7 @@ export type InventoryItemGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type InventoryItemGroupByOutputType = {
   id: string
   tenantId: string
+  teamId: string | null
   itemNumber: string
   name: string
   description: string | null
@@ -327,6 +334,7 @@ export type InventoryItemWhereInput = {
   NOT?: Prisma.InventoryItemWhereInput | Prisma.InventoryItemWhereInput[]
   id?: Prisma.UuidFilter<"InventoryItem"> | string
   tenantId?: Prisma.UuidFilter<"InventoryItem"> | string
+  teamId?: Prisma.UuidNullableFilter<"InventoryItem"> | string | null
   itemNumber?: Prisma.StringFilter<"InventoryItem"> | string
   name?: Prisma.StringFilter<"InventoryItem"> | string
   description?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
@@ -345,6 +353,7 @@ export type InventoryItemWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   transactions?: Prisma.InventoryTransactionListRelationFilter
   workOrderParts?: Prisma.WorkOrderPartListRelationFilter
@@ -353,6 +362,7 @@ export type InventoryItemWhereInput = {
 export type InventoryItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   itemNumber?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -371,6 +381,7 @@ export type InventoryItemOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  team?: Prisma.TeamOrderByWithRelationInput
   location?: Prisma.LocationOrderByWithRelationInput
   transactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
   workOrderParts?: Prisma.WorkOrderPartOrderByRelationAggregateInput
@@ -383,6 +394,7 @@ export type InventoryItemWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.InventoryItemWhereInput[]
   NOT?: Prisma.InventoryItemWhereInput | Prisma.InventoryItemWhereInput[]
   tenantId?: Prisma.UuidFilter<"InventoryItem"> | string
+  teamId?: Prisma.UuidNullableFilter<"InventoryItem"> | string | null
   itemNumber?: Prisma.StringFilter<"InventoryItem"> | string
   name?: Prisma.StringFilter<"InventoryItem"> | string
   description?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
@@ -401,6 +413,7 @@ export type InventoryItemWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   transactions?: Prisma.InventoryTransactionListRelationFilter
   workOrderParts?: Prisma.WorkOrderPartListRelationFilter
@@ -409,6 +422,7 @@ export type InventoryItemWhereUniqueInput = Prisma.AtLeast<{
 export type InventoryItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   itemNumber?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -439,6 +453,7 @@ export type InventoryItemScalarWhereWithAggregatesInput = {
   NOT?: Prisma.InventoryItemScalarWhereWithAggregatesInput | Prisma.InventoryItemScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"InventoryItem"> | string
   tenantId?: Prisma.UuidWithAggregatesFilter<"InventoryItem"> | string
+  teamId?: Prisma.UuidNullableWithAggregatesFilter<"InventoryItem"> | string | null
   itemNumber?: Prisma.StringWithAggregatesFilter<"InventoryItem"> | string
   name?: Prisma.StringWithAggregatesFilter<"InventoryItem"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"InventoryItem"> | string | null
@@ -477,6 +492,7 @@ export type InventoryItemCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutInventoryItemsInput
+  team?: Prisma.TeamCreateNestedOneWithoutInventoryItemsInput
   location?: Prisma.LocationCreateNestedOneWithoutInventoryItemsInput
   transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutItemInput
   workOrderParts?: Prisma.WorkOrderPartCreateNestedManyWithoutInventoryItemInput
@@ -485,6 +501,7 @@ export type InventoryItemCreateInput = {
 export type InventoryItemUncheckedCreateInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -525,6 +542,7 @@ export type InventoryItemUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutInventoryItemsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutInventoryItemsNestedInput
   location?: Prisma.LocationUpdateOneWithoutInventoryItemsNestedInput
   transactions?: Prisma.InventoryTransactionUpdateManyWithoutItemNestedInput
   workOrderParts?: Prisma.WorkOrderPartUpdateManyWithoutInventoryItemNestedInput
@@ -533,6 +551,7 @@ export type InventoryItemUpdateInput = {
 export type InventoryItemUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -557,6 +576,7 @@ export type InventoryItemUncheckedUpdateInput = {
 export type InventoryItemCreateManyInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -599,6 +619,7 @@ export type InventoryItemUpdateManyMutationInput = {
 export type InventoryItemUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -641,6 +662,7 @@ export type InventoryItemTenantIdItemNumberCompoundUniqueInput = {
 export type InventoryItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   itemNumber?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -671,6 +693,7 @@ export type InventoryItemAvgOrderByAggregateInput = {
 export type InventoryItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   itemNumber?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -693,6 +716,7 @@ export type InventoryItemMaxOrderByAggregateInput = {
 export type InventoryItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   itemNumber?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -764,6 +788,48 @@ export type InventoryItemUncheckedUpdateManyWithoutTenantNestedInput = {
   connect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
   update?: Prisma.InventoryItemUpdateWithWhereUniqueWithoutTenantInput | Prisma.InventoryItemUpdateWithWhereUniqueWithoutTenantInput[]
   updateMany?: Prisma.InventoryItemUpdateManyWithWhereWithoutTenantInput | Prisma.InventoryItemUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.InventoryItemScalarWhereInput | Prisma.InventoryItemScalarWhereInput[]
+}
+
+export type InventoryItemCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput> | Prisma.InventoryItemCreateWithoutTeamInput[] | Prisma.InventoryItemUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.InventoryItemCreateOrConnectWithoutTeamInput | Prisma.InventoryItemCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.InventoryItemCreateManyTeamInputEnvelope
+  connect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+}
+
+export type InventoryItemUncheckedCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput> | Prisma.InventoryItemCreateWithoutTeamInput[] | Prisma.InventoryItemUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.InventoryItemCreateOrConnectWithoutTeamInput | Prisma.InventoryItemCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.InventoryItemCreateManyTeamInputEnvelope
+  connect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+}
+
+export type InventoryItemUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput> | Prisma.InventoryItemCreateWithoutTeamInput[] | Prisma.InventoryItemUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.InventoryItemCreateOrConnectWithoutTeamInput | Prisma.InventoryItemCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.InventoryItemUpsertWithWhereUniqueWithoutTeamInput | Prisma.InventoryItemUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.InventoryItemCreateManyTeamInputEnvelope
+  set?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  disconnect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  delete?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  connect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  update?: Prisma.InventoryItemUpdateWithWhereUniqueWithoutTeamInput | Prisma.InventoryItemUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.InventoryItemUpdateManyWithWhereWithoutTeamInput | Prisma.InventoryItemUpdateManyWithWhereWithoutTeamInput[]
+  deleteMany?: Prisma.InventoryItemScalarWhereInput | Prisma.InventoryItemScalarWhereInput[]
+}
+
+export type InventoryItemUncheckedUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput> | Prisma.InventoryItemCreateWithoutTeamInput[] | Prisma.InventoryItemUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.InventoryItemCreateOrConnectWithoutTeamInput | Prisma.InventoryItemCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.InventoryItemUpsertWithWhereUniqueWithoutTeamInput | Prisma.InventoryItemUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.InventoryItemCreateManyTeamInputEnvelope
+  set?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  disconnect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  delete?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  connect?: Prisma.InventoryItemWhereUniqueInput | Prisma.InventoryItemWhereUniqueInput[]
+  update?: Prisma.InventoryItemUpdateWithWhereUniqueWithoutTeamInput | Prisma.InventoryItemUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.InventoryItemUpdateManyWithWhereWithoutTeamInput | Prisma.InventoryItemUpdateManyWithWhereWithoutTeamInput[]
   deleteMany?: Prisma.InventoryItemScalarWhereInput | Prisma.InventoryItemScalarWhereInput[]
 }
 
@@ -857,6 +923,7 @@ export type InventoryItemCreateWithoutTenantInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  team?: Prisma.TeamCreateNestedOneWithoutInventoryItemsInput
   location?: Prisma.LocationCreateNestedOneWithoutInventoryItemsInput
   transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutItemInput
   workOrderParts?: Prisma.WorkOrderPartCreateNestedManyWithoutInventoryItemInput
@@ -864,6 +931,7 @@ export type InventoryItemCreateWithoutTenantInput = {
 
 export type InventoryItemUncheckedCreateWithoutTenantInput = {
   id?: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -917,6 +985,7 @@ export type InventoryItemScalarWhereInput = {
   NOT?: Prisma.InventoryItemScalarWhereInput | Prisma.InventoryItemScalarWhereInput[]
   id?: Prisma.UuidFilter<"InventoryItem"> | string
   tenantId?: Prisma.UuidFilter<"InventoryItem"> | string
+  teamId?: Prisma.UuidNullableFilter<"InventoryItem"> | string | null
   itemNumber?: Prisma.StringFilter<"InventoryItem"> | string
   name?: Prisma.StringFilter<"InventoryItem"> | string
   description?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
@@ -934,6 +1003,80 @@ export type InventoryItemScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"InventoryItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
+}
+
+export type InventoryItemCreateWithoutTeamInput = {
+  id?: string
+  itemNumber: string
+  name: string
+  description?: string | null
+  category?: string | null
+  unit?: string
+  currentStock?: number
+  minimumStock?: number
+  reorderPoint?: number
+  reorderQuantity?: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: string | null
+  partNumber?: string | null
+  barcode?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutInventoryItemsInput
+  location?: Prisma.LocationCreateNestedOneWithoutInventoryItemsInput
+  transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutItemInput
+  workOrderParts?: Prisma.WorkOrderPartCreateNestedManyWithoutInventoryItemInput
+}
+
+export type InventoryItemUncheckedCreateWithoutTeamInput = {
+  id?: string
+  tenantId: string
+  itemNumber: string
+  name: string
+  description?: string | null
+  category?: string | null
+  unit?: string
+  currentStock?: number
+  minimumStock?: number
+  reorderPoint?: number
+  reorderQuantity?: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: string | null
+  partNumber?: string | null
+  barcode?: string | null
+  locationId?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutItemInput
+  workOrderParts?: Prisma.WorkOrderPartUncheckedCreateNestedManyWithoutInventoryItemInput
+}
+
+export type InventoryItemCreateOrConnectWithoutTeamInput = {
+  where: Prisma.InventoryItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput>
+}
+
+export type InventoryItemCreateManyTeamInputEnvelope = {
+  data: Prisma.InventoryItemCreateManyTeamInput | Prisma.InventoryItemCreateManyTeamInput[]
+  skipDuplicates?: boolean
+}
+
+export type InventoryItemUpsertWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.InventoryItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.InventoryItemUpdateWithoutTeamInput, Prisma.InventoryItemUncheckedUpdateWithoutTeamInput>
+  create: Prisma.XOR<Prisma.InventoryItemCreateWithoutTeamInput, Prisma.InventoryItemUncheckedCreateWithoutTeamInput>
+}
+
+export type InventoryItemUpdateWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.InventoryItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.InventoryItemUpdateWithoutTeamInput, Prisma.InventoryItemUncheckedUpdateWithoutTeamInput>
+}
+
+export type InventoryItemUpdateManyWithWhereWithoutTeamInput = {
+  where: Prisma.InventoryItemScalarWhereInput
+  data: Prisma.XOR<Prisma.InventoryItemUpdateManyMutationInput, Prisma.InventoryItemUncheckedUpdateManyWithoutTeamInput>
 }
 
 export type InventoryItemCreateWithoutLocationInput = {
@@ -955,6 +1098,7 @@ export type InventoryItemCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutInventoryItemsInput
+  team?: Prisma.TeamCreateNestedOneWithoutInventoryItemsInput
   transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutItemInput
   workOrderParts?: Prisma.WorkOrderPartCreateNestedManyWithoutInventoryItemInput
 }
@@ -962,6 +1106,7 @@ export type InventoryItemCreateWithoutLocationInput = {
 export type InventoryItemUncheckedCreateWithoutLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -1027,6 +1172,7 @@ export type InventoryItemCreateWithoutWorkOrderPartsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutInventoryItemsInput
+  team?: Prisma.TeamCreateNestedOneWithoutInventoryItemsInput
   location?: Prisma.LocationCreateNestedOneWithoutInventoryItemsInput
   transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutItemInput
 }
@@ -1034,6 +1180,7 @@ export type InventoryItemCreateWithoutWorkOrderPartsInput = {
 export type InventoryItemUncheckedCreateWithoutWorkOrderPartsInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -1089,6 +1236,7 @@ export type InventoryItemUpdateWithoutWorkOrderPartsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutInventoryItemsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutInventoryItemsNestedInput
   location?: Prisma.LocationUpdateOneWithoutInventoryItemsNestedInput
   transactions?: Prisma.InventoryTransactionUpdateManyWithoutItemNestedInput
 }
@@ -1096,6 +1244,7 @@ export type InventoryItemUpdateWithoutWorkOrderPartsInput = {
 export type InventoryItemUncheckedUpdateWithoutWorkOrderPartsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1135,6 +1284,7 @@ export type InventoryItemCreateWithoutTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutInventoryItemsInput
+  team?: Prisma.TeamCreateNestedOneWithoutInventoryItemsInput
   location?: Prisma.LocationCreateNestedOneWithoutInventoryItemsInput
   workOrderParts?: Prisma.WorkOrderPartCreateNestedManyWithoutInventoryItemInput
 }
@@ -1142,6 +1292,7 @@ export type InventoryItemCreateWithoutTransactionsInput = {
 export type InventoryItemUncheckedCreateWithoutTransactionsInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -1197,6 +1348,7 @@ export type InventoryItemUpdateWithoutTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutInventoryItemsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutInventoryItemsNestedInput
   location?: Prisma.LocationUpdateOneWithoutInventoryItemsNestedInput
   workOrderParts?: Prisma.WorkOrderPartUpdateManyWithoutInventoryItemNestedInput
 }
@@ -1204,6 +1356,7 @@ export type InventoryItemUpdateWithoutTransactionsInput = {
 export type InventoryItemUncheckedUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1226,6 +1379,7 @@ export type InventoryItemUncheckedUpdateWithoutTransactionsInput = {
 
 export type InventoryItemCreateManyTenantInput = {
   id?: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -1263,6 +1417,7 @@ export type InventoryItemUpdateWithoutTenantInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  team?: Prisma.TeamUpdateOneWithoutInventoryItemsNestedInput
   location?: Prisma.LocationUpdateOneWithoutInventoryItemsNestedInput
   transactions?: Prisma.InventoryTransactionUpdateManyWithoutItemNestedInput
   workOrderParts?: Prisma.WorkOrderPartUpdateManyWithoutInventoryItemNestedInput
@@ -1270,6 +1425,7 @@ export type InventoryItemUpdateWithoutTenantInput = {
 
 export type InventoryItemUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1293,6 +1449,99 @@ export type InventoryItemUncheckedUpdateWithoutTenantInput = {
 
 export type InventoryItemUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
+  minimumStock?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderPoint?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  barcode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InventoryItemCreateManyTeamInput = {
+  id?: string
+  tenantId: string
+  itemNumber: string
+  name: string
+  description?: string | null
+  category?: string | null
+  unit?: string
+  currentStock?: number
+  minimumStock?: number
+  reorderPoint?: number
+  reorderQuantity?: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: string | null
+  partNumber?: string | null
+  barcode?: string | null
+  locationId?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type InventoryItemUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
+  minimumStock?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderPoint?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  barcode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutInventoryItemsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutInventoryItemsNestedInput
+  transactions?: Prisma.InventoryTransactionUpdateManyWithoutItemNestedInput
+  workOrderParts?: Prisma.WorkOrderPartUpdateManyWithoutInventoryItemNestedInput
+}
+
+export type InventoryItemUncheckedUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
+  minimumStock?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderPoint?: Prisma.IntFieldUpdateOperationsInput | number
+  reorderQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  barcode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutItemNestedInput
+  workOrderParts?: Prisma.WorkOrderPartUncheckedUpdateManyWithoutInventoryItemNestedInput
+}
+
+export type InventoryItemUncheckedUpdateManyWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1315,6 +1564,7 @@ export type InventoryItemUncheckedUpdateManyWithoutTenantInput = {
 export type InventoryItemCreateManyLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   itemNumber: string
   name: string
   description?: string | null
@@ -1352,6 +1602,7 @@ export type InventoryItemUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutInventoryItemsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutInventoryItemsNestedInput
   transactions?: Prisma.InventoryTransactionUpdateManyWithoutItemNestedInput
   workOrderParts?: Prisma.WorkOrderPartUpdateManyWithoutInventoryItemNestedInput
 }
@@ -1359,6 +1610,7 @@ export type InventoryItemUpdateWithoutLocationInput = {
 export type InventoryItemUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1382,6 +1634,7 @@ export type InventoryItemUncheckedUpdateWithoutLocationInput = {
 export type InventoryItemUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   itemNumber?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1443,6 +1696,7 @@ export type InventoryItemCountOutputTypeCountWorkOrderPartsArgs<ExtArgs extends 
 export type InventoryItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   itemNumber?: boolean
   name?: boolean
   description?: boolean
@@ -1461,6 +1715,7 @@ export type InventoryItemSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
   transactions?: boolean | Prisma.InventoryItem$transactionsArgs<ExtArgs>
   workOrderParts?: boolean | Prisma.InventoryItem$workOrderPartsArgs<ExtArgs>
@@ -1470,6 +1725,7 @@ export type InventoryItemSelect<ExtArgs extends runtime.Types.Extensions.Interna
 export type InventoryItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   itemNumber?: boolean
   name?: boolean
   description?: boolean
@@ -1488,12 +1744,14 @@ export type InventoryItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryItem"]>
 
 export type InventoryItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   itemNumber?: boolean
   name?: boolean
   description?: boolean
@@ -1512,12 +1770,14 @@ export type InventoryItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryItem"]>
 
 export type InventoryItemSelectScalar = {
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   itemNumber?: boolean
   name?: boolean
   description?: boolean
@@ -1537,9 +1797,10 @@ export type InventoryItemSelectScalar = {
   updatedAt?: boolean
 }
 
-export type InventoryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "itemNumber" | "name" | "description" | "category" | "unit" | "currentStock" | "minimumStock" | "reorderPoint" | "reorderQuantity" | "unitCost" | "manufacturer" | "partNumber" | "barcode" | "locationId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryItem"]>
+export type InventoryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "teamId" | "itemNumber" | "name" | "description" | "category" | "unit" | "currentStock" | "minimumStock" | "reorderPoint" | "reorderQuantity" | "unitCost" | "manufacturer" | "partNumber" | "barcode" | "locationId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryItem"]>
 export type InventoryItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
   transactions?: boolean | Prisma.InventoryItem$transactionsArgs<ExtArgs>
   workOrderParts?: boolean | Prisma.InventoryItem$workOrderPartsArgs<ExtArgs>
@@ -1547,10 +1808,12 @@ export type InventoryItemInclude<ExtArgs extends runtime.Types.Extensions.Intern
 }
 export type InventoryItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
 }
 export type InventoryItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.InventoryItem$teamArgs<ExtArgs>
   location?: boolean | Prisma.InventoryItem$locationArgs<ExtArgs>
 }
 
@@ -1558,6 +1821,7 @@ export type $InventoryItemPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "InventoryItem"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    team: Prisma.$TeamPayload<ExtArgs> | null
     location: Prisma.$LocationPayload<ExtArgs> | null
     transactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
     workOrderParts: Prisma.$WorkOrderPartPayload<ExtArgs>[]
@@ -1565,6 +1829,7 @@ export type $InventoryItemPayload<ExtArgs extends runtime.Types.Extensions.Inter
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     tenantId: string
+    teamId: string | null
     itemNumber: string
     name: string
     description: string | null
@@ -1977,6 +2242,7 @@ readonly fields: InventoryItemFieldRefs;
 export interface Prisma__InventoryItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  team<T extends Prisma.InventoryItem$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryItem$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   location<T extends Prisma.InventoryItem$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryItem$locationArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.InventoryItem$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryItem$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workOrderParts<T extends Prisma.InventoryItem$workOrderPartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryItem$workOrderPartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkOrderPartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2011,6 +2277,7 @@ export interface Prisma__InventoryItemClient<T, Null = never, ExtArgs extends ru
 export interface InventoryItemFieldRefs {
   readonly id: Prisma.FieldRef<"InventoryItem", 'String'>
   readonly tenantId: Prisma.FieldRef<"InventoryItem", 'String'>
+  readonly teamId: Prisma.FieldRef<"InventoryItem", 'String'>
   readonly itemNumber: Prisma.FieldRef<"InventoryItem", 'String'>
   readonly name: Prisma.FieldRef<"InventoryItem", 'String'>
   readonly description: Prisma.FieldRef<"InventoryItem", 'String'>
@@ -2421,6 +2688,25 @@ export type InventoryItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many InventoryItems to delete.
    */
   limit?: number
+}
+
+/**
+ * InventoryItem.team
+ */
+export type InventoryItem$teamArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
 }
 
 /**

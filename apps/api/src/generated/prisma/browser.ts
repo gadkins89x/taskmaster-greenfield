@@ -53,6 +53,16 @@ export type RolePermission = Prisma.RolePermissionModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model Team
+ * 
+ */
+export type Team = Prisma.TeamModel
+/**
+ * Model UserTeam
+ * 
+ */
+export type UserTeam = Prisma.UserTeamModel
+/**
  * Model Location
  * 
  */

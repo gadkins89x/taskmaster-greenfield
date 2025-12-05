@@ -27,6 +27,7 @@ export type AggregateAsset = {
 export type AssetMinAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   locationId: string | null
   parentAssetId: string | null
   name: string | null
@@ -45,6 +46,7 @@ export type AssetMinAggregateOutputType = {
 export type AssetMaxAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  teamId: string | null
   locationId: string | null
   parentAssetId: string | null
   name: string | null
@@ -63,6 +65,7 @@ export type AssetMaxAggregateOutputType = {
 export type AssetCountAggregateOutputType = {
   id: number
   tenantId: number
+  teamId: number
   locationId: number
   parentAssetId: number
   name: number
@@ -84,6 +87,7 @@ export type AssetCountAggregateOutputType = {
 export type AssetMinAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   locationId?: true
   parentAssetId?: true
   name?: true
@@ -102,6 +106,7 @@ export type AssetMinAggregateInputType = {
 export type AssetMaxAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   locationId?: true
   parentAssetId?: true
   name?: true
@@ -120,6 +125,7 @@ export type AssetMaxAggregateInputType = {
 export type AssetCountAggregateInputType = {
   id?: true
   tenantId?: true
+  teamId?: true
   locationId?: true
   parentAssetId?: true
   name?: true
@@ -212,6 +218,7 @@ export type AssetGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type AssetGroupByOutputType = {
   id: string
   tenantId: string
+  teamId: string | null
   locationId: string | null
   parentAssetId: string | null
   name: string
@@ -252,6 +259,7 @@ export type AssetWhereInput = {
   NOT?: Prisma.AssetWhereInput | Prisma.AssetWhereInput[]
   id?: Prisma.UuidFilter<"Asset"> | string
   tenantId?: Prisma.UuidFilter<"Asset"> | string
+  teamId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   locationId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   parentAssetId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   name?: Prisma.StringFilter<"Asset"> | string
@@ -267,6 +275,7 @@ export type AssetWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   parentAsset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   childAssets?: Prisma.AssetListRelationFilter
@@ -277,6 +286,7 @@ export type AssetWhereInput = {
 export type AssetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -292,6 +302,7 @@ export type AssetOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  team?: Prisma.TeamOrderByWithRelationInput
   location?: Prisma.LocationOrderByWithRelationInput
   parentAsset?: Prisma.AssetOrderByWithRelationInput
   childAssets?: Prisma.AssetOrderByRelationAggregateInput
@@ -306,6 +317,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AssetWhereInput[]
   NOT?: Prisma.AssetWhereInput | Prisma.AssetWhereInput[]
   tenantId?: Prisma.UuidFilter<"Asset"> | string
+  teamId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   locationId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   parentAssetId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   name?: Prisma.StringFilter<"Asset"> | string
@@ -321,6 +333,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   parentAsset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   childAssets?: Prisma.AssetListRelationFilter
@@ -331,6 +344,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
 export type AssetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -356,6 +370,7 @@ export type AssetScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AssetScalarWhereWithAggregatesInput | Prisma.AssetScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Asset"> | string
   tenantId?: Prisma.UuidWithAggregatesFilter<"Asset"> | string
+  teamId?: Prisma.UuidNullableWithAggregatesFilter<"Asset"> | string | null
   locationId?: Prisma.UuidNullableWithAggregatesFilter<"Asset"> | string | null
   parentAssetId?: Prisma.UuidNullableWithAggregatesFilter<"Asset"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Asset"> | string
@@ -387,6 +402,7 @@ export type AssetCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
@@ -397,6 +413,7 @@ export type AssetCreateInput = {
 export type AssetUncheckedCreateInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -431,6 +448,7 @@ export type AssetUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
@@ -441,6 +459,7 @@ export type AssetUpdateInput = {
 export type AssetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -463,6 +482,7 @@ export type AssetUncheckedUpdateInput = {
 export type AssetCreateManyInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -498,6 +518,7 @@ export type AssetUpdateManyMutationInput = {
 export type AssetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -537,6 +558,7 @@ export type AssetTenantIdAssetTagCompoundUniqueInput = {
 export type AssetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   parentAssetId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -556,6 +578,7 @@ export type AssetCountOrderByAggregateInput = {
 export type AssetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   parentAssetId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -574,6 +597,7 @@ export type AssetMaxOrderByAggregateInput = {
 export type AssetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  teamId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   parentAssetId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -628,6 +652,48 @@ export type AssetUncheckedUpdateManyWithoutTenantNestedInput = {
   connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
   update?: Prisma.AssetUpdateWithWhereUniqueWithoutTenantInput | Prisma.AssetUpdateWithWhereUniqueWithoutTenantInput[]
   updateMany?: Prisma.AssetUpdateManyWithWhereWithoutTenantInput | Prisma.AssetUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput> | Prisma.AssetCreateWithoutTeamInput[] | Prisma.AssetUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTeamInput | Prisma.AssetCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.AssetCreateManyTeamInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutTeamInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput> | Prisma.AssetCreateWithoutTeamInput[] | Prisma.AssetUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTeamInput | Prisma.AssetCreateOrConnectWithoutTeamInput[]
+  createMany?: Prisma.AssetCreateManyTeamInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput> | Prisma.AssetCreateWithoutTeamInput[] | Prisma.AssetUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTeamInput | Prisma.AssetCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutTeamInput | Prisma.AssetUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.AssetCreateManyTeamInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutTeamInput | Prisma.AssetUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutTeamInput | Prisma.AssetUpdateManyWithWhereWithoutTeamInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput> | Prisma.AssetCreateWithoutTeamInput[] | Prisma.AssetUncheckedCreateWithoutTeamInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTeamInput | Prisma.AssetCreateOrConnectWithoutTeamInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutTeamInput | Prisma.AssetUpsertWithWhereUniqueWithoutTeamInput[]
+  createMany?: Prisma.AssetCreateManyTeamInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutTeamInput | Prisma.AssetUpdateWithWhereUniqueWithoutTeamInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutTeamInput | Prisma.AssetUpdateManyWithWhereWithoutTeamInput[]
   deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
 }
 
@@ -777,6 +843,7 @@ export type AssetCreateWithoutTenantInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
@@ -786,6 +853,7 @@ export type AssetCreateWithoutTenantInput = {
 
 export type AssetUncheckedCreateWithoutTenantInput = {
   id?: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -837,6 +905,7 @@ export type AssetScalarWhereInput = {
   NOT?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
   id?: Prisma.UuidFilter<"Asset"> | string
   tenantId?: Prisma.UuidFilter<"Asset"> | string
+  teamId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   locationId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   parentAssetId?: Prisma.UuidNullableFilter<"Asset"> | string | null
   name?: Prisma.StringFilter<"Asset"> | string
@@ -851,6 +920,76 @@ export type AssetScalarWhereInput = {
   specifications?: Prisma.JsonNullableFilter<"Asset">
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+}
+
+export type AssetCreateWithoutTeamInput = {
+  id?: string
+  name: string
+  assetTag: string
+  serialNumber?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  category?: string | null
+  status?: string
+  purchaseDate?: Date | string | null
+  warrantyExpires?: Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
+  parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
+  childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
+  workOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutTeamInput = {
+  id?: string
+  tenantId: string
+  locationId?: string | null
+  parentAssetId?: string | null
+  name: string
+  assetTag: string
+  serialNumber?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  category?: string | null
+  status?: string
+  purchaseDate?: Date | string | null
+  warrantyExpires?: Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  childAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutParentAssetInput
+  workOrders?: Prisma.WorkOrderUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutTeamInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput>
+}
+
+export type AssetCreateManyTeamInputEnvelope = {
+  data: Prisma.AssetCreateManyTeamInput | Prisma.AssetCreateManyTeamInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetUpsertWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutTeamInput, Prisma.AssetUncheckedUpdateWithoutTeamInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutTeamInput, Prisma.AssetUncheckedCreateWithoutTeamInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutTeamInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutTeamInput, Prisma.AssetUncheckedUpdateWithoutTeamInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutTeamInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutTeamInput>
 }
 
 export type AssetCreateWithoutLocationInput = {
@@ -868,6 +1007,7 @@ export type AssetCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssetInput
@@ -877,6 +1017,7 @@ export type AssetCreateWithoutLocationInput = {
 export type AssetUncheckedCreateWithoutLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   parentAssetId?: string | null
   name: string
   assetTag: string
@@ -936,6 +1077,7 @@ export type AssetCreateWithoutChildAssetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssetInput
@@ -945,6 +1087,7 @@ export type AssetCreateWithoutChildAssetsInput = {
 export type AssetUncheckedCreateWithoutChildAssetsInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -983,6 +1126,7 @@ export type AssetCreateWithoutParentAssetInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
   workOrders?: Prisma.WorkOrderCreateNestedManyWithoutAssetInput
@@ -992,6 +1136,7 @@ export type AssetCreateWithoutParentAssetInput = {
 export type AssetUncheckedCreateWithoutParentAssetInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   name: string
   assetTag: string
@@ -1046,6 +1191,7 @@ export type AssetUpdateWithoutChildAssetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutAssetNestedInput
@@ -1055,6 +1201,7 @@ export type AssetUpdateWithoutChildAssetsInput = {
 export type AssetUncheckedUpdateWithoutChildAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1104,6 +1251,7 @@ export type AssetCreateWithoutWorkOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
@@ -1113,6 +1261,7 @@ export type AssetCreateWithoutWorkOrdersInput = {
 export type AssetUncheckedCreateWithoutWorkOrdersInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -1162,6 +1311,7 @@ export type AssetUpdateWithoutWorkOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
@@ -1171,6 +1321,7 @@ export type AssetUpdateWithoutWorkOrdersInput = {
 export type AssetUncheckedUpdateWithoutWorkOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1204,6 +1355,7 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutAssetsInput
+  team?: Prisma.TeamCreateNestedOneWithoutAssetsInput
   location?: Prisma.LocationCreateNestedOneWithoutAssetsInput
   parentAsset?: Prisma.AssetCreateNestedOneWithoutChildAssetsInput
   childAssets?: Prisma.AssetCreateNestedManyWithoutParentAssetInput
@@ -1213,6 +1365,7 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
 export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -1262,6 +1415,7 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
@@ -1271,6 +1425,7 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
 export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1291,6 +1446,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
 
 export type AssetCreateManyTenantInput = {
   id?: string
+  teamId?: string | null
   locationId?: string | null
   parentAssetId?: string | null
   name: string
@@ -1321,6 +1477,7 @@ export type AssetUpdateWithoutTenantInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
@@ -1330,6 +1487,7 @@ export type AssetUpdateWithoutTenantInput = {
 
 export type AssetUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1351,6 +1509,89 @@ export type AssetUncheckedUpdateWithoutTenantInput = {
 
 export type AssetUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetCreateManyTeamInput = {
+  id?: string
+  tenantId: string
+  locationId?: string | null
+  parentAssetId?: string | null
+  name: string
+  assetTag: string
+  serialNumber?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  category?: string | null
+  status?: string
+  purchaseDate?: Date | string | null
+  warrantyExpires?: Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
+  parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
+  childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
+  workOrders?: Prisma.WorkOrderUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manufacturer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  childAssets?: Prisma.AssetUncheckedUpdateManyWithoutParentAssetNestedInput
+  workOrders?: Prisma.WorkOrderUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1370,6 +1611,7 @@ export type AssetUncheckedUpdateManyWithoutTenantInput = {
 export type AssetCreateManyLocationInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   parentAssetId?: string | null
   name: string
   assetTag: string
@@ -1400,6 +1642,7 @@ export type AssetUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   parentAsset?: Prisma.AssetUpdateOneWithoutChildAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutAssetNestedInput
@@ -1409,6 +1652,7 @@ export type AssetUpdateWithoutLocationInput = {
 export type AssetUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1430,6 +1674,7 @@ export type AssetUncheckedUpdateWithoutLocationInput = {
 export type AssetUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1448,6 +1693,7 @@ export type AssetUncheckedUpdateManyWithoutLocationInput = {
 export type AssetCreateManyParentAssetInput = {
   id?: string
   tenantId: string
+  teamId?: string | null
   locationId?: string | null
   name: string
   assetTag: string
@@ -1478,6 +1724,7 @@ export type AssetUpdateWithoutParentAssetInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAssetsNestedInput
+  team?: Prisma.TeamUpdateOneWithoutAssetsNestedInput
   location?: Prisma.LocationUpdateOneWithoutAssetsNestedInput
   childAssets?: Prisma.AssetUpdateManyWithoutParentAssetNestedInput
   workOrders?: Prisma.WorkOrderUpdateManyWithoutAssetNestedInput
@@ -1487,6 +1734,7 @@ export type AssetUpdateWithoutParentAssetInput = {
 export type AssetUncheckedUpdateWithoutParentAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1508,6 +1756,7 @@ export type AssetUncheckedUpdateWithoutParentAssetInput = {
 export type AssetUncheckedUpdateManyWithoutParentAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1575,6 +1824,7 @@ export type AssetCountOutputTypeCountMaintenanceSchedulesArgs<ExtArgs extends ru
 export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   locationId?: boolean
   parentAssetId?: boolean
   name?: boolean
@@ -1590,6 +1840,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
   childAssets?: boolean | Prisma.Asset$childAssetsArgs<ExtArgs>
@@ -1601,6 +1852,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   locationId?: boolean
   parentAssetId?: boolean
   name?: boolean
@@ -1616,6 +1868,7 @@ export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
@@ -1623,6 +1876,7 @@ export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   locationId?: boolean
   parentAssetId?: boolean
   name?: boolean
@@ -1638,6 +1892,7 @@ export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
@@ -1645,6 +1900,7 @@ export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type AssetSelectScalar = {
   id?: boolean
   tenantId?: boolean
+  teamId?: boolean
   locationId?: boolean
   parentAssetId?: boolean
   name?: boolean
@@ -1661,9 +1917,10 @@ export type AssetSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "locationId" | "parentAssetId" | "name" | "assetTag" | "serialNumber" | "manufacturer" | "model" | "category" | "status" | "purchaseDate" | "warrantyExpires" | "specifications" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
+export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "teamId" | "locationId" | "parentAssetId" | "name" | "assetTag" | "serialNumber" | "manufacturer" | "model" | "category" | "status" | "purchaseDate" | "warrantyExpires" | "specifications" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
 export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
   childAssets?: boolean | Prisma.Asset$childAssetsArgs<ExtArgs>
@@ -1673,11 +1930,13 @@ export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 }
 export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
 }
 export type AssetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  team?: boolean | Prisma.Asset$teamArgs<ExtArgs>
   location?: boolean | Prisma.Asset$locationArgs<ExtArgs>
   parentAsset?: boolean | Prisma.Asset$parentAssetArgs<ExtArgs>
 }
@@ -1686,6 +1945,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Asset"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    team: Prisma.$TeamPayload<ExtArgs> | null
     location: Prisma.$LocationPayload<ExtArgs> | null
     parentAsset: Prisma.$AssetPayload<ExtArgs> | null
     childAssets: Prisma.$AssetPayload<ExtArgs>[]
@@ -1695,6 +1955,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     tenantId: string
+    teamId: string | null
     locationId: string | null
     parentAssetId: string | null
     name: string
@@ -2104,6 +2365,7 @@ readonly fields: AssetFieldRefs;
 export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  team<T extends Prisma.Asset$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   location<T extends Prisma.Asset$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$locationArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parentAsset<T extends Prisma.Asset$parentAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$parentAssetArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   childAssets<T extends Prisma.Asset$childAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$childAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2140,6 +2402,7 @@ export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface AssetFieldRefs {
   readonly id: Prisma.FieldRef<"Asset", 'String'>
   readonly tenantId: Prisma.FieldRef<"Asset", 'String'>
+  readonly teamId: Prisma.FieldRef<"Asset", 'String'>
   readonly locationId: Prisma.FieldRef<"Asset", 'String'>
   readonly parentAssetId: Prisma.FieldRef<"Asset", 'String'>
   readonly name: Prisma.FieldRef<"Asset", 'String'>
@@ -2547,6 +2810,25 @@ export type AssetDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Assets to delete.
    */
   limit?: number
+}
+
+/**
+ * Asset.team
+ */
+export type Asset$teamArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
 }
 
 /**
