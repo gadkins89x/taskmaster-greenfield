@@ -85,6 +85,11 @@ export class CreateInventoryItemDto {
   @IsUUID()
   locationId?: string;
 
+  @ApiPropertyOptional({ example: '550e8400-e29b-41d4-a716-446655440000', description: 'Team to assign the item to (defaults to user primary team)' })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string;
+
   @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()
   @IsBoolean()

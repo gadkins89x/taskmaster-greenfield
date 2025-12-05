@@ -57,6 +57,9 @@ describe('TokenService', () => {
         email: 'test@example.com',
         tenantId: 'tenant-456',
         permissions: ['work_orders:read', 'work_orders:create'],
+        teamIds: ['team-123'],
+        primaryTeamId: 'team-123',
+        isAdmin: false,
       };
 
       const result = await service.generateAccessToken(payload);
@@ -66,6 +69,9 @@ describe('TokenService', () => {
         email: payload.email,
         tenantId: payload.tenantId,
         permissions: payload.permissions,
+        teamIds: payload.teamIds,
+        primaryTeamId: payload.primaryTeamId,
+        isAdmin: payload.isAdmin,
       });
       expect(result.accessToken).toBe('mock-jwt-token');
       expect(result.expiresIn).toBe(900); // 15m = 900 seconds
@@ -174,6 +180,9 @@ describe('TokenService', () => {
         email: 'test@test.com',
         tenantId: 'tenant',
         permissions: [],
+        teamIds: [],
+        primaryTeamId: null,
+        isAdmin: false,
       });
 
       expect(result.expiresIn).toBe(expected);

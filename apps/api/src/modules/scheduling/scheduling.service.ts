@@ -2,12 +2,14 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
   Logger,
 } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import { AuditService } from '../audit/audit.service';
+import { buildTeamFilter, canAssignToTeam } from '../../common/auth/helpers';
 import {
   CreateMaintenanceScheduleDto,
   UpdateMaintenanceScheduleDto,
@@ -25,6 +27,11 @@ export class SchedulingService {
   ) {}
 
   async create(ctx: TenantContext, dto: CreateMaintenanceScheduleDto) {
+    // Validate team assignment if provided
+    if (dto.teamId !== undefined && !canAssignToTeam(ctx, dto.teamId)) {
+      throw new ForbiddenException('You cannot assign schedules to this team');
+    }
+
     // Calculate first due date
     const nextDueDate = this.calculateNextDueDate(
       new Date(dto.startDate),
@@ -35,6 +42,9 @@ export class SchedulingService {
       dto.monthOfYear,
     );
 
+    // Use user's primary team as default if not specified
+    const teamId = dto.teamId ?? ctx.primaryTeamId;
+
     const schedule = await this.prisma.maintenanceSchedule.create({
       data: {
         tenantId: ctx.tenantId,
@@ -42,6 +52,7 @@ export class SchedulingService {
         description: dto.description,
         assetId: dto.assetId,
         locationId: dto.locationId,
+        teamId,
         priority: dto.priority || 'medium',
         estimatedHours: dto.estimatedHours,
         assignedToId: dto.assignedToId,
@@ -71,6 +82,7 @@ export class SchedulingService {
       include: {
         asset: true,
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: {
           select: { id: true, firstName: true, lastName: true, email: true },
         },
@@ -91,13 +103,18 @@ export class SchedulingService {
       isActive?: boolean;
       assetId?: string;
       locationId?: string;
+      teamId?: string; // Optional team filter (admins can filter by specific team)
     } = {},
   ) {
-    const { page = 1, limit = 20, isActive, assetId, locationId } = options;
+    const { page = 1, limit = 20, isActive, assetId, locationId, teamId } = options;
     const skip = (page - 1) * limit;
+
+    // Build team filter based on user's role and team memberships
+    const teamFilter = buildTeamFilter(ctx, teamId);
 
     const where: Record<string, unknown> = {
       tenantId: ctx.tenantId,
+      ...teamFilter,
     };
 
     if (isActive !== undefined) {
@@ -121,6 +138,7 @@ export class SchedulingService {
         include: {
           asset: { select: { id: true, name: true, assetTag: true } },
           location: { select: { id: true, name: true, code: true } },
+          team: { select: { id: true, name: true, code: true, color: true } },
           assignedTo: { select: { id: true, firstName: true, lastName: true } },
           _count: { select: { generatedWorkOrders: true } },
         },
@@ -140,11 +158,15 @@ export class SchedulingService {
   }
 
   async findOne(ctx: TenantContext, id: string) {
+    // Build team filter (user can only see schedules from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const schedule = await this.prisma.maintenanceSchedule.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         asset: true,
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: {
           select: { id: true, firstName: true, lastName: true, email: true },
         },
@@ -169,6 +191,11 @@ export class SchedulingService {
   }
 
   async update(ctx: TenantContext, id: string, dto: UpdateMaintenanceScheduleDto) {
+    // Validate team assignment if provided
+    if (dto.teamId !== undefined && !canAssignToTeam(ctx, dto.teamId)) {
+      throw new ForbiddenException('You cannot assign schedules to this team');
+    }
+
     const existing = await this.findOne(ctx, id);
 
     // Recalculate next due date if schedule parameters changed
@@ -192,6 +219,7 @@ export class SchedulingService {
         description: dto.description,
         assetId: dto.assetId,
         locationId: dto.locationId,
+        teamId: dto.teamId,
         priority: dto.priority,
         estimatedHours: dto.estimatedHours,
         assignedToId: dto.assignedToId,
@@ -211,6 +239,7 @@ export class SchedulingService {
       include: {
         asset: true,
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: {
           select: { id: true, firstName: true, lastName: true, email: true },
         },
@@ -540,9 +569,13 @@ export class SchedulingService {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + days);
 
+    // Build team filter (user can only see schedules from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     return this.prisma.maintenanceSchedule.findMany({
       where: {
         tenantId: ctx.tenantId,
+        ...teamFilter,
         isActive: true,
         nextDueDate: {
           lte: endDate,
@@ -553,6 +586,7 @@ export class SchedulingService {
       include: {
         asset: { select: { id: true, name: true, assetTag: true } },
         location: { select: { id: true, name: true, code: true } },
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: { select: { id: true, firstName: true, lastName: true } },
       },
     });

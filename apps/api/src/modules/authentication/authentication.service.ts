@@ -82,11 +82,15 @@ export class AuthenticationService {
       ? await this.getPermissionsForRole(defaultRole.id)
       : [];
 
+    // New users don't have teams yet - they'll need to be assigned by an admin
     const { accessToken, expiresIn } = await this.tokenService.generateAccessToken({
       userId: user.id,
       email: user.email,
       tenantId: user.tenantId,
       permissions,
+      teamIds: [],
+      primaryTeamId: null,
+      isAdmin: false,
     });
 
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
@@ -104,6 +108,9 @@ export class AuthenticationService {
         tenantName: tenant.name,
         roles: defaultRole ? [defaultRole.name] : [],
         permissions,
+        teamIds: [],
+        primaryTeamId: null,
+        teams: [],
       },
     };
   }
@@ -136,6 +143,9 @@ export class AuthenticationService {
             },
           },
         },
+        userTeams: {
+          include: { team: true },
+        },
       },
     });
 
@@ -161,12 +171,22 @@ export class AuthenticationService {
       ),
     );
 
+    // Get team data
+    const teamIds = user.userTeams.map((ut) => ut.teamId);
+    const primaryTeam = user.userTeams.find((ut) => ut.isPrimary);
+    const primaryTeamId = primaryTeam?.teamId ?? null;
+    const roleNames = user.userRoles.map((ur) => ur.role.name);
+    const isAdmin = roleNames.includes('Admin');
+
     // Generate tokens
     const { accessToken, expiresIn } = await this.tokenService.generateAccessToken({
       userId: user.id,
       email: user.email,
       tenantId: user.tenantId,
       permissions,
+      teamIds,
+      primaryTeamId,
+      isAdmin,
     });
 
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
@@ -182,8 +202,18 @@ export class AuthenticationService {
         lastName: user.lastName,
         tenantId: user.tenantId,
         tenantName: user.tenant.name,
-        roles: user.userRoles.map((ur) => ur.role.name),
+        roles: roleNames,
         permissions,
+        teamIds,
+        primaryTeamId,
+        teams: user.userTeams.map((ut) => ({
+          id: ut.team.id,
+          name: ut.team.name,
+          code: ut.team.code,
+          color: ut.team.color,
+          isPrimary: ut.isPrimary,
+          role: ut.role,
+        })),
       },
     };
   }
@@ -201,6 +231,7 @@ export class AuthenticationService {
             },
           },
         },
+        userTeams: true,
       },
     });
 
@@ -214,11 +245,21 @@ export class AuthenticationService {
       ),
     );
 
+    // Get team data
+    const teamIds = user.userTeams.map((ut) => ut.teamId);
+    const primaryTeam = user.userTeams.find((ut) => ut.isPrimary);
+    const primaryTeamId = primaryTeam?.teamId ?? null;
+    const roleNames = user.userRoles.map((ur) => ur.role.name);
+    const isAdmin = roleNames.includes('Admin');
+
     const { accessToken, expiresIn } = await this.tokenService.generateAccessToken({
       userId: user.id,
       email: user.email,
       tenantId: user.tenantId,
       permissions,
+      teamIds,
+      primaryTeamId,
+      isAdmin,
     });
 
     return { accessToken, expiresIn };

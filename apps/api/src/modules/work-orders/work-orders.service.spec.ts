@@ -14,6 +14,9 @@ describe('WorkOrdersService', () => {
     tenantId: 'tenant-456',
     email: 'test@example.com',
     permissions: ['work_orders:create', 'work_orders:update'],
+    teamIds: ['team-123'],
+    primaryTeamId: 'team-123',
+    isAdmin: false,
   };
 
   const mockPrismaService = {

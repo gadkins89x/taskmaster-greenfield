@@ -225,6 +225,9 @@ describe('AuthenticationController', () => {
         tenantId: 'tenant-123',
         email: 'test@example.com',
         permissions: ['work_orders:read'],
+        teamIds: ['team-123'],
+        primaryTeamId: 'team-123',
+        isAdmin: false,
       };
 
       const mockRequestWithUser = {

@@ -12,6 +12,9 @@ describe('UsersController', () => {
     tenantId: 'tenant-123',
     email: 'admin@example.com',
     permissions: ['users:read', 'users:create', 'users:update', 'users:delete'],
+    teamIds: ['team-123'],
+    primaryTeamId: 'team-123',
+    isAdmin: true,
   };
 
   const mockUser = {

@@ -10,6 +10,9 @@ interface TokenPayload {
   email: string;
   tenantId: string;
   permissions: string[];
+  teamIds: string[];
+  primaryTeamId: string | null;
+  isAdmin: boolean;
 }
 
 @Injectable()
@@ -28,6 +31,9 @@ export class TokenService {
       email: payload.email,
       tenantId: payload.tenantId,
       permissions: payload.permissions,
+      teamIds: payload.teamIds,
+      primaryTeamId: payload.primaryTeamId,
+      isAdmin: payload.isAdmin,
     });
 
     // Parse expiresIn to seconds

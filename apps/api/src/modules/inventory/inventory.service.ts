@@ -2,10 +2,12 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import { AuditService } from '../audit/audit.service';
+import { buildTeamFilter, canAssignToTeam } from '../../common/auth/helpers';
 import {
   CreateInventoryItemDto,
   UpdateInventoryItemDto,
@@ -41,7 +43,15 @@ export class InventoryService {
   }
 
   async create(ctx: TenantContext, dto: CreateInventoryItemDto) {
+    // Validate team assignment if provided
+    if (dto.teamId !== undefined && !canAssignToTeam(ctx, dto.teamId)) {
+      throw new ForbiddenException('You cannot assign inventory items to this team');
+    }
+
     const itemNumber = await this.generateItemNumber(ctx.tenantId);
+
+    // Use user's primary team as default if not specified
+    const teamId = dto.teamId ?? ctx.primaryTeamId;
 
     const item = await this.prisma.inventoryItem.create({
       data: {
@@ -60,10 +70,12 @@ export class InventoryService {
         partNumber: dto.partNumber,
         barcode: dto.barcode,
         locationId: dto.locationId,
+        teamId,
         isActive: dto.isActive ?? true,
       },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 
@@ -82,13 +94,18 @@ export class InventoryService {
       lowStock?: boolean;
       search?: string;
       isActive?: boolean;
+      teamId?: string; // Optional team filter (admins can filter by specific team)
     } = {},
   ) {
-    const { page = 1, limit = 20, category, locationId, lowStock, search, isActive } = options;
+    const { page = 1, limit = 20, category, locationId, lowStock, search, isActive, teamId } = options;
     const skip = (page - 1) * limit;
+
+    // Build team filter based on user's role and team memberships
+    const teamFilter = buildTeamFilter(ctx, teamId);
 
     const where: Record<string, unknown> = {
       tenantId: ctx.tenantId,
+      ...teamFilter,
     };
 
     if (category) {
@@ -126,6 +143,7 @@ export class InventoryService {
         orderBy: { name: 'asc' },
         include: {
           location: true,
+          team: { select: { id: true, name: true, code: true, color: true } },
         },
       }),
       this.prisma.inventoryItem.count({ where }),
@@ -143,10 +161,14 @@ export class InventoryService {
   }
 
   async findOne(ctx: TenantContext, id: string) {
+    // Build team filter (user can only see items from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const item = await this.prisma.inventoryItem.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         transactions: {
           take: 10,
           orderBy: { createdAt: 'desc' },
@@ -167,10 +189,14 @@ export class InventoryService {
   }
 
   async findByBarcode(ctx: TenantContext, barcode: string) {
+    // Build team filter (user can only see items from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const item = await this.prisma.inventoryItem.findFirst({
-      where: { barcode, tenantId: ctx.tenantId },
+      where: { barcode, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 
@@ -182,6 +208,11 @@ export class InventoryService {
   }
 
   async update(ctx: TenantContext, id: string, dto: UpdateInventoryItemDto) {
+    // Validate team assignment if provided
+    if (dto.teamId !== undefined && !canAssignToTeam(ctx, dto.teamId)) {
+      throw new ForbiddenException('You cannot assign inventory items to this team');
+    }
+
     const existing = await this.findOne(ctx, id);
 
     const item = await this.prisma.inventoryItem.update({
@@ -199,10 +230,12 @@ export class InventoryService {
         partNumber: dto.partNumber,
         barcode: dto.barcode,
         locationId: dto.locationId,
+        teamId: dto.teamId,
         isActive: dto.isActive,
       },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 

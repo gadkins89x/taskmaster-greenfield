@@ -3,6 +3,7 @@ import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Prisma } from '@/generated/prisma/client';
+import { buildTeamFilter, canAssignToTeam } from '../../common/auth/helpers';
 
 // Type definitions for Prisma query results with includes
 // Base type with common includes
@@ -10,6 +11,7 @@ type WorkOrderBase = Prisma.WorkOrderGetPayload<{
   include: {
     asset: true;
     location: true;
+    team: { select: { id: true; name: true; code: true; color: true } };
     assignedTo: true;
     createdBy: true;
     steps: {
@@ -146,11 +148,16 @@ export class WorkOrdersService {
     priority?: string[];
     assignedToId?: string;
     assetId?: string;
+    teamId?: string; // Optional team filter (admins can filter by specific team)
   }) {
-    const { page = 1, limit = 20, search, status, priority, assignedToId, assetId } = filters;
+    const { page = 1, limit = 20, search, status, priority, assignedToId, assetId, teamId } = filters;
+
+    // Build team filter based on user's role and team memberships
+    const teamFilter = buildTeamFilter(ctx, teamId);
 
     const where = {
       tenantId: ctx.tenantId,
+      ...teamFilter,
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' as const } },
@@ -169,6 +176,7 @@ export class WorkOrdersService {
         include: {
           asset: { select: { id: true, name: true, assetTag: true } },
           location: { select: { id: true, name: true, code: true } },
+          team: { select: { id: true, name: true, code: true, color: true } },
           assignedTo: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
           createdBy: { select: { id: true, firstName: true, lastName: true } },
           _count: { select: { steps: true, comments: true } },
@@ -200,6 +208,7 @@ export class WorkOrdersService {
         type: wo.type,
         asset: wo.asset,
         location: wo.location,
+        team: wo.team,
         assignedTo: wo.assignedTo,
         createdBy: wo.createdBy,
         dueDate: wo.dueDate?.toISOString() ?? null,
@@ -216,11 +225,15 @@ export class WorkOrdersService {
   }
 
   async findById(ctx: TenantContext, id: string) {
+    // Build team filter (user can only see work orders from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const workOrder = await this.prisma.workOrder.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         asset: true,
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: true,
         createdBy: true,
         steps: {
@@ -269,9 +282,18 @@ export class WorkOrdersService {
     assignedToId?: string;
     dueDate?: string;
     estimatedHours?: number;
+    teamId?: string; // Optional team assignment
     steps?: { title: string; description?: string; isRequired?: boolean }[];
   }) {
+    // Validate team assignment if provided
+    if (data.teamId !== undefined && !canAssignToTeam(ctx, data.teamId)) {
+      throw new ForbiddenException('You cannot assign work orders to this team');
+    }
+
     const workOrderNumber = await this.generateWorkOrderNumber(ctx.tenantId);
+
+    // Use user's primary team as default if not specified
+    const teamId = data.teamId ?? ctx.primaryTeamId;
 
     const workOrder = await this.prisma.workOrder.create({
       data: {
@@ -283,6 +305,7 @@ export class WorkOrdersService {
         type: data.type,
         assetId: data.assetId,
         locationId: data.locationId,
+        teamId,
         assignedToId: data.assignedToId,
         createdById: ctx.userId,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
@@ -300,6 +323,7 @@ export class WorkOrdersService {
       include: {
         asset: true,
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         assignedTo: true,
         createdBy: true,
         steps: {
@@ -321,13 +345,23 @@ export class WorkOrdersService {
     assignedToId?: string;
     dueDate?: string;
     estimatedHours?: number;
+    teamId?: string; // Can reassign to different team
     expectedVersion: number;
   }) {
+    // Validate team assignment if provided
+    if (data.teamId !== undefined && !canAssignToTeam(ctx, data.teamId)) {
+      throw new ForbiddenException('You cannot assign work orders to this team');
+    }
+
+    // Build team filter to ensure user can access the work order
+    const teamFilter = buildTeamFilter(ctx);
+
     const result = await this.prisma.workOrder.updateMany({
       where: {
         id,
         tenantId: ctx.tenantId,
         version: data.expectedVersion,
+        ...teamFilter,
       },
       data: {
         title: data.title,
@@ -336,6 +370,7 @@ export class WorkOrdersService {
         assignedToId: data.assignedToId,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
         estimatedHours: data.estimatedHours,
+        teamId: data.teamId,
         version: { increment: 1 },
       },
     });
@@ -442,6 +477,7 @@ export class WorkOrdersService {
         code: wo.location.code,
         type: wo.location.type,
       } : null,
+      team: wo.team ?? null,
       assignedTo: wo.assignedTo ? {
         id: wo.assignedTo.id,
         firstName: wo.assignedTo.firstName,

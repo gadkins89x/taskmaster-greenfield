@@ -54,6 +54,7 @@ export class SchedulingController {
   @ApiQuery({ name: 'isActive', required: false, type: Boolean })
   @ApiQuery({ name: 'assetId', required: false, type: String })
   @ApiQuery({ name: 'locationId', required: false, type: String })
+  @ApiQuery({ name: 'teamId', required: false, description: 'Filter by team (admins only can see all teams)' })
   findAll(
     @CurrentUser() ctx: TenantContext,
     @Query('page') page?: number,
@@ -61,6 +62,7 @@ export class SchedulingController {
     @Query('isActive') isActive?: boolean,
     @Query('assetId') assetId?: string,
     @Query('locationId') locationId?: string,
+    @Query('teamId') teamId?: string,
   ) {
     return this.schedulingService.findAll(ctx, {
       page: page ? Number(page) : undefined,
@@ -68,6 +70,7 @@ export class SchedulingController {
       isActive: isActive === undefined ? undefined : isActive === true || isActive === 'true' as unknown as boolean,
       assetId,
       locationId,
+      teamId,
     });
   }
 

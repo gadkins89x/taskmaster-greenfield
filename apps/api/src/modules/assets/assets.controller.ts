@@ -9,7 +9,7 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AssetsService } from './assets.service';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/auth/guards/permissions.guard';
@@ -27,6 +27,7 @@ export class AssetsController {
   @Get()
   @Permissions('assets:read')
   @ApiOperation({ summary: 'List all assets' })
+  @ApiQuery({ name: 'teamId', required: false, description: 'Filter by team (admins only can see all teams)' })
   async findAll(
     @TenantCtx() ctx: TenantContext,
     @Query('page') page?: number,
@@ -34,8 +35,9 @@ export class AssetsController {
     @Query('search') search?: string,
     @Query('locationId') locationId?: string,
     @Query('status') status?: string,
+    @Query('teamId') teamId?: string,
   ) {
-    return this.assetsService.findAll(ctx, { page, limit, search, locationId, status });
+    return this.assetsService.findAll(ctx, { page, limit, search, locationId, status, teamId });
   }
 
   @Get('by-tag/:tag')
@@ -77,6 +79,7 @@ export class AssetsController {
       purchaseDate?: string;
       warrantyExpires?: string;
       specifications?: Record<string, unknown>;
+      teamId?: string; // Optional team assignment (defaults to user's primary team)
     },
   ) {
     return this.assetsService.create(ctx, body);
@@ -100,6 +103,7 @@ export class AssetsController {
       purchaseDate?: string;
       warrantyExpires?: string;
       specifications?: Record<string, unknown>;
+      teamId?: string; // Optional team reassignment
     },
   ) {
     return this.assetsService.update(ctx, id, body);

@@ -9,6 +9,9 @@ export interface JwtPayload {
   email: string;
   tenantId: string;
   permissions: string[];
+  teamIds: string[]; // All teams user belongs to
+  primaryTeamId: string | null; // User's primary team
+  isAdmin: boolean; // Quick check for admin bypass on team filtering
   iat: number;
   exp: number;
 }
@@ -18,6 +21,9 @@ export interface TenantContext {
   userId: string;
   email: string;
   permissions: string[];
+  teamIds: string[]; // All teams user belongs to
+  primaryTeamId: string | null; // User's primary team
+  isAdmin: boolean; // Quick check for admin bypass on team filtering
 }
 
 @Injectable()
@@ -58,6 +64,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userId: payload.sub,
       email: payload.email,
       permissions: payload.permissions,
+      teamIds: payload.teamIds ?? [],
+      primaryTeamId: payload.primaryTeamId ?? null,
+      isAdmin: payload.isAdmin ?? false,
     };
   }
 }

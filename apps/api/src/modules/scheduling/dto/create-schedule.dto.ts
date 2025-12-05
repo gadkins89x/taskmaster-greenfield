@@ -93,6 +93,11 @@ export class CreateMaintenanceScheduleDto {
   @IsUUID()
   assignedToId?: string;
 
+  @ApiPropertyOptional({ example: '550e8400-e29b-41d4-a716-446655440000', description: 'Team to assign the schedule to (defaults to user primary team)' })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string;
+
   // Recurrence
   @ApiProperty({ enum: ScheduleFrequency, example: ScheduleFrequency.MONTHLY })
   @IsEnum(ScheduleFrequency)

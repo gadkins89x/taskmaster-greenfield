@@ -16,6 +16,9 @@ describe('RolesService', () => {
     tenantId: 'tenant-123',
     email: 'admin@example.com',
     permissions: ['roles:read', 'roles:create', 'roles:update', 'roles:delete'],
+    teamIds: ['team-123'],
+    primaryTeamId: 'team-123',
+    isAdmin: true,
   };
 
   const mockRole = {

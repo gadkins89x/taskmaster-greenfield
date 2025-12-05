@@ -28,6 +28,7 @@ export class WorkOrdersController {
   @Get()
   @Permissions('work_orders:read')
   @ApiOperation({ summary: 'List all work orders' })
+  @ApiQuery({ name: 'teamId', required: false, description: 'Filter by team (admins only can see all teams)' })
   async findAll(
     @TenantCtx() ctx: TenantContext,
     @Query('page') page?: number,
@@ -37,6 +38,7 @@ export class WorkOrdersController {
     @Query('priority') priority?: string,
     @Query('assignedToId') assignedToId?: string,
     @Query('assetId') assetId?: string,
+    @Query('teamId') teamId?: string,
   ) {
     return this.workOrdersService.findAll(ctx, {
       page,
@@ -46,6 +48,7 @@ export class WorkOrdersController {
       priority: priority?.split(','),
       assignedToId,
       assetId,
+      teamId,
     });
   }
 
@@ -72,6 +75,7 @@ export class WorkOrdersController {
       assignedToId?: string;
       dueDate?: string;
       estimatedHours?: number;
+      teamId?: string; // Optional team assignment (defaults to user's primary team)
       steps?: { title: string; description?: string; isRequired?: boolean }[];
     },
   ) {
@@ -92,6 +96,7 @@ export class WorkOrdersController {
       assignedToId?: string;
       dueDate?: string;
       estimatedHours?: number;
+      teamId?: string; // Optional team reassignment
       expectedVersion: number;
     },
   ) {

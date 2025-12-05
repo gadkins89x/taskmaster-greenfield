@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { buildTeamFilter, canAssignToTeam } from '../../common/auth/helpers';
 
 @Injectable()
 export class AssetsService {
@@ -22,8 +23,14 @@ export class AssetsService {
       purchaseDate?: string;
       warrantyExpires?: string;
       specifications?: Record<string, unknown>;
+      teamId?: string; // Optional team assignment
     },
   ) {
+    // Validate team assignment if provided
+    if (data.teamId !== undefined && !canAssignToTeam(ctx, data.teamId)) {
+      throw new ForbiddenException('You cannot assign assets to this team');
+    }
+
     // Check for duplicate asset tag
     const existing = await this.prisma.asset.findFirst({
       where: { tenantId: ctx.tenantId, assetTag: data.assetTag },
@@ -53,6 +60,9 @@ export class AssetsService {
       }
     }
 
+    // Use user's primary team as default if not specified
+    const teamId = data.teamId ?? ctx.primaryTeamId;
+
     const asset = await this.prisma.asset.create({
       data: {
         tenantId: ctx.tenantId,
@@ -64,6 +74,7 @@ export class AssetsService {
         category: data.category,
         status: data.status || 'operational',
         locationId: data.locationId,
+        teamId,
         parentAssetId: data.parentAssetId,
         purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
         warrantyExpires: data.warrantyExpires ? new Date(data.warrantyExpires) : null,
@@ -71,6 +82,7 @@ export class AssetsService {
       },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 
@@ -92,10 +104,19 @@ export class AssetsService {
       purchaseDate?: string;
       warrantyExpires?: string;
       specifications?: Record<string, unknown>;
+      teamId?: string; // Optional team reassignment
     },
   ) {
+    // Validate team assignment if provided
+    if (data.teamId !== undefined && !canAssignToTeam(ctx, data.teamId)) {
+      throw new ForbiddenException('You cannot assign assets to this team');
+    }
+
+    // Build team filter to ensure user can access the asset
+    const teamFilter = buildTeamFilter(ctx);
+
     const asset = await this.prisma.asset.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
     });
 
     if (!asset) {
@@ -145,6 +166,7 @@ export class AssetsService {
         model: data.model,
         category: data.category,
         locationId: data.locationId,
+        teamId: data.teamId,
         parentAssetId: data.parentAssetId,
         purchaseDate: data.purchaseDate !== undefined
           ? (data.purchaseDate ? new Date(data.purchaseDate) : null)
@@ -156,6 +178,7 @@ export class AssetsService {
       },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 
@@ -172,8 +195,11 @@ export class AssetsService {
       throw new BadRequestException(`Status must be one of: ${validStatuses.join(', ')}`);
     }
 
+    // Build team filter to ensure user can access the asset
+    const teamFilter = buildTeamFilter(ctx);
+
     const asset = await this.prisma.asset.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
     });
 
     if (!asset) {
@@ -185,6 +211,7 @@ export class AssetsService {
       data: { status },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
       },
     });
 
@@ -192,8 +219,11 @@ export class AssetsService {
   }
 
   async delete(ctx: TenantContext, id: string) {
+    // Build team filter to ensure user can access the asset
+    const teamFilter = buildTeamFilter(ctx);
+
     const asset = await this.prisma.asset.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         _count: { select: { workOrders: true, childAssets: true } },
       },
@@ -220,7 +250,7 @@ export class AssetsService {
     return { success: true };
   }
 
-  private mapAsset(asset: Prisma.AssetGetPayload<{ include: { location: true } }>) {
+  private mapAsset(asset: Prisma.AssetGetPayload<{ include: { location: true; team: { select: { id: true; name: true; code: true; color: true } } } }>) {
     return {
       id: asset.id,
       name: asset.name,
@@ -235,6 +265,7 @@ export class AssetsService {
         name: asset.location.name,
         code: asset.location.code,
       } : null,
+      team: asset.team ?? null,
       parentAssetId: asset.parentAssetId,
       purchaseDate: asset.purchaseDate?.toISOString().split('T')[0] ?? null,
       warrantyExpires: asset.warrantyExpires?.toISOString().split('T')[0] ?? null,
@@ -250,11 +281,16 @@ export class AssetsService {
     search?: string;
     locationId?: string;
     status?: string;
+    teamId?: string; // Optional team filter (admins can filter by specific team)
   }) {
-    const { page = 1, limit = 20, search, locationId, status } = filters;
+    const { page = 1, limit = 20, search, locationId, status, teamId } = filters;
+
+    // Build team filter based on user's role and team memberships
+    const teamFilter = buildTeamFilter(ctx, teamId);
 
     const where = {
       tenantId: ctx.tenantId,
+      ...teamFilter,
       ...(search && {
         OR: [
           { name: { contains: search, mode: 'insensitive' as const } },
@@ -271,6 +307,7 @@ export class AssetsService {
         where,
         include: {
           location: { select: { id: true, name: true, code: true } },
+          team: { select: { id: true, name: true, code: true, color: true } },
           _count: { select: { workOrders: { where: { status: { in: ['open', 'in_progress'] } } } } },
         },
         skip: (page - 1) * limit,
@@ -291,6 +328,7 @@ export class AssetsService {
         category: a.category,
         status: a.status,
         location: a.location,
+        team: a.team,
         purchaseDate: a.purchaseDate?.toISOString().split('T')[0] ?? null,
         warrantyExpires: a.warrantyExpires?.toISOString().split('T')[0] ?? null,
         openWorkOrdersCount: a._count.workOrders,
@@ -301,10 +339,14 @@ export class AssetsService {
   }
 
   async findById(ctx: TenantContext, id: string) {
+    // Build team filter (user can only see assets from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const asset = await this.prisma.asset.findFirst({
-      where: { id, tenantId: ctx.tenantId },
+      where: { id, tenantId: ctx.tenantId, ...teamFilter },
       include: {
         location: true,
+        team: { select: { id: true, name: true, code: true, color: true } },
         _count: {
           select: {
             workOrders: true,
@@ -336,6 +378,7 @@ export class AssetsService {
         code: asset.location.code,
         type: asset.location.type,
       } : null,
+      team: asset.team ?? null,
       purchaseDate: asset.purchaseDate?.toISOString().split('T')[0] ?? null,
       warrantyExpires: asset.warrantyExpires?.toISOString().split('T')[0] ?? null,
       specifications: asset.specifications,
@@ -349,8 +392,11 @@ export class AssetsService {
   }
 
   async findByTag(ctx: TenantContext, assetTag: string) {
+    // Build team filter (user can only see assets from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     const asset = await this.prisma.asset.findFirst({
-      where: { tenantId: ctx.tenantId, assetTag },
+      where: { tenantId: ctx.tenantId, assetTag, ...teamFilter },
     });
 
     if (!asset) {
@@ -361,10 +407,14 @@ export class AssetsService {
   }
 
   async findByBarcode(ctx: TenantContext, barcode: string) {
+    // Build team filter (user can only see assets from their teams or shared)
+    const teamFilter = buildTeamFilter(ctx);
+
     // Search by asset tag or serial number
     const asset = await this.prisma.asset.findFirst({
       where: {
         tenantId: ctx.tenantId,
+        ...teamFilter,
         OR: [
           { assetTag: barcode },
           { serialNumber: barcode },

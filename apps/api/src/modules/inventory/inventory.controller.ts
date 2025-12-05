@@ -56,6 +56,7 @@ export class InventoryController {
   @ApiQuery({ name: 'lowStock', required: false, type: Boolean })
   @ApiQuery({ name: 'search', required: false, type: String })
   @ApiQuery({ name: 'isActive', required: false, type: Boolean })
+  @ApiQuery({ name: 'teamId', required: false, description: 'Filter by team (admins only can see all teams)' })
   findAll(
     @CurrentUser() ctx: TenantContext,
     @Query('page') page?: number,
@@ -65,6 +66,7 @@ export class InventoryController {
     @Query('lowStock') lowStock?: boolean,
     @Query('search') search?: string,
     @Query('isActive') isActive?: boolean,
+    @Query('teamId') teamId?: string,
   ) {
     return this.inventoryService.findAll(ctx, {
       page: page ? Number(page) : undefined,
@@ -74,6 +76,7 @@ export class InventoryController {
       lowStock: lowStock === true || lowStock === 'true' as unknown as boolean,
       search,
       isActive: isActive === undefined ? undefined : isActive === true || isActive === 'true' as unknown as boolean,
+      teamId,
     });
   }
 

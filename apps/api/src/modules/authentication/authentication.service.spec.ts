@@ -257,6 +257,19 @@ describe('AuthenticationService', () => {
           },
         },
       ],
+      userTeams: [
+        {
+          teamId: 'team-123',
+          isPrimary: true,
+          role: 'member',
+          team: {
+            id: 'team-123',
+            name: 'Maintenance',
+            code: 'MAINT',
+            color: '#3B82F6',
+          },
+        },
+      ],
     };
 
     it('should login successfully with valid credentials', async () => {
@@ -358,6 +371,9 @@ describe('AuthenticationService', () => {
         email: mockUser.email,
         tenantId: mockUser.tenantId,
         permissions: ['work_orders:read', 'work_orders:update'],
+        teamIds: ['team-123'],
+        primaryTeamId: 'team-123',
+        isAdmin: false,
       });
       expect(tokenService.generateRefreshToken).toHaveBeenCalledWith(
         mockUser.id,
@@ -377,6 +393,13 @@ describe('AuthenticationService', () => {
               { permission: { resource: 'users', action: 'manage' } },
             ],
           },
+        },
+      ],
+      userTeams: [
+        {
+          teamId: 'team-123',
+          isPrimary: true,
+          role: 'admin',
         },
       ],
     };
@@ -440,6 +463,9 @@ describe('AuthenticationService', () => {
         email: mockUser.email,
         tenantId: mockUser.tenantId,
         permissions: ['users:manage'],
+        teamIds: ['team-123'],
+        primaryTeamId: 'team-123',
+        isAdmin: true,
       });
     });
   });
