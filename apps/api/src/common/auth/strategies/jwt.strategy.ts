@@ -59,6 +59,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid tenant context');
     }
 
+    // Block non-admin users without team assignments
+    const teamIds = payload.teamIds ?? [];
+    const isAdmin = payload.isAdmin ?? false;
+    if (teamIds.length === 0 && !isAdmin) {
+      throw new UnauthorizedException('User must be assigned to at least one team');
+    }
+
     return {
       tenantId: payload.tenantId,
       userId: payload.sub,

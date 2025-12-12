@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException }
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -29,6 +30,11 @@ export class UsersService {
           userRoles: {
             include: { role: true },
           },
+          userTeams: {
+            include: {
+              team: { select: { id: true, name: true, code: true, color: true } },
+            },
+          },
         },
         skip: (page - 1) * limit,
         take: limit,
@@ -50,6 +56,15 @@ export class UsersService {
           id: ur.role.id,
           name: ur.role.name,
         })),
+        teams: u.userTeams.map((ut) => ({
+          id: ut.team.id,
+          name: ut.team.name,
+          code: ut.team.code,
+          color: ut.team.color,
+          isPrimary: ut.isPrimary,
+          role: ut.role,
+        })),
+        primaryTeamId: u.userTeams.find((ut) => ut.isPrimary)?.teamId ?? null,
         lastLoginAt: u.lastLoginAt?.toISOString() ?? null,
         createdAt: u.createdAt.toISOString(),
       })),
@@ -71,6 +86,11 @@ export class UsersService {
             role: {
               include: { rolePermissions: { include: { permission: true } } },
             },
+          },
+        },
+        userTeams: {
+          include: {
+            team: { select: { id: true, name: true, code: true, color: true } },
           },
         },
       },
@@ -95,6 +115,15 @@ export class UsersService {
           (rp) => `${rp.permission.resource}:${rp.permission.action}`,
         ),
       })),
+      teams: user.userTeams.map((ut) => ({
+        id: ut.team.id,
+        name: ut.team.name,
+        code: ut.team.code,
+        color: ut.team.color,
+        isPrimary: ut.isPrimary,
+        role: ut.role,
+      })),
+      primaryTeamId: user.userTeams.find((ut) => ut.isPrimary)?.teamId ?? null,
       lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
@@ -117,56 +146,91 @@ export class UsersService {
     });
   }
 
-  async create(
-    ctx: TenantContext,
-    data: {
-      email: string;
-      password: string;
-      firstName: string;
-      lastName: string;
-      phone?: string;
-      roleIds?: string[];
-    },
-  ) {
+  async create(ctx: TenantContext, dto: CreateUserDto) {
     // Check if email already exists in tenant
     const existing = await this.prisma.user.findFirst({
-      where: { tenantId: ctx.tenantId, email: data.email },
+      where: { tenantId: ctx.tenantId, email: dto.email },
     });
 
     if (existing) {
       throw new ConflictException('A user with this email already exists');
     }
 
-    // Validate roles belong to tenant
-    if (data.roleIds?.length) {
-      const roles = await this.prisma.role.findMany({
-        where: { id: { in: data.roleIds }, tenantId: ctx.tenantId },
+    // Validate primary team exists and belongs to tenant
+    const primaryTeam = await this.prisma.team.findFirst({
+      where: { id: dto.primaryTeamId, tenantId: ctx.tenantId },
+    });
+    if (!primaryTeam) {
+      throw new BadRequestException('Invalid primary team ID');
+    }
+
+    // Validate additional teams if provided
+    if (dto.additionalTeamIds?.length) {
+      const teams = await this.prisma.team.findMany({
+        where: { id: { in: dto.additionalTeamIds }, tenantId: ctx.tenantId },
       });
-      if (roles.length !== data.roleIds.length) {
+      if (teams.length !== dto.additionalTeamIds.length) {
+        throw new BadRequestException('One or more additional team IDs are invalid');
+      }
+    }
+
+    // Validate roles belong to tenant
+    if (dto.roleIds?.length) {
+      const roles = await this.prisma.role.findMany({
+        where: { id: { in: dto.roleIds }, tenantId: ctx.tenantId },
+      });
+      if (roles.length !== dto.roleIds.length) {
         throw new BadRequestException('One or more invalid role IDs');
       }
     }
 
     // Hash password
-    const passwordHash = await argon2.hash(data.password);
+    const passwordHash = await argon2.hash(dto.password);
 
-    const user = await this.prisma.user.create({
-      data: {
-        tenantId: ctx.tenantId,
-        email: data.email,
-        passwordHash,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        userRoles: data.roleIds?.length
-          ? {
-              create: data.roleIds.map((roleId) => ({ roleId })),
-            }
-          : undefined,
-      },
-      include: {
-        userRoles: { include: { role: true } },
-      },
+    // Create user + team memberships in transaction
+    const user = await this.prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          tenantId: ctx.tenantId,
+          email: dto.email,
+          passwordHash,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          phone: dto.phone,
+          userRoles: dto.roleIds?.length
+            ? {
+                create: dto.roleIds.map((roleId) => ({ roleId })),
+              }
+            : undefined,
+        },
+        include: {
+          userRoles: { include: { role: true } },
+        },
+      });
+
+      // Create primary team membership
+      await tx.userTeam.create({
+        data: {
+          userId: newUser.id,
+          teamId: dto.primaryTeamId,
+          isPrimary: true,
+          role: 'member',
+        },
+      });
+
+      // Create additional team memberships
+      if (dto.additionalTeamIds?.length) {
+        await tx.userTeam.createMany({
+          data: dto.additionalTeamIds.map((teamId) => ({
+            userId: newUser.id,
+            teamId,
+            isPrimary: false,
+            role: 'member',
+          })),
+        });
+      }
+
+      return newUser;
     });
 
     return this.mapUser(user);
@@ -302,6 +366,38 @@ export class UsersService {
     ]);
 
     return this.findById(ctx, id);
+  }
+
+  async getUserTeams(ctx: TenantContext, userId: string) {
+    // Verify user belongs to tenant
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId, tenantId: ctx.tenantId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const userTeams = await this.prisma.userTeam.findMany({
+      where: { userId },
+      include: {
+        team: {
+          select: { id: true, name: true, code: true, color: true, description: true },
+        },
+      },
+      orderBy: [{ isPrimary: 'desc' }, { joinedAt: 'asc' }],
+    });
+
+    return userTeams.map((ut) => ({
+      id: ut.team.id,
+      name: ut.team.name,
+      code: ut.team.code,
+      color: ut.team.color,
+      description: ut.team.description,
+      isPrimary: ut.isPrimary,
+      role: ut.role,
+      joinedAt: ut.joinedAt,
+    }));
   }
 
   private mapUser(

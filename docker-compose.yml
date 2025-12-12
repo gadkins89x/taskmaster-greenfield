@@ -87,6 +87,11 @@ services:
       STORAGE_TYPE: local
       STORAGE_PATH: /app/storage
       LOG_LEVEL: debug
+      EMAIL_PROVIDER: resend
+      RESEND_API_KEY: re_f2coDKyG_331CQ7uXMwPfZnqeb9RxnbpG
+      EMAIL_FROM: noreply@taskmaster.pro
+      EMAIL_FROM_NAME: TaskMaster CMMS
+      APP_URL: https://taskmaster.pro
     depends_on:
       postgres:
         condition: service_healthy

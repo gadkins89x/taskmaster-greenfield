@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ForbiddenException } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -26,9 +28,22 @@ describe('UsersController', () => {
     avatarUrl: null,
     isActive: true,
     roles: [{ id: 'role-123', name: 'Technician' }],
+    teams: [{ id: 'team-123', name: 'Engineering', code: 'ENG', color: '#0000FF', isPrimary: true, role: 'member' }],
+    primaryTeamId: 'team-123',
     lastLoginAt: null,
     createdAt: '2025-01-01T00:00:00.000Z',
     updatedAt: '2025-01-01T00:00:00.000Z',
+  };
+
+  const mockUserTeam = {
+    id: 'team-123',
+    name: 'Engineering',
+    code: 'ENG',
+    color: '#0000FF',
+    description: 'Engineering team',
+    isPrimary: true,
+    role: 'member',
+    joinedAt: new Date(),
   };
 
   const mockUsersService = {
@@ -40,6 +55,7 @@ describe('UsersController', () => {
     deactivate: jest.fn(),
     activate: jest.fn(),
     assignRoles: jest.fn(),
+    getUserTeams: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -100,25 +116,26 @@ describe('UsersController', () => {
   });
 
   describe('create', () => {
-    const createBody = {
+    const createDto: CreateUserDto = {
       email: 'newuser@example.com',
       password: 'SecurePass123!',
       firstName: 'Jane',
       lastName: 'Smith',
       phone: '555-5678',
+      primaryTeamId: 'team-123',
       roleIds: ['role-123'],
     };
 
     it('should create a new user', async () => {
-      const createdUser = { ...mockUser, ...createBody, id: 'new-user-123' };
+      const createdUser = { ...mockUser, ...createDto, id: 'new-user-123' };
       mockUsersService.create.mockResolvedValue(createdUser);
 
-      const result = await controller.create(mockTenantContext, createBody);
+      const result = await controller.create(mockTenantContext, createDto);
 
       expect(result).toEqual(createdUser);
       expect(usersService.create).toHaveBeenCalledWith(
         mockTenantContext,
-        createBody,
+        createDto,
       );
     });
   });
@@ -216,6 +233,64 @@ describe('UsersController', () => {
         'user-123',
         ['role-123', 'role-456'],
       );
+    });
+  });
+
+  describe('getMyTeams', () => {
+    it('should return current user teams', async () => {
+      mockUsersService.getUserTeams.mockResolvedValue([mockUserTeam]);
+
+      const result = await controller.getMyTeams(mockTenantContext);
+
+      expect(result).toEqual([mockUserTeam]);
+      expect(usersService.getUserTeams).toHaveBeenCalledWith(
+        mockTenantContext,
+        mockTenantContext.userId,
+      );
+    });
+  });
+
+  describe('getUserTeams', () => {
+    it('should return user teams for admin viewing any user', async () => {
+      mockUsersService.getUserTeams.mockResolvedValue([mockUserTeam]);
+
+      const result = await controller.getUserTeams(mockTenantContext, 'other-user-123');
+
+      expect(result).toEqual([mockUserTeam]);
+      expect(usersService.getUserTeams).toHaveBeenCalledWith(
+        mockTenantContext,
+        'other-user-123',
+      );
+    });
+
+    it('should return user teams for user viewing own teams', async () => {
+      const nonAdminContext: TenantContext = {
+        ...mockTenantContext,
+        isAdmin: false,
+      };
+      mockUsersService.getUserTeams.mockResolvedValue([mockUserTeam]);
+
+      const result = await controller.getUserTeams(nonAdminContext, nonAdminContext.userId);
+
+      expect(result).toEqual([mockUserTeam]);
+      expect(usersService.getUserTeams).toHaveBeenCalledWith(
+        nonAdminContext,
+        nonAdminContext.userId,
+      );
+    });
+
+    it('should throw ForbiddenException for non-admin viewing other user teams', async () => {
+      const nonAdminContext: TenantContext = {
+        ...mockTenantContext,
+        isAdmin: false,
+      };
+
+      await expect(
+        controller.getUserTeams(nonAdminContext, 'other-user-123'),
+      ).rejects.toThrow(ForbiddenException);
+      await expect(
+        controller.getUserTeams(nonAdminContext, 'other-user-123'),
+      ).rejects.toThrow("Cannot view other users' teams");
     });
   });
 });

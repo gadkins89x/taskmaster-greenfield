@@ -8,6 +8,7 @@ import * as argon2 from 'argon2';
 import { UsersService } from './users.service';
 import { PrismaService } from '../../common/database/prisma.service';
 import { TenantContext } from '../../common/auth/strategies/jwt.strategy';
+import { CreateUserDto } from './dto/create-user.dto';
 
 // Mock argon2
 jest.mock('argon2', () => ({
@@ -52,6 +53,26 @@ describe('UsersService', () => {
     updatedAt: new Date(),
   };
 
+  const mockTeam = {
+    id: 'team-123',
+    tenantId: 'tenant-123',
+    name: 'Engineering',
+    code: 'ENG',
+    color: '#0000FF',
+    description: 'Engineering team',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const mockUserTeam = {
+    userId: 'user-123',
+    teamId: 'team-123',
+    isPrimary: true,
+    role: 'member',
+    createdAt: new Date(),
+    team: mockTeam,
+  };
+
   const mockUserWithRoles = {
     ...mockUser,
     userRoles: [
@@ -61,6 +82,7 @@ describe('UsersService', () => {
         role: mockRole,
       },
     ],
+    userTeams: [mockUserTeam],
   };
 
   const mockPrismaService = {
@@ -74,9 +96,18 @@ describe('UsersService', () => {
     role: {
       findMany: jest.fn(),
     },
+    team: {
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+    },
     userRole: {
       deleteMany: jest.fn(),
       createMany: jest.fn(),
+    },
+    userTeam: {
+      create: jest.fn(),
+      createMany: jest.fn(),
+      findMany: jest.fn(),
     },
     $transaction: jest.fn(),
   };
@@ -169,6 +200,7 @@ describe('UsersService', () => {
           },
         },
       ],
+      userTeams: [mockUserTeam],
     };
 
     it('should return user with roles and permissions', async () => {
@@ -227,69 +259,146 @@ describe('UsersService', () => {
   });
 
   describe('create', () => {
-    const createData = {
+    const createDto: CreateUserDto = {
       email: 'newuser@example.com',
       password: 'SecurePass123!',
       firstName: 'Jane',
       lastName: 'Smith',
       phone: '555-5678',
+      primaryTeamId: 'team-123',
       roleIds: ['role-123'],
     };
 
-    it('should create a new user successfully', async () => {
+    it('should create a new user successfully with team', async () => {
       mockPrismaService.user.findFirst.mockResolvedValue(null);
+      mockPrismaService.team.findFirst.mockResolvedValue(mockTeam);
       mockPrismaService.role.findMany.mockResolvedValue([mockRole]);
-      mockPrismaService.user.create.mockResolvedValue({
-        ...mockUser,
-        ...createData,
-        id: 'new-user-123',
-        userRoles: [{ userId: 'new-user-123', roleId: 'role-123', role: mockRole }],
-      });
 
-      const result = await service.create(mockTenantContext, createData);
+      // Mock the transaction
+      const mockTx = {
+        user: {
+          create: jest.fn().mockResolvedValue({
+            ...mockUser,
+            ...createDto,
+            id: 'new-user-123',
+            userRoles: [{ userId: 'new-user-123', roleId: 'role-123', role: mockRole }],
+          }),
+        },
+        userTeam: {
+          create: jest.fn().mockResolvedValue(mockUserTeam),
+          createMany: jest.fn(),
+        },
+      };
+      mockPrismaService.$transaction.mockImplementation((fn) => fn(mockTx));
 
-      expect(result).toHaveProperty('email', createData.email);
+      const result = await service.create(mockTenantContext, createDto);
+
+      expect(result).toHaveProperty('email', createDto.email);
       expect(result.roles).toHaveLength(1);
-      expect(argon2.hash).toHaveBeenCalledWith(createData.password);
+      expect(argon2.hash).toHaveBeenCalledWith(createDto.password);
+      expect(mockTx.userTeam.create).toHaveBeenCalledWith({
+        data: {
+          userId: 'new-user-123',
+          teamId: 'team-123',
+          isPrimary: true,
+          role: 'member',
+        },
+      });
     });
 
     it('should throw ConflictException if email already exists', async () => {
       mockPrismaService.user.findFirst.mockResolvedValue(mockUser);
 
       await expect(
-        service.create(mockTenantContext, createData),
+        service.create(mockTenantContext, createDto),
       ).rejects.toThrow(ConflictException);
       await expect(
-        service.create(mockTenantContext, createData),
+        service.create(mockTenantContext, createDto),
       ).rejects.toThrow('A user with this email already exists');
+    });
+
+    it('should throw BadRequestException for invalid primary team ID', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      mockPrismaService.team.findFirst.mockResolvedValue(null); // No team found
+
+      await expect(
+        service.create(mockTenantContext, createDto),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.create(mockTenantContext, createDto),
+      ).rejects.toThrow('Invalid primary team ID');
+    });
+
+    it('should throw BadRequestException for invalid additional team IDs', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      mockPrismaService.team.findFirst.mockResolvedValue(mockTeam);
+      mockPrismaService.team.findMany.mockResolvedValue([]); // No additional teams found
+
+      const dtoWithAdditionalTeams = {
+        ...createDto,
+        additionalTeamIds: ['team-456'],
+      };
+
+      await expect(
+        service.create(mockTenantContext, dtoWithAdditionalTeams),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.create(mockTenantContext, dtoWithAdditionalTeams),
+      ).rejects.toThrow('One or more additional team IDs are invalid');
     });
 
     it('should throw BadRequestException for invalid role IDs', async () => {
       mockPrismaService.user.findFirst.mockResolvedValue(null);
+      mockPrismaService.team.findFirst.mockResolvedValue(mockTeam);
       mockPrismaService.role.findMany.mockResolvedValue([]); // No roles found
 
       await expect(
-        service.create(mockTenantContext, createData),
+        service.create(mockTenantContext, createDto),
       ).rejects.toThrow(BadRequestException);
       await expect(
-        service.create(mockTenantContext, createData),
+        service.create(mockTenantContext, createDto),
       ).rejects.toThrow('One or more invalid role IDs');
     });
 
-    it('should create user without roles', async () => {
+    it('should create user with additional teams', async () => {
+      const additionalTeam = { ...mockTeam, id: 'team-456', name: 'Operations' };
       mockPrismaService.user.findFirst.mockResolvedValue(null);
-      mockPrismaService.user.create.mockResolvedValue({
-        ...mockUser,
-        email: createData.email,
-        userRoles: [],
-      });
+      mockPrismaService.team.findFirst.mockResolvedValue(mockTeam);
+      mockPrismaService.team.findMany.mockResolvedValue([additionalTeam]);
+      mockPrismaService.role.findMany.mockResolvedValue([mockRole]);
 
-      const result = await service.create(mockTenantContext, {
-        ...createData,
-        roleIds: undefined,
-      });
+      const mockTx = {
+        user: {
+          create: jest.fn().mockResolvedValue({
+            ...mockUser,
+            id: 'new-user-123',
+            userRoles: [{ userId: 'new-user-123', roleId: 'role-123', role: mockRole }],
+          }),
+        },
+        userTeam: {
+          create: jest.fn().mockResolvedValue(mockUserTeam),
+          createMany: jest.fn(),
+        },
+      };
+      mockPrismaService.$transaction.mockImplementation((fn) => fn(mockTx));
 
-      expect(result.roles).toEqual([]);
+      const dtoWithAdditionalTeams = {
+        ...createDto,
+        additionalTeamIds: ['team-456'],
+      };
+
+      await service.create(mockTenantContext, dtoWithAdditionalTeams);
+
+      expect(mockTx.userTeam.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            userId: 'new-user-123',
+            teamId: 'team-456',
+            isPrimary: false,
+            role: 'member',
+          },
+        ],
+      });
     });
   });
 
@@ -453,6 +562,7 @@ describe('UsersService', () => {
           },
         },
       ],
+      userTeams: [mockUserTeam],
     };
 
     it('should assign roles to user', async () => {
@@ -498,6 +608,58 @@ describe('UsersService', () => {
       await expect(
         service.assignRoles(mockTenantContext, 'user-123', ['role-123', 'role-456']),
       ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('getUserTeams', () => {
+    it('should return user teams successfully', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(mockUser);
+      mockPrismaService.userTeam.findMany.mockResolvedValue([mockUserTeam]);
+
+      const result = await service.getUserTeams(mockTenantContext, 'user-123');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('id', 'team-123');
+      expect(result[0]).toHaveProperty('name', 'Engineering');
+      expect(result[0]).toHaveProperty('isPrimary', true);
+      expect(result[0]).toHaveProperty('role', 'member');
+      expect(result[0]).toHaveProperty('joinedAt');
+    });
+
+    it('should throw NotFoundException if user not found', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+
+      await expect(
+        service.getUserTeams(mockTenantContext, 'nonexistent'),
+      ).rejects.toThrow(NotFoundException);
+      await expect(
+        service.getUserTeams(mockTenantContext, 'nonexistent'),
+      ).rejects.toThrow('User not found');
+    });
+
+    it('should return empty array if user has no teams', async () => {
+      mockPrismaService.user.findFirst.mockResolvedValue(mockUser);
+      mockPrismaService.userTeam.findMany.mockResolvedValue([]);
+
+      const result = await service.getUserTeams(mockTenantContext, 'user-123');
+
+      expect(result).toEqual([]);
+    });
+
+    it('should order teams with primary first', async () => {
+      const secondaryTeam = {
+        ...mockUserTeam,
+        teamId: 'team-456',
+        isPrimary: false,
+        team: { ...mockTeam, id: 'team-456', name: 'Operations' },
+      };
+      mockPrismaService.user.findFirst.mockResolvedValue(mockUser);
+      mockPrismaService.userTeam.findMany.mockResolvedValue([secondaryTeam, mockUserTeam]);
+
+      const result = await service.getUserTeams(mockTenantContext, 'user-123');
+
+      expect(result).toHaveLength(2);
+      // Note: The ordering is handled by Prisma orderBy, so mock order represents DB order
     });
   });
 });

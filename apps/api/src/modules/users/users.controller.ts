@@ -7,9 +7,11 @@ import {
   Query,
   Body,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../../common/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/auth/guards/permissions.guard';
 import { Permissions } from '../../common/auth/decorators/permissions.decorator';
@@ -35,6 +37,13 @@ export class UsersController {
     return this.usersService.findAll(ctx, { page, limit, search });
   }
 
+  @Get('me/teams')
+  @Permissions('users:read')
+  @ApiOperation({ summary: "Get current user's teams" })
+  async getMyTeams(@TenantCtx() ctx: TenantContext) {
+    return this.usersService.getUserTeams(ctx, ctx.userId);
+  }
+
   @Get(':id')
   @Permissions('users:read')
   @ApiOperation({ summary: 'Get user by ID' })
@@ -42,21 +51,28 @@ export class UsersController {
     return this.usersService.findById(ctx, id);
   }
 
+  @Get(':id/teams')
+  @Permissions('users:read')
+  @ApiOperation({ summary: "Get user's teams (admin only for other users)" })
+  async getUserTeams(
+    @TenantCtx() ctx: TenantContext,
+    @Param('id') id: string,
+  ) {
+    // If not admin and not self, deny
+    if (!ctx.isAdmin && id !== ctx.userId) {
+      throw new ForbiddenException("Cannot view other users' teams");
+    }
+    return this.usersService.getUserTeams(ctx, id);
+  }
+
   @Post()
   @Permissions('users:create')
   @ApiOperation({ summary: 'Create a new user' })
   async create(
     @TenantCtx() ctx: TenantContext,
-    @Body() body: {
-      email: string;
-      password: string;
-      firstName: string;
-      lastName: string;
-      phone?: string;
-      roleIds?: string[];
-    },
+    @Body() dto: CreateUserDto,
   ) {
-    return this.usersService.create(ctx, body);
+    return this.usersService.create(ctx, dto);
   }
 
   @Patch(':id')
